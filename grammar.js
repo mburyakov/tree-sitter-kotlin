@@ -54,7 +54,7 @@ const REAL_EXPONENT = token(seq(/[eE]/, optional(/[+-]/), DEC_DIGITS))
 
 module.exports = grammar({
 	name: "kotlin",
-	
+
 	conflicts: $ => [
 		// Ambiguous when used in an explicit delegation expression,
 		// since the '{' could either be interpreted as the class body
@@ -81,11 +81,11 @@ module.exports = grammar({
 		// ====================
 		// Syntax grammar
 		// ====================
-		
+
 		// ==========
 		// General
 		// ==========
-		
+
 		// start
 		source_file: $ => seq(
 			optional($.shebang_line),
@@ -94,7 +94,7 @@ module.exports = grammar({
 			repeat($.import_header),
 			repeat(seq($._statement, $._semi))
 		),
-		
+
 		shebang_line: $ => seq("#!", /[^\r\n]*/),
 
 		file_annotation: $ => seq(
@@ -104,13 +104,13 @@ module.exports = grammar({
 				$._unescaped_annotation
 			)
 		),
-		
+
 		package_header: $ => seq("package", $.identifier, $._semi),
-		
+
 		import_header: $ => seq(
 			"import",
 			$.identifier,
-			optional(choice(seq(".*"), $.import_alias)), 
+			optional(choice(seq(".*"), $.import_alias)),
 			$._semi
 		),
 
@@ -124,7 +124,7 @@ module.exports = grammar({
 			"=",
 			$._type
 		),
-		
+
 		_declaration: $ => choice(
 			$.class_declaration,
 			$.object_declaration,
@@ -132,11 +132,11 @@ module.exports = grammar({
 			$.property_declaration,
 			$.type_alias
 		),
-		
+
 		// ==========
 		// Classes
 		// ==========
-		
+
 		class_declaration: $ => prec.right(choice(
 			seq(
 				optional($.modifiers),
@@ -224,7 +224,7 @@ module.exports = grammar({
 		// ==========
 		// Class members
 		// ==========
-		
+
 		_class_member_declarations: $ => repeat1(seq($._class_member_declaration, $._semis)),
 
 		_class_member_declaration: $ => choice(
@@ -265,7 +265,7 @@ module.exports = grammar({
 		)),
 
 		function_body: $ => choice($._block, seq("=", $._expression)),
-		
+
 		variable_declaration: $ => seq(
 			// repeat($.annotation), TODO
 			$.simple_identifier,
@@ -341,11 +341,11 @@ module.exports = grammar({
 		),
 
 		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
-		
+
 		// ==========
 		// Enum classes
 		// ==========
-		
+
 		enum_class_body: $ => seq(
 			"{",
 			optional($._enum_entries),
@@ -361,11 +361,11 @@ module.exports = grammar({
 			optional($.value_arguments),
 			optional($.class_body)
 		),
-		
+
 		// ==========
 		// Types
 		// ==========
-		
+
 		_type: $ => seq(
 			optional($.type_modifiers),
 			choice(
@@ -393,7 +393,7 @@ module.exports = grammar({
 		//       unary expresions with navigation suffixes.
 
 		user_type: $ => prec.right(sep1($._simple_user_type, ".")),
-		
+
 		_simple_user_type: $ => prec.right(seq(
 			alias($.simple_identifier, $.type_identifier),
 			optional($.type_arguments)
@@ -414,7 +414,7 @@ module.exports = grammar({
 			"->",
 			$._type
 		),
-		
+
 		// A higher-than-default precedence resolves the ambiguity with 'parenthesized_type'
 		function_type_parameters: $ => prec.left(1, seq(
 			"(",
@@ -429,11 +429,11 @@ module.exports = grammar({
 			choice($.user_type, $.parenthesized_user_type),
 			")"
 		),
-		
+
 		// ==========
 		// Statements
 		// ==========
-		
+
 		statements: $ => seq(
 			$._statement,
 			repeat(seq($._semis, $._statement)),
@@ -466,7 +466,7 @@ module.exports = grammar({
 			$.while_statement,
 			$.do_while_statement
 		),
-		
+
 		for_statement: $ => prec.right(seq(
 			"for",
 			"(",
@@ -498,18 +498,18 @@ module.exports = grammar({
 		// See also https://github.com/tree-sitter/tree-sitter/issues/160
 		// generic EOF/newline token
 		_semi: $ => /[\r\n]+/,
-		
+
 		_semis: $ => /[\r\n]+/,
-		
+
 		assignment: $ => choice(
 			prec.left(PREC.ASSIGNMENT, seq($.directly_assignable_expression, $._assignment_and_operator, $._expression)),
 			// TODO
 		),
-		
+
 		// ==========
 		// Expressions
 		// ==========
-		
+
 		_expression: $ => choice(
 			$._unary_expression,
 			$._binary_expression,
@@ -535,12 +535,12 @@ module.exports = grammar({
 		indexing_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.indexing_suffix)),
 
 		navigation_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.navigation_suffix)),
-		
+
 		// TODO: Postfix type arguments conflict naturally with 'less than'.
 		//       Possible solutions include listing this conflict
 		//       between 'unary_expression' and 'binary_expression'
 		//       in the array of LR(1) conflicts at the top.
-		
+
 		prefix_expression: $ => prec.right(PREC.PREFIX, seq(choice($.annotation, $.label, $._prefix_unary_operator), $._expression)),
 
 		as_expression: $ => prec.left(PREC.AS, seq($._expression, $._as_operator, $._type)),
@@ -565,7 +565,7 @@ module.exports = grammar({
 		),
 
 		multiplicative_expression: $ => prec.left(PREC.MULTIPLICATIVE, seq($._expression, $._multiplicative_operator, $._expression)),
-		
+
 		additive_expression: $ => prec.left(PREC.ADDITIVE, seq($._expression, $._additive_operator, $._expression)),
 
 		range_expression: $ => prec.left(PREC.RANGE, seq($._expression, "..", $._expression)),
@@ -575,7 +575,7 @@ module.exports = grammar({
 		elvis_expression: $ => prec.left(PREC.ELVIS, seq($._expression, "?:", $._expression)),
 
 		check_expression: $ => prec.left(PREC.CHECK, seq($._expression, choice($._in_operator, $._is_operator), $._expression)),
-		
+
 		comparison_expression: $ => prec.left(PREC.COMPARISON, seq($._expression, $._comparison_operator, $._expression)),
 
 		equality_expression: $ => prec.left(PREC.EQUALITY, seq($._expression, $._equality_operator, $._expression)),
@@ -817,27 +817,27 @@ module.exports = grammar({
 		),
 
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
-		
+
 		_equality_operator: $ => choice("!=", "!==", "==", "==="),
-		
+
 		_comparison_operator: $ => choice("<", ">", "<=", ">="),
-		
+
 		_in_operator: $ => choice("in", "!in"),
-		
+
 		_is_operator: $ => choice("is", $._not_is),
-		
+
 		_additive_operator: $ => choice("+", "-"),
-		
+
 		_multiplicative_operator: $ => choice("*", "/", "%"),
-		
+
 		_as_operator: $ => choice("as", "as?"),
-		
+
 		_prefix_unary_operator: $ => choice("++", "--", "-", "+", "!"),
-		
+
 		_postfix_unary_operator: $ => choice("++", "--", "!!"),
-		
+
 		_member_access_operator: $ => choice(".", $._safe_nav, "::"),
-		
+
 		_safe_nav: $ => "?.",      // TODO: '?' and '.' should actually be separate tokens
 		                           //       but produce an LR(1) conflict that way, however.
 		                           //       ('as' expression with '?' produces conflict). Also
@@ -852,7 +852,7 @@ module.exports = grammar({
 		// ==========
 		// Modifiers
 		// ==========
-		
+
 		modifiers: $ => choice($.annotation, repeat1($._modifier)),
 
 		parameter_modifiers: $ => choice($.annotation, repeat1($.parameter_modifier)),
@@ -933,11 +933,11 @@ module.exports = grammar({
 			"expect",
 			"actual"
 		),
-		
+
 		// ==========
 		// Annotations
 		// ==========
-		
+
 		annotation: $ => seq(
 			"@",
 			$.simple_identifier
@@ -948,24 +948,24 @@ module.exports = grammar({
 			$.constructor_invocation,
 			$.user_type
 		),
-		
+
 		// ==========
 		// Identifiers
 		// ==========
-		
+
 		simple_identifier: $ => $._lexical_identifier, // TODO
-		
+
 		identifier: $ => sep1($.simple_identifier, "."),
-		
+
 		// ====================
 		// Lexical grammar
 		// ====================
-		
-		
+
+
 		// ==========
 		// General
 		// ==========
-		
+
 		// Source: https://github.com/tree-sitter/tree-sitter-java/blob/bc7124d924723e933b6ffeb5f22c4cf5248416b7/grammar.js#L1030
 		comment: $ => token(prec(PREC.COMMENT, choice(
 			seq("//", /.*/),
@@ -975,12 +975,12 @@ module.exports = grammar({
 		// ==========
 		// Separators and operations
 		// ==========
-		
-		
+
+
 		// ==========
 		// Keywords
 		// ==========
-		
+
 		_return_at: $ => seq("return@", $._lexical_identifier),
 
 		_continue_at: $ => seq("continue@", $._lexical_identifier),
@@ -994,11 +994,11 @@ module.exports = grammar({
 		_not_is: $ => "!is",
 
 		_not_in: $ => "!in",
-		
+
 		// ==========
 		// Literals
 		// ==========
-		
+
 		real_literal: $ => token(choice(
 			seq(
 				choice(
@@ -1009,37 +1009,37 @@ module.exports = grammar({
 			),
 			seq(DEC_DIGITS, /[fF]/)
 		)),
-		
+
 		integer_literal: $ => token(seq(optional(/[1-9]/), DEC_DIGITS)),
-		
+
 		hex_literal: $ => token(seq("0", /[xX]/, HEX_DIGITS)),
-		
+
 		bin_literal: $ => token(seq("0", /[bB]/, BIN_DIGITS)),
-		
+
 		unsigned_literal: $ => seq(
 			choice($.integer_literal, $.hex_literal, $.bin_literal),
 			/[uU]/,
 			optional("L")
 		),
-		
+
 		long_literal: $ => seq(
 			choice($.integer_literal, $.hex_literal, $.bin_literal),
 			"L"
 		),
-		
+
 		boolean_literal: $ => choice("true", "false"),
-		
+
 		character_literal: $ => seq(
 			"'",
 			choice($._escape_seq, /[^\n\r'\\]/),
 			"'"
 		),
 
-		
+
 		// ==========
 		// Identifiers
 		// ==========
-		
+
 		_lexical_identifier: $ => choice(
 			/[a-zA-Z_][a-zA-Z_0-9]*/,
 			/`[^\r\n`]+`/
@@ -1061,14 +1061,14 @@ module.exports = grammar({
 		// ==========
 		// Strings
 		// ==========
-		
+
 		_line_str_text: $ => /[^\\"$]+/,
-		
+
 		_line_str_escaped_char: $ => choice(
 			$._escaped_identifier,
 			$._uni_character_literal
 		),
-		
+
 		_multi_line_str_text: $ => /[^"$]+/
 	}
 });

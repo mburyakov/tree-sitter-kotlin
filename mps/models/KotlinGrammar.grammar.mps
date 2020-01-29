@@ -15,13 +15,6 @@
       <concept id="987964775448365991" name="org.campagnelab.ANTLR.structure.NotSet" flags="ng" index="2uxNWt">
         <child id="987964775448366068" name="set" index="2uxNXe" />
       </concept>
-      <concept id="987964775451668461" name="org.campagnelab.ANTLR.structure.Range" flags="ng" index="2uOdHn">
-        <child id="987964775451668702" name="end" index="2uOch$" />
-        <child id="987964775451668700" name="start" index="2uOchA" />
-      </concept>
-      <concept id="2212714499869525789" name="org.campagnelab.ANTLR.structure.BlockSet" flags="ng" index="$Cmc0">
-        <child id="2212714499869597287" name="elements" index="$C7DU" />
-      </concept>
       <concept id="1684107016606379934" name="org.campagnelab.ANTLR.structure.LexerRuleRef" flags="ng" index="2ZNWBQ">
         <reference id="1684107016606379935" name="rule" index="2ZNWBR" />
       </concept>
@@ -35,7 +28,6 @@
         <child id="1684107016605707430" name="alternatives" index="2ZQoFe" />
       </concept>
       <concept id="1684107016605283314" name="org.campagnelab.ANTLR.structure.Dot" flags="ng" index="2ZRLmq" />
-      <concept id="5643126999999269540" name="org.campagnelab.ANTLR.structure.LexerElement" flags="ng" index="3J3M2Z" />
       <concept id="5643127000000497363" name="org.campagnelab.ANTLR.structure.LexerRuleRefByName" flags="ng" index="3J8AN8">
         <property id="5643127000000499288" name="name" index="3J8Ah3" />
       </concept>
@@ -106,7 +98,6 @@
             </node>
             <node concept="1Qzf3M" id="4ak6RTc7J4T" role="2ZQ012">
               <property role="2sqUGl" value="true" />
-              <property role="2sqU3E" value="true" />
               <node concept="3Jbb_8" id="4ak6RTc7J5k" role="1Qzf3N">
                 <node concept="2ZQ011" id="4ak6RTc7J5r" role="3JbbP2">
                   <node concept="2ZNWBQ" id="4ak6RTc84Je" role="2ZQ012">
@@ -302,7 +293,6 @@
             <node concept="1M88Us" id="4ak6RTc7J_F" role="2ZQ012">
               <property role="1M88Tz" value="}" />
             </node>
-            <node concept="3J3M2Z" id="4ak6RTc7J_G" role="2ZQ012" />
           </node>
         </node>
       </node>
@@ -1845,13 +1835,8 @@
       <node concept="2ZQoFH" id="4ak6RTc7S8p" role="2ZQoCl">
         <node concept="3Jbb_8" id="4ak6RTc7S8R" role="2ZQoFe">
           <node concept="2ZQ011" id="4ak6RTc7S96" role="3JbbP2">
-            <node concept="2uOdHn" id="4ak6RTc7S9i" role="2ZQ012">
-              <node concept="1M88Us" id="4ak6RTc7S9j" role="2uOchA">
-                <property role="1M88Tz" value="0" />
-              </node>
-              <node concept="1M88Us" id="4ak6RTc7S9k" role="2uOch$">
-                <property role="1M88Tz" value="9" />
-              </node>
+            <node concept="1M84Vo" id="4ak6RTczCxl" role="2ZQ012">
+              <property role="1M84Qq" value="[0123456789]" />
             </node>
           </node>
         </node>
@@ -1862,13 +1847,8 @@
       <node concept="2ZQoFH" id="4ak6RTc7Sc8" role="2ZQoCl">
         <node concept="3Jbb_8" id="4ak6RTc7ScA" role="2ZQoFe">
           <node concept="2ZQ011" id="4ak6RTc7ScP" role="3JbbP2">
-            <node concept="2uOdHn" id="4ak6RTc7Sd1" role="2ZQ012">
-              <node concept="1M88Us" id="4ak6RTc7Sd2" role="2uOchA">
-                <property role="1M88Tz" value="1" />
-              </node>
-              <node concept="1M88Us" id="4ak6RTc7Sd3" role="2uOch$">
-                <property role="1M88Tz" value="9" />
-              </node>
+            <node concept="1M84Vo" id="4ak6RTczCxn" role="2ZQ012">
+              <property role="1M84Qq" value="[123456789]" />
             </node>
           </node>
         </node>
@@ -2343,13 +2323,8 @@
             </node>
             <node concept="2uxNWt" id="4ak6RTc7Zt9" role="2ZQ012">
               <property role="2sqUKs" value="true" />
-              <node concept="$Cmc0" id="4ak6RTc7Zta" role="2uxNXe">
-                <node concept="1M84Vo" id="4ak6RTc7Ztb" role="$C7DU">
-                  <property role="1M84Qq" value="[\r\n]" />
-                </node>
-                <node concept="1M88Us" id="4ak6RTc7Ztc" role="$C7DU">
-                  <property role="1M88Tz" value="`" />
-                </node>
+              <node concept="1M84Vo" id="4ak6RTc7Ztb" role="2uxNXe">
+                <property role="1M84Qq" value="[\r\n`]" />
               </node>
             </node>
             <node concept="1M88Us" id="4ak6RTc7Ztf" role="2ZQ012">

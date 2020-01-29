@@ -3,6 +3,7 @@
   <persistence version="9" />
   <languages>
     <use id="d6782141-eafa-4cf7-a85d-1229abdb1152" name="org.campagnelab.ANTLR" version="3" />
+    <use id="d5a097a4-d918-4273-9509-6444df2ee95d" name="org.jetbrains.mps.treesitter" version="0" />
   </languages>
   <imports />
   <registry>

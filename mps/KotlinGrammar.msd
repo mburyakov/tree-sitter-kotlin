@@ -12,6 +12,7 @@
   <languageVersions>
     <language slang="l:ceab5195-25ea-4f22-9b92-103b95ca8c0c:jetbrains.mps.lang.core" version="2" />
     <language slang="l:d6782141-eafa-4cf7-a85d-1229abdb1152:org.campagnelab.ANTLR" version="3" />
+    <language slang="l:d5a097a4-d918-4273-9509-6444df2ee95d:org.jetbrains.mps.treesitter" version="0" />
   </languageVersions>
   <dependencyVersions>
     <module reference="c737a688-8cb9-479a-bc7a-b68c874e8e17(KotlinGrammar)" version="0" />

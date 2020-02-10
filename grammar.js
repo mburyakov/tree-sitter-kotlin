@@ -1,13 +1,6 @@
 module.exports = grammar({
   name: "KotlinParser_extracted",
   extras: $ => [$.WS],
-  conflicts: $ => [
-    [$.functionTypeParameters, $.parenthesizedType],
-    [$.valueArgument, $.typeModifier],
-    [$.primaryExpression, $.simpleUserType],
-    [$.primaryExpression, $.simpleUserType, $.valueArgument],
-    [$.unaryPrefix, $.typeModifier]
-  ],
   rules: {
 
     start: $ => seq($.expression, ";"),
@@ -21,7 +14,7 @@ module.exports = grammar({
 
     parameter: $ => seq(
       $.simpleIdentifier,
-      repeat(prec.left($.NL)),
+      optional($.NLS),
       $.COLON,
       optional($.NLS),
       $.type
@@ -42,7 +35,7 @@ module.exports = grammar({
       $.DYNAMIC
     )),
 
-    nullableType: $ => prec.left(seq(
+    nullableType: $ => prec.right(seq(
       choice(
         $.typeReference,
         $.parenthesizedType
@@ -56,20 +49,20 @@ module.exports = grammar({
       $.QUEST_WS
     ),
 
-    userType: $ => prec.left(seq(
+    userType: $ => prec.right(seq(
       $.simpleUserType,
       repeat(seq(
-        repeat(prec.right($.NL)),
+        optional($.NLS),
         $.DOT,
-        repeat(prec.left($.NL)),
+        optional($.NLS),
         $.simpleUserType
       ))
     )),
 
-    simpleUserType: $ => prec.left(seq(
+    simpleUserType: $ => prec.right(seq(
       $.simpleIdentifier,
       optional(seq(
-        repeat(prec.left($.NL)),
+        optional($.NLS),
         $.typeArguments
       ))
     )),
@@ -82,12 +75,12 @@ module.exports = grammar({
       $.MULT
     ),
 
-    typeProjectionModifiers: $ => prec.left(repeat1($.typeProjectionModifier)),
+    typeProjectionModifiers: $ => prec.right(repeat1($.typeProjectionModifier)),
 
     typeProjectionModifier: $ => prec(1, choice(
       seq(
         $.varianceModifier,
-        repeat(prec.left($.NL))
+        optional($.NLS),
       ),
       $.annotation
     )),
@@ -97,7 +90,7 @@ module.exports = grammar({
         $.receiverType,
         optional($.NLS),
         $.DOT,
-        optional($.NLS)
+        optional($.NLS),
       )),
       $.functionTypeParameters,
       optional($.NLS),
@@ -125,13 +118,13 @@ module.exports = grammar({
       $.RPAREN
     ),
 
-    parenthesizedType: $ => seq(
+    parenthesizedType: $ => prec(1, seq(
       $.LPAREN,
       optional($.NLS),
       $.type,
       optional($.NLS),
       $.RPAREN
-    ),
+    )),
 
     receiverType: $ => prec.right(seq(
       choice(
@@ -141,7 +134,7 @@ module.exports = grammar({
       )
     )),
 
-    label: $ => prec.left(seq(
+    label: $ => prec.right(seq(
       $.simpleIdentifier,
       choice(
         $.AT_NO_WS,
@@ -150,7 +143,7 @@ module.exports = grammar({
       optional($.NLS)
     )),
 
-    disjunction: $ => prec.left(seq(
+    disjunction: $ => prec.right(seq(
       $.conjunction,
       repeat(seq(
         optional($.NLS),
@@ -160,7 +153,7 @@ module.exports = grammar({
       ))
     )),
 
-    conjunction: $ => prec.left(seq(
+    conjunction: $ => prec.right(seq(
       $.equality,
       repeat(seq(
         optional($.NLS),
@@ -170,7 +163,7 @@ module.exports = grammar({
       ))
     )),
 
-    equality: $ => prec.left(seq(
+    equality: $ => prec.right(seq(
       $.comparison,
       repeat(seq(
         $.equalityOperator,
@@ -179,7 +172,7 @@ module.exports = grammar({
       ))
     )),
 
-    comparison: $ => prec.left(seq(
+    comparison: $ => prec.right(seq(
       $.infixOperation,
       optional(seq(
         $.comparisonOperator,
@@ -188,7 +181,7 @@ module.exports = grammar({
       ))
     )),
 
-    infixOperation: $ => prec.left(seq(
+    infixOperation: $ => prec.right(seq(
       $.elvisExpression,
       repeat(choice(
         seq(
@@ -204,7 +197,7 @@ module.exports = grammar({
       ))
     )),
 
-    elvisExpression: $ => prec.left(seq(
+    elvisExpression: $ => prec.right(seq(
       $.infixFunctionCall,
       repeat(seq(
         optional($.NLS),
@@ -219,7 +212,7 @@ module.exports = grammar({
       $.COLON
     ),
 
-    infixFunctionCall: $ => prec.left(seq(
+    infixFunctionCall: $ => prec.right(seq(
       $.rangeExpression,
       repeat(seq(
         $.simpleIdentifier,
@@ -228,7 +221,7 @@ module.exports = grammar({
       ))
     )),
 
-    rangeExpression: $ => prec.left(seq(
+    rangeExpression: $ => prec.right(seq(
       $.additiveExpression,
       repeat(seq(
         $.RANGE,
@@ -237,7 +230,7 @@ module.exports = grammar({
       ))
     )),
 
-    additiveExpression: $ => prec.left(seq(
+    additiveExpression: $ => prec.right(seq(
       $.multiplicativeExpression,
       repeat(seq(
         $.additiveOperator,
@@ -246,7 +239,7 @@ module.exports = grammar({
       ))
     )),
 
-    multiplicativeExpression: $ => prec.left(seq(
+    multiplicativeExpression: $ => prec.right(seq(
       $.asExpression,
       repeat(seq(
         $.multiplicativeOperator,
@@ -255,7 +248,7 @@ module.exports = grammar({
       ))
     )),
 
-    asExpression: $ => prec.left(seq(
+    asExpression: $ => prec.right(seq(
       $.prefixUnaryExpression,
       optional(seq(
         optional($.NLS),
@@ -270,7 +263,7 @@ module.exports = grammar({
       $.postfixUnaryExpression
     ),
 
-    unaryPrefix: $ => prec.left(choice(
+    unaryPrefix: $ => prec.right(1, choice(
       $.annotation,
       $.label,
       seq(
@@ -279,7 +272,7 @@ module.exports = grammar({
       )
     )),
 
-    postfixUnaryExpression: $ => prec.left(choice(
+    postfixUnaryExpression: $ => prec.right(choice(
       $.primaryExpression,
       seq(
         $.primaryExpression,
@@ -366,7 +359,7 @@ module.exports = grammar({
       $.expression
     ),
 
-    primaryExpression: $ => choice(
+    primaryExpression: $ => prec(1, choice(
       $.parenthesizedExpression,
       $.simpleIdentifier,
       $.literalConstant,
@@ -374,9 +367,9 @@ module.exports = grammar({
       $.callableReference,
       $.collectionLiteral,
       $.thisExpression,
-      //$.superExpression,
+      $.superExpression,
       $.jumpExpression
-    ),
+    )),
 
     parenthesizedExpression: $ => seq(
       $.LPAREN,
@@ -473,7 +466,7 @@ module.exports = grammar({
       $.THIS_AT
     ),
 
-    superExpression: $ => choice(
+    superExpression: $ => prec.left(choice(
       seq(
         $.SUPER,
         optional(seq(
@@ -489,9 +482,9 @@ module.exports = grammar({
         ))
       ),
       $.SUPER_AT
-    ),
+    )),
 
-    jumpExpression: $ => prec.left(choice(
+    jumpExpression: $ => prec.right(choice(
       seq(
         $.THROW,
         optional($.NLS),
@@ -593,7 +586,7 @@ module.exports = grammar({
       $.DOT
     ),
 
-    typeModifiers: $ => prec.left(repeat1($.typeModifier)),
+    typeModifiers: $ => prec.right(repeat1($.typeModifier)),
 
     typeModifier: $ => choice(
       $.annotation,
@@ -608,7 +601,7 @@ module.exports = grammar({
       $.OUT
     ),
 
-    annotation: $ => prec.left(seq(
+    annotation: $ => prec.right(seq(
       choice(
         $.singleAnnotation,
         $.multiAnnotation
@@ -913,13 +906,13 @@ module.exports = grammar({
       choice(
         seq(
           choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_"
           ),
           repeat(choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_",
-            /0-9/
+            /[0-9]/
           ))
         ),
         seq(
@@ -935,13 +928,13 @@ module.exports = grammar({
       choice(
         seq(
           choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_"
           ),
           repeat(choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_",
-            /0-9/
+            /[0-9]/
           ))
         ),
         seq(
@@ -957,13 +950,13 @@ module.exports = grammar({
       choice(
         seq(
           choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_"
           ),
           repeat(choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_",
-            /0-9/
+            /[0-9]/
           ))
         ),
         seq(
@@ -979,13 +972,13 @@ module.exports = grammar({
       choice(
         seq(
           choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_"
           ),
           repeat(choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_",
-            /0-9/
+            /[0-9]/
           ))
         ),
         seq(
@@ -1001,13 +994,13 @@ module.exports = grammar({
       choice(
         seq(
           choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_"
           ),
           repeat(choice(
-            /a-zA-Z/,
+            /[a-zA-Z]/,
             "_",
-            /0-9/
+            /[0-9]/
           ))
         ),
         seq(
@@ -1743,18 +1736,18 @@ module.exports = grammar({
       "\'"
     )),
 
-    UnicodeDigit: $ => token(/0-9/),
+    UnicodeDigit: $ => token(/[0-9]/),
 
     Identifier: $ => token(choice(
       seq(
         choice(
-          /a-zA-Z/,
+          /[a-zA-Z]/,
           "_"
         ),
         repeat(choice(
-          /a-zA-Z/,
+          /[a-zA-Z]/,
           "_",
-          /0-9/
+          /[0-9]/
         ))
       ),
       seq(
@@ -1811,7 +1804,7 @@ module.exports = grammar({
       ))
     )),
 
-    Letter: $ => token(/a-zA-Z/),
+    Letter: $ => token(/[a-zA-Z]/),
 
     QUOTE_OPEN: $ => token("\""),
 

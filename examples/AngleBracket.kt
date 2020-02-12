@@ -1,0 +1,1 @@
+ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>;

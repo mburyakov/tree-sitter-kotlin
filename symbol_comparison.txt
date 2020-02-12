@@ -1,0 +1,8 @@
+Symbol list table
+
+| kotlinFile     | $.source_file              |
+| shebangLine    | $.shebang_line             |
+| fileAnnotation | ???                        |
+| packageHeader  | optional($.package_header) |
+| importList     | repeat($.import_header)    |
+| topLevelObject | ???                        |

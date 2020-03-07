@@ -1,274 +1,613 @@
 ==================
 Classes
 ==================
-
 class Empty
 class Empty2 {}
-
 ---
 
 (source_file
-	(class_declaration (type_identifier))
-	(class_declaration (type_identifier) (class_body)))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier))))
+  (semis
+    (NLS))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (class_body)))
  
 ==================
 Class with methods
 ==================
-
 class HelloWorld {
 	fun a() {}
 
 	fun b() {}
 }
-
 ---
 
 (source_file
-	(class_declaration (type_identifier)
-		(class_body
-			(function_declaration (simple_identifier) (function_body))
-			(function_declaration (simple_identifier) (function_body)))))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (class_body
+      (NLS)
+      (WS)
+      (function_declaration
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (function_body))
+      (semis
+        (NLS))
+      (WS)
+      (function_declaration
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (function_body))
+      (semis
+        (NLS)))))
 
 ==================
 Generic class
 ==================
-
 class Container<T> {}
-
 ---
 
 (source_file
-	(class_declaration (type_identifier)
-		(type_parameters (type_parameter (type_identifier)))
-		(class_body)))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (type_parameters
+      (LANGLE)
+      (type_parameter
+        (type_identifier
+          (simpleIdentifier
+            (Identifier))))
+      (RANGLE))
+    (WS)
+    (class_body)))
 
 ==================
 Class with methods and expressions
 ==================
-
 class Strings {
 	fun aString() = "Hello World!"
 
 	fun anotherString() = "Hello" + " " + "World"
 }
-
 ---
 
 (source_file
-	(class_declaration (type_identifier)
-		(class_body
-			(function_declaration (simple_identifier) (function_body
-				(line_string_literal)))
-			(function_declaration (simple_identifier) (function_body
-				(additive_expression
-					(additive_expression
-						(line_string_literal)
-						(line_string_literal))
-					(line_string_literal)))))))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (class_body
+      (NLS)
+      (WS)
+      (function_declaration
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (function_body
+          (WS)
+          (expression
+            (disjunction
+              (conjunction
+                (equality
+                  (comparison
+                    (infixOperation
+                      (elvisExpression
+                        (infixFunctionCall
+                          (rangeExpression
+                            (additiveExpression
+                              (multiplicativeExpression
+                                (asExpression
+                                  (prefixUnaryExpression
+                                    (postfixUnaryExpression
+                                      (primaryExpression
+                                        (stringLiteral
+                                          (line_string_literal)))))))))))))))))))
+      (semis
+        (NLS))
+      (WS)
+      (function_declaration
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (function_body
+          (WS)
+          (expression
+            (disjunction
+              (conjunction
+                (equality
+                  (comparison
+                    (infixOperation
+                      (elvisExpression
+                        (infixFunctionCall
+                          (rangeExpression
+                            (additiveExpression
+                              (multiplicativeExpression
+                                (asExpression
+                                  (prefixUnaryExpression
+                                    (postfixUnaryExpression
+                                      (primaryExpression
+                                        (stringLiteral
+                                          (line_string_literal)))))))
+                              (WS)
+                              (additiveOperator
+                                (ADD))
+                              (WS)
+                              (multiplicativeExpression
+                                (asExpression
+                                  (prefixUnaryExpression
+                                    (postfixUnaryExpression
+                                      (primaryExpression
+                                        (stringLiteral
+                                          (line_string_literal)))))))
+                              (WS)
+                              (additiveOperator
+                                (ADD))
+                              (WS)
+                              (multiplicativeExpression
+                                (asExpression
+                                  (prefixUnaryExpression
+                                    (postfixUnaryExpression
+                                      (primaryExpression
+                                        (stringLiteral
+                                          (line_string_literal)))))))))))))))))))
+      (semis
+        (NLS)))))
 
 ==================
 Class with modifiers
 ==================
-
 internal open class Test {
 	private abstract inline fun test()
 }
-
 ---
 
 (source_file
-	(class_declaration
-		(modifiers (visibility_modifier) (inheritance_modifier))
-		(type_identifier)
-		(class_body
-			(function_declaration
-				(modifiers (visibility_modifier) (inheritance_modifier) (function_modifier))
-				(simple_identifier)))))
+  (class_declaration
+    (modifiers
+      (visibility_modifier
+        (INTERNAL ))
+      (WS )
+      (inheritance_modifier
+        (OPEN )))
+    (WS )
+    (CLASS )
+    (WS )
+    (type_identifier
+      (simpleIdentifier
+        (Identifier )))
+    (WS )
+    (class_body
+      (NLS )
+      (WS )
+      (function_declaration
+        (modifiers
+          (visibility_modifier
+            (PRIVATE ))
+          (WS )
+          (inheritance_modifier
+            (ABSTRACT ))
+          (WS )
+          (function_modifier
+            (INLINE )))
+        (WS )
+        (WS )
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier ))))
+      (semis
+        (NLS )))))
 
 ==================
 Objects
 ==================
-
 object Singleton {
 	fun test()
 }
-
 ---
 
 (source_file
-	(object_declaration (type_identifier)
-		(class_body
-			(function_declaration (simple_identifier)))))
+  (object_declaration
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (class_body
+      (NLS)
+      (WS)
+      (function_declaration
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier))))
+      (semis
+        (NLS)))))
 
 ==================
 Primary constructors
 ==================
-
 data class Vector2D(
 	val x: Int,
 	val y: Int
 )
-
 ---
 
 (source_file
-	(class_declaration
-		(modifiers (class_modifier))
-		(type_identifier)
-		(primary_constructor
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier)))
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier))))))
+  (class_declaration
+    (modifiers
+      (class_modifier
+        (DATA)))
+    (WS)
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (primary_constructor
+      (NLS)
+      (WS)
+      (class_parameter
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (type
+          (typeReference
+            (userType
+              (simpleUserType
+                (simpleIdentifier
+                  (Identifier)))))))
+      (NLS)
+      (WS)
+      (class_parameter
+        (WS)
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (type
+          (typeReference
+            (userType
+              (simpleUserType
+                (simpleIdentifier
+                  (Identifier)))))))
+      (NLS))))
 
 ==================
 Inheritance
 ==================
-
 class A : B() {}
 
 class C(param: Int) : D(param)
 
 class D : SomeInterface
-
 ---
 
 (source_file
-	(class_declaration
-		(type_identifier)
-		(delegation_specifier (constructor_invocation (user_type (type_identifier))
-			(value_arguments)))
-		(class_body))
-	(class_declaration
-		(type_identifier)
-		(primary_constructor
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier))))
-		(delegation_specifier (constructor_invocation (user_type (type_identifier))
-			(value_arguments (value_argument (simple_identifier))))))
-	(class_declaration
-		(type_identifier)
-		(delegation_specifier (user_type (type_identifier)))))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (COLON)
+    (WS)
+    (delegation_specifier
+      (constructor_invocation
+        (constructorInvocation
+          (userType
+            (simpleUserType
+              (simpleIdentifier
+                (Identifier))))
+          (valueArguments
+            (LPAREN)
+            (RPAREN)))))
+    (WS)
+    (class_body))
+  (semis
+    (NLS))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (primary_constructor
+      (class_parameter
+        (simple_identifier
+          (simpleIdentifier
+            (PARAM)))
+        (WS)
+        (type
+          (typeReference
+            (userType
+              (simpleUserType
+                (simpleIdentifier
+                  (Identifier))))))))
+    (WS)
+    (COLON)
+    (WS)
+    (delegation_specifier
+      (constructor_invocation
+        (constructorInvocation
+          (userType
+            (simpleUserType
+              (simpleIdentifier
+                (Identifier))))
+          (valueArguments
+            (LPAREN)
+            (valueArgument
+              (expression
+                (disjunction
+                  (conjunction
+                    (equality
+                      (comparison
+                        (infixOperation
+                          (elvisExpression
+                            (infixFunctionCall
+                              (rangeExpression
+                                (additiveExpression
+                                  (multiplicativeExpression
+                                    (asExpression
+                                      (prefixUnaryExpression
+                                        (postfixUnaryExpression
+                                          (primaryExpression
+                                            (simpleIdentifier
+                                              (PARAM))))))))))))))))))
+            (RPAREN))))))
+  (semis
+    (NLS))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (COLON)
+    (WS)
+    (delegation_specifier
+      (userType
+        (simpleUserType
+          (simpleIdentifier
+            (Identifier)))))))
 
 ==================
 Properties
 ==================
-
 class Something {
 	val x: Int = 4
 	var y: Int?
 	val z: Int get() = x
 }
-
 ---
 
 (source_file
-	(class_declaration
-		(type_identifier)
-		(class_body
-			(property_declaration
-				(variable_declaration
-					(simple_identifier)
-					(user_type (type_identifier)))
-				(integer_literal))
-			(property_declaration
-				(variable_declaration
-					(simple_identifier)
-					(nullable_type (user_type (type_identifier)))))
-			(property_declaration
-				(variable_declaration
-					(simple_identifier)
-					(user_type (type_identifier)))
-				(getter (function_body (simple_identifier)))))))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (class_body
+      (NLS)
+      (WS)
+      (property_declaration
+        (WS)
+        (variable_declaration
+          (simple_identifier
+            (simpleIdentifier
+              (Identifier)))
+          (WS)
+          (type
+            (typeReference
+              (userType
+                (simpleUserType
+                  (simpleIdentifier
+                    (Identifier)))))))
+        (WS)
+        (WS)
+        (expression
+          (disjunction
+            (conjunction
+              (equality
+                (comparison
+                  (infixOperation
+                    (elvisExpression
+                      (infixFunctionCall
+                        (rangeExpression
+                          (additiveExpression
+                            (multiplicativeExpression
+                              (asExpression
+                                (prefixUnaryExpression
+                                  (postfixUnaryExpression
+                                    (primaryExpression
+                                      (literalConstant
+                                        (IntegerLiteral))))))))))))))))))
+      (semis
+        (NLS))
+      (WS)
+      (property_declaration
+        (WS)
+        (variable_declaration
+          (simple_identifier
+            (simpleIdentifier
+              (Identifier)))
+          (WS)
+          (type
+            (nullableType
+              (typeReference
+                (userType
+                  (simpleUserType
+                    (simpleIdentifier
+                      (Identifier)))))
+              (quest
+                (QUEST_NO_WS))))))
+      (semis
+        (NLS))
+      (WS)
+      (property_declaration
+        (WS)
+        (variable_declaration
+          (simple_identifier
+            (simpleIdentifier
+              (Identifier)))
+          (WS)
+          (type
+            (typeReference
+              (userType
+                (simpleUserType
+                  (simpleIdentifier
+                    (Identifier)))))))
+        (WS)
+        (getter
+          (WS)
+          (function_body
+            (WS)
+            (expression
+              (disjunction
+                (conjunction
+                  (equality
+                    (comparison
+                      (infixOperation
+                        (elvisExpression
+                          (infixFunctionCall
+                            (rangeExpression
+                              (additiveExpression
+                                (multiplicativeExpression
+                                  (asExpression
+                                    (prefixUnaryExpression
+                                      (postfixUnaryExpression
+                                        (primaryExpression
+                                          (simpleIdentifier
+                                            (Identifier))))))))))))))))))))
+      (semis
+        (NLS)))))
 
 ==================
 Constructor delegation calls
 ==================
-
 class Test(x: Int, y: Int) {
 	constructor() : this(0, 0)
 }
-
 ---
 
 (source_file
-	(class_declaration
-		(type_identifier)
-		(primary_constructor
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier)))
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier))))
-		(class_body
-			(secondary_constructor
-				(constructor_delegation_call
-					(value_arguments
-						(value_argument (integer_literal))
-						(value_argument (integer_literal))))))))
-
-==================
-Enum classes
-==================
-
-enum class Suit {
-	DIAMONDS, CLOVERS, HEARTS, SPADES
-}
-
-enum class Color(val rgb: Int) {
-	RED(0xFF0000),
-	GREEN(0x00FF00),
-	BLUE(0x0000FF);
-
-	override fun toString() = rgb.toString(16)
-}
-
----
-
-(source_file
-	(class_declaration
-		(type_identifier)
-		(enum_class_body
-			(enum_entry
-				(simple_identifier))
-			(enum_entry
-				(simple_identifier))
-			(enum_entry
-				(simple_identifier))
-			(enum_entry
-				(simple_identifier))))
-	(class_declaration
-		(type_identifier)
-		(primary_constructor
-			(class_parameter
-				(simple_identifier)
-				(user_type (type_identifier))))
-		(enum_class_body
-			(enum_entry
-				(simple_identifier)
-				(value_arguments
-					(value_argument (hex_literal))))
-			(enum_entry
-				(simple_identifier)
-				(value_arguments
-					(value_argument (hex_literal))))
-			(enum_entry
-				(simple_identifier)
-				(value_arguments
-					(value_argument (hex_literal))))
-			(function_declaration
-				(modifiers (member_modifier))
-				(simple_identifier)
-				(function_body
-					(call_expression
-						(navigation_expression
-							(simple_identifier)
-							(navigation_suffix
-								(simple_identifier)))
-						(call_suffix
-							(value_arguments
-								(value_argument (integer_literal))))))))))
+  (class_declaration
+    (CLASS)
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (primary_constructor
+      (class_parameter
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (type
+          (typeReference
+            (userType
+              (simpleUserType
+                (simpleIdentifier
+                  (Identifier)))))))
+      (WS)
+      (class_parameter
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier)))
+        (WS)
+        (type
+          (typeReference
+            (userType
+              (simpleUserType
+                (simpleIdentifier
+                  (Identifier))))))))
+    (WS)
+    (class_body
+      (NLS)
+      (WS)
+      (secondary_constructor
+        (WS)
+        (WS)
+        (constructor_delegation_call
+          (value_arguments
+            (valueArguments
+              (LPAREN)
+              (valueArgument
+                (expression
+                  (disjunction
+                    (conjunction
+                      (equality
+                        (comparison
+                          (infixOperation
+                            (elvisExpression
+                              (infixFunctionCall
+                                (rangeExpression
+                                  (additiveExpression
+                                    (multiplicativeExpression
+                                      (asExpression
+                                        (prefixUnaryExpression
+                                          (postfixUnaryExpression
+                                            (primaryExpression
+                                              (literalConstant
+                                                (IntegerLiteral))))))))))))))))))
+              (COMMA)
+              (WS)
+              (valueArgument
+                (expression
+                  (disjunction
+                    (conjunction
+                      (equality
+                        (comparison
+                          (infixOperation
+                            (elvisExpression
+                              (infixFunctionCall
+                                (rangeExpression
+                                  (additiveExpression
+                                    (multiplicativeExpression
+                                      (asExpression
+                                        (prefixUnaryExpression
+                                          (postfixUnaryExpression
+                                            (primaryExpression
+                                              (literalConstant
+                                                (IntegerLiteral))))))))))))))))))
+              (RPAREN)))))
+      (semis
+        (NLS)))))

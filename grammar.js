@@ -25,6 +25,12 @@
 // Using an adapted version of https://kotlinlang.org/docs/reference/grammar.html
 
 const PREC = {
+	// 'dynamic' '?' -- not type but expression
+	// 'import' 'x' -- not infix call but import statement
+	// 'internal' 'open' 'class' -- not infix call but class declaration
+	SIMPLE_IDENTIDIER: -1,
+	TYPE_REFERENCE: -2,
+
 	TYPE_ARGS: 17,
 	POSTFIX: 16,
 	PREFIX: 15,
@@ -47,10 +53,6 @@ const PREC = {
 	RETURN_OR_THROW: 0,
 	COMMENT: 0
 };
-const DEC_DIGITS = token(sep1(/[0-9]+/, /_+/));
-const HEX_DIGITS = token(sep1(/[0-9a-fA-F]+/, /_+/));
-const BIN_DIGITS = token(sep1(/[01]/, /_+/));
-const REAL_EXPONENT = token(seq(/[eE]/, optional(/[+-]/), DEC_DIGITS))
 
 module.exports = grammar({
 	name: "kotlin",
@@ -85,7 +87,7 @@ module.exports = grammar({
 		
 		// start
 
-		//start: $ => seq($.delegation_specifier, $._semi),
+		//start: $ => $._statement,
 
 		source_file: $ => seq(
 			optional($.shebang_line),
@@ -93,7 +95,8 @@ module.exports = grammar({
 			optional(seq(repeat1($.file_annotation), optional($.NLS))),
 			optional($.package_header),
 			repeat($.import_header),
-			repeat(seq($._statement, $._semis))
+			repeat(seq($._statement, $._semis)),
+			optional($._statement)
 		),
 		
 		shebang_line: $ => seq("#!", /[^\r\n]*/),
@@ -576,31 +579,9 @@ module.exports = grammar({
 
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
 		
-		_equality_operator: $ => choice("!=", "!==", "==", "==="),
-		
-		_comparison_operator: $ => choice($.LANGLE, $.RANGLE, "<=", ">="),
-		
 		_in_operator: $ => choice("in", "!in"),
 		
 		_is_operator: $ => choice("is", $._not_is),
-		
-		_additive_operator: $ => choice("+", "-"),
-		
-		_multiplicative_operator: $ => choice("*", "/", "%"),
-		
-		_as_operator: $ => choice("as", "as?"),
-		
-		_prefix_unary_operator: $ => choice("++", "--", "-", "+", "!"),
-		
-		_postfix_unary_operator: $ => choice("++", "--", "!!"),
-		
-		_member_access_operator: $ => choice(".", $._safe_nav, "::"),
-		
-		_safe_nav: $ => "?.",      // TODO: '?' and '.' should actually be separate tokens
-		                           //       but produce an LR(1) conflict that way, however.
-		                           //       ('as' expression with '?' produces conflict). Also
-		                           //       does it seem to be very uncommon to write the safe
-		                           //       navigation operator 'split up' in Kotlin.
 
 		directly_assignable_expression: $ => choice(
 			$.simple_identifier
@@ -811,7 +792,7 @@ module.exports = grammar({
 			)
 		)),
 
-		typeReference: $ => prec(1, choice(
+		typeReference: $ => prec(PREC.TYPE_REFERENCE, choice(
 			$.userType,
 			$.DYNAMIC
 		)),
@@ -1407,7 +1388,7 @@ module.exports = grammar({
 			$.userType
 		),
 
-		simpleIdentifier: $ => prec(2, choice(
+		simpleIdentifier: $ => prec(PREC.SIMPLE_IDENTIDIER, choice(
 			$.Identifier,
 			$.ABSTRACT,
 			$.ANNOTATION,
@@ -1468,9 +1449,9 @@ module.exports = grammar({
 			repeat(/[^\r\n]/)
 		)),
 
-		WS: $ => token(/[\u0020\u0009\u000C]/),
+		WS: $ => token(prec.right(repeat1(/[\u0020\u0009\u000C]+/))),
 
-		NLS: $ => prec.right(repeat1(/(\n|\r\n)/)),
+		NLS: $ => token(prec.right(repeat1(/(\n|\r\n)/))),
 
 		Hidden: $ => token(choice(
 			seq(

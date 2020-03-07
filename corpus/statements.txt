@@ -1,14 +1,35 @@
 ==================
 For statements
 ==================
-
 for (value in values) {}
-
 ---
 
-(source_file
-	(for_statement
-		(variable_declaration (simple_identifier))
-		(simple_identifier)
-		(control_structure_body)))
+(source_file 
+  (for_statement 
+    (WS )
+    (variable_declaration 
+      (simple_identifier 
+        (simpleIdentifier 
+          (Identifier ))))
+    (WS )
+    (WS )
+    (expression 
+      (disjunction 
+        (conjunction 
+          (equality 
+            (comparison 
+              (infixOperation 
+                (elvisExpression 
+                  (infixFunctionCall 
+                    (rangeExpression 
+                      (additiveExpression 
+                        (multiplicativeExpression 
+                          (asExpression 
+                            (prefixUnaryExpression 
+                              (postfixUnaryExpression 
+                                (primaryExpression 
+                                  (simpleIdentifier 
+                                    (Identifier )))))))))))))))))
+    (WS )
+    (control_structure_body )))
 

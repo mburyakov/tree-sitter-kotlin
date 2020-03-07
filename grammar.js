@@ -364,7 +364,11 @@ module.exports = grammar({
 			"{",
 			optional($.NLS),
 			optional($._enum_entries),
-			optional(seq(";", optional($._class_member_declarations))),
+			optional(seq(
+				";",
+				optional($.NLS),
+				optional($._class_member_declarations),
+			)),
 			"}"
 		),
 
@@ -1046,9 +1050,10 @@ module.exports = grammar({
 
 		postfixUnarySuffix: $ => choice(
 			$.postfixUnaryOperator,
-			$.typeArguments,
+			//$.typeArguments,
+			$.callSuffix,
 			$.indexingSuffix,
-			$.navigationSuffix
+			$.navigationSuffix,
 		),
 
 		indexingSuffix: $ => seq(
@@ -1075,6 +1080,18 @@ module.exports = grammar({
 				$.CLASS
 			)
 		),
+
+		callSuffix: $ => prec.right(choice(
+			seq(
+				optional($.typeArguments),
+				optional($.valueArguments),
+				$.annotated_lambda,
+			),
+			seq(
+				optional($.typeArguments),
+				$.valueArguments
+			)
+		)),
 
 		typeArguments: $ => seq(
 			$.LANGLE,

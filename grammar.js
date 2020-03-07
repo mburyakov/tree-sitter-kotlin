@@ -66,16 +66,13 @@ module.exports = grammar({
 		//
 		// 'class'  simple_identifier  ':'  user_type  'by'  (anonymous_function  'fun'  '('  ')'  •  function_body)
 		// 'class'  simple_identifier  ':'  user_type  'by'  (anonymous_function  'fun'  '('  ')')  •  '{'  …
-		[$.anonymous_function],
+		//[$.anonymous_function],
 
 		// Member access operator '::' conflicts with callable reference
-		[$._primary_expression, $.callable_reference]
+		//[$._primary_expression, $.callable_reference]
 	],
 
-	extras: $ => [
-		$.comment,
-		/\s+/ // Whitespace
-	],
+	extras: $ => [$.WS, $.Hidden],
 
 	rules: {
 		// ====================
@@ -87,28 +84,32 @@ module.exports = grammar({
 		// ==========
 		
 		// start
+
+		//start: $ => seq($.delegation_specifier, $._semi),
+
 		source_file: $ => seq(
 			optional($.shebang_line),
-			optional(seq(repeat1($.file_annotation), $._semi)),
+			optional($.NLS),
+			optional(seq(repeat1($.file_annotation), optional($.NLS))),
 			optional($.package_header),
 			repeat($.import_header),
-			repeat(seq($._statement, $._semi))
+			repeat(seq($._statement, $._semis))
 		),
 		
 		shebang_line: $ => seq("#!", /[^\r\n]*/),
 
-		file_annotation: $ => seq(
+		file_annotation: $ => prec(-1, seq(
 			"@", "file", ":",
 			choice(
 				seq("[", repeat1($._unescaped_annotation), "]"),
 				$._unescaped_annotation
 			)
-		),
+		)),
 		
 		package_header: $ => seq("package", $.identifier, $._semi),
 		
 		import_header: $ => seq(
-			"import",
+			$.IMPORT,
 			$.identifier,
 			optional(choice(seq(".*"), $.import_alias)), 
 			$._semi
@@ -140,17 +141,18 @@ module.exports = grammar({
 		class_declaration: $ => prec.right(choice(
 			seq(
 				optional($.modifiers),
-				choice("class", "interface"),
+				choice($.CLASS, "interface"),
 				alias($.simple_identifier, $.type_identifier),
 				optional($.type_parameters),
 				optional($.primary_constructor),
-				optional(seq(":", $._delegation_specifiers)),
+				optional(seq($.COLON, $._delegation_specifiers)),
 				optional($.type_constraints),
 				optional($.class_body)
 			),
 			seq(
 				optional($.modifiers),
-				"enum", "class",
+				$.ENUM,
+				$.CLASS,
 				alias($.simple_identifier, $.type_identifier),
 				optional($.type_parameters),
 				optional($.primary_constructor),
@@ -165,9 +167,22 @@ module.exports = grammar({
 			$._class_parameters
 		),
 
-		class_body: $ => seq("{", optional($._class_member_declarations), "}"),
+		class_body: $ => seq(
+			"{",
+			optional($.NLS),
+			optional($._class_member_declarations),
+			"}"
+		),
 
-		_class_parameters: $ => seq("(", optional(sep1($.class_parameter, ",")), ")"),
+		_class_parameters: $ => seq(
+			"(",
+			optional($.NLS),
+			optional(sep1(
+				seq($.class_parameter, optional($.NLS)),
+				seq(",", optional($.NLS))
+			)),
+			")"
+		),
 
 		class_parameter: $ => seq(
 			optional($.modifiers),
@@ -187,11 +202,9 @@ module.exports = grammar({
 		delegation_specifier: $ => prec.left(choice(
 			$.constructor_invocation,
 			$.explicit_delegation,
-			$.user_type,
+			prec(2, $.userType),
 			$.function_type
 		)),
-
-		constructor_invocation: $ => seq($.user_type, $.value_arguments),
 
 		_annotated_delegation_specifier: $ => seq(repeat($.annotation), $.delegation_specifier),
 
@@ -204,7 +217,7 @@ module.exports = grammar({
 			$._expression
 		),
 
-		type_parameters: $ => seq("<", sep1($.type_parameter, ","), ">"),
+		type_parameters: $ => seq($.LANGLE, sep1($.type_parameter, ","), $.RANGLE),
 
 		type_parameter: $ => seq(
 			optional($.type_parameter_modifiers),
@@ -322,8 +335,6 @@ module.exports = grammar({
 			optional(seq(":", $._type))
 		),
 
-		parameter: $ => seq($.simple_identifier, ":", $._type),
-
 		object_declaration: $ => prec.right(seq(
 			optional($.modifiers),
 			"object",
@@ -348,12 +359,13 @@ module.exports = grammar({
 		
 		enum_class_body: $ => seq(
 			"{",
+			optional($.NLS),
 			optional($._enum_entries),
 			optional(seq(";", optional($._class_member_declarations))),
 			"}"
 		),
 
-		_enum_entries: $ => seq(sep1($.enum_entry, ","), optional(",")),
+		_enum_entries: $ => seq(sep1(seq($.enum_entry, optional($.NLS)), seq(",", optional($.NLS))), optional(","), optional($.NLS)),
 
 		enum_entry: $ => seq(
 			optional($.modifiers),
@@ -365,71 +377,9 @@ module.exports = grammar({
 		// ==========
 		// Types
 		// ==========
-		
-		_type: $ => seq(
-			optional($.type_modifiers),
-			choice(
-				$.parenthesized_type,
-				$.nullable_type,
-				$._type_reference,
-				$.function_type
-			)
-		),
-
-		_type_reference: $ => choice(
-			$.user_type,
-			"dynamic"
-		),
-
-		nullable_type: $ => seq(
-			choice($._type_reference, $.parenthesized_type),
-			repeat1($._quest)
-		),
 
 		_quest: $ => "?",
 
-		// TODO: Figure out a better solution than right associativity
-		//       to prevent nested types from being recognized as
-		//       unary expresions with navigation suffixes.
-
-		user_type: $ => prec.right(sep1($._simple_user_type, ".")),
-		
-		_simple_user_type: $ => prec.right(seq(
-			alias($.simple_identifier, $.type_identifier),
-			optional($.type_arguments)
-		)),
-
-		type_projection: $ => choice(
-			seq(optional($.type_projection_modifiers), $._type),
-			"*"
-		),
-
-		type_projection_modifiers: $ => repeat1($._type_projection_modifier),
-
-		_type_projection_modifier: $ => $.variance_modifier,
-
-		function_type: $ => seq(
-			optional(seq($._simple_user_type, ".")), // TODO: Support "real" types
-			$.function_type_parameters,
-			"->",
-			$._type
-		),
-		
-		// A higher-than-default precedence resolves the ambiguity with 'parenthesized_type'
-		function_type_parameters: $ => prec.left(1, seq(
-			"(",
-			optional(sep1(choice($.parameter, $._type), ",")),
-			")"
-		)),
-
-		parenthesized_type: $ => seq("(", $._type, ")"),
-
-		parenthesized_user_type: $ => seq(
-			"(",
-			choice($.user_type, $.parenthesized_user_type),
-			")"
-		),
-		
 		// ==========
 		// Statements
 		// ==========
@@ -451,11 +401,6 @@ module.exports = grammar({
 				)
 			)
 		),
-
-		label: $ => token(seq(
-			/[a-zA-Z_][a-zA-Z_0-9]*/,
-			"@"
-		)),
 
 		control_structure_body: $ => choice($._block, $._statement),
 
@@ -495,115 +440,10 @@ module.exports = grammar({
 			")",
 		)),
 
-		// See also https://github.com/tree-sitter/tree-sitter/issues/160
-		// generic EOF/newline token
-		_semi: $ => /[\r\n]+/,
-		
-		_semis: $ => /[\r\n]+/,
-		
 		assignment: $ => choice(
 			prec.left(PREC.ASSIGNMENT, seq($.directly_assignable_expression, $._assignment_and_operator, $._expression)),
 			// TODO
 		),
-		
-		// ==========
-		// Expressions
-		// ==========
-		
-		_expression: $ => choice(
-			$._unary_expression,
-			$._binary_expression,
-			$._primary_expression
-		),
-
-		// Unary expressions
-
-		_unary_expression: $ => choice(
-			$.postfix_expression,
-			$.call_expression,
-			$.indexing_expression,
-			$.navigation_expression,
-			$.prefix_expression,
-			$.as_expression,
-			$.spread_expression
-		),
-
-		postfix_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $._postfix_unary_operator)),
-
-		call_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.call_suffix)),
-
-		indexing_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.indexing_suffix)),
-
-		navigation_expression: $ => prec.left(PREC.POSTFIX, seq($._expression, $.navigation_suffix)),
-		
-		// TODO: Postfix type arguments conflict naturally with 'less than'.
-		//       Possible solutions include listing this conflict
-		//       between 'unary_expression' and 'binary_expression'
-		//       in the array of LR(1) conflicts at the top.
-		
-		prefix_expression: $ => prec.right(PREC.PREFIX, seq(choice($.annotation, $.label, $._prefix_unary_operator), $._expression)),
-
-		as_expression: $ => prec.left(PREC.AS, seq($._expression, $._as_operator, $._type)),
-
-		spread_expression: $ => prec.left(PREC.SPREAD, seq("*", $._expression)),
-
-		// Binary expressions
-
-		_binary_expression: $ => choice(
-			$.multiplicative_expression,
-			$.additive_expression,
-			$.range_expression,
-			$.infix_expression,
-			$.elvis_expression,
-			$.check_expression,
-			$.comparison_expression,
-			$.equality_expression,
-			$.comparison_expression,
-			$.equality_expression,
-			$.conjunction_expression,
-			$.disjunction_expression
-		),
-
-		multiplicative_expression: $ => prec.left(PREC.MULTIPLICATIVE, seq($._expression, $._multiplicative_operator, $._expression)),
-		
-		additive_expression: $ => prec.left(PREC.ADDITIVE, seq($._expression, $._additive_operator, $._expression)),
-
-		range_expression: $ => prec.left(PREC.RANGE, seq($._expression, "..", $._expression)),
-
-		infix_expression: $ => prec.left(PREC.INFIX, seq($._expression, $.simple_identifier, $._expression)),
-
-		elvis_expression: $ => prec.left(PREC.ELVIS, seq($._expression, "?:", $._expression)),
-
-		check_expression: $ => prec.left(PREC.CHECK, seq($._expression, choice($._in_operator, $._is_operator), $._expression)),
-		
-		comparison_expression: $ => prec.left(PREC.COMPARISON, seq($._expression, $._comparison_operator, $._expression)),
-
-		equality_expression: $ => prec.left(PREC.EQUALITY, seq($._expression, $._equality_operator, $._expression)),
-
-		conjunction_expression: $ => prec.left(PREC.CONJUNCTION, seq($._expression, "&&", $._expression)),
-
-		disjunction_expression: $ => prec.left(PREC.DISJUNCTION, seq($._expression, "||", $._expression)),
-
-		// Suffixes
-
-		indexing_suffix: $ => seq("[", sep1($._expression, ","), "]"),
-
-		navigation_suffix: $ => seq(
-			$._member_access_operator,
-			choice(
-				$.simple_identifier,
-				$.parenthesized_expression,
-				"class"
-			)
-		),
-
-		call_suffix: $ => prec.left(seq(
-			// optional($.type_arguments), // TODO: Type args conflict with 'less than', see above
-			choice(
-				seq(optional($.value_arguments), $.annotated_lambda),
-				$.value_arguments
-			)
-		)),
 
 		annotated_lambda: $ => seq(
 			// repeat($.annotation),
@@ -611,79 +451,12 @@ module.exports = grammar({
 			$.lambda_literal
 		),
 
-		type_arguments: $ => prec.left(PREC.TYPE_ARGS, seq("<", sep1($.type_projection, ","), ">")),
-
-		value_arguments: $ => seq("(", optional(sep1($.value_argument, ",")), ")"),
-
-		value_argument: $ => seq(
-			optional($.annotation),
-			optional(seq($.simple_identifier, "=")),
-			optional("*"),
-			$._expression
-		),
-
-		_primary_expression: $ => choice(
-			$.parenthesized_expression,
-			$.simple_identifier,
-			$._literal_constant,
-			$._string_literal,
-			$.callable_reference,
-			$._function_literal,
-			$.object_literal,
-			$.collection_literal,
-			$.this_expression,
-			$.super_expression,
-			$.if_expression,
-			$.when_expression,
-			$.try_expression,
-			$.jump_expression
-		),
-
-		parenthesized_expression: $ => seq("(", $._expression, ")"),
-
-		collection_literal: $ => seq("[", $._expression, repeat(seq(",", $._expression)), "]"),
-
-		_literal_constant: $ => choice(
-			$.boolean_literal,
-			$.integer_literal,
-			$.hex_literal,
-			$.bin_literal,
-			$.character_literal,
-			$.real_literal,
-			"null",
-			$.long_literal,
-			$.unsigned_literal
-		),
-
 		_string_literal: $ => choice(
 			$.line_string_literal,
-			$.multi_line_string_literal
+			//$.multi_line_string_literal
 		),
 
-		line_string_literal: $ => seq('"', repeat(choice($._line_string_content, $._interpolation)), '"'),
-
-		multi_line_string_literal: $ => seq(
-			'"""',
-			repeat(choice(
-				$._multi_line_string_content,
-				$._interpolation
-			)),
-			'"""'
-		),
-
-		_line_string_content: $ => choice(
-			$._line_str_text,
-			$._line_str_escaped_char
-		),
-
-		line_string_expression: $ => seq("${", $._expression, "}"),
-
-		_multi_line_string_content: $ => choice($._multi_line_str_text, '"'),
-
-		_interpolation: $ => choice(
-			seq("${", alias($._expression, $.interpolated_expression), "}"),
-			seq("$", alias($.simple_identifier, $.interpolated_identifier))
-		),
+		line_string_literal: $ => token(seq('"', /[^\\"$]+/, '"')),
 
 		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
@@ -801,26 +574,11 @@ module.exports = grammar({
 
 		finally_block: $ => seq("finally", $._block),
 
-		jump_expression: $ => choice(
-			prec.left(PREC.RETURN_OR_THROW, seq("throw", $._expression)),
-			prec.left(PREC.RETURN_OR_THROW, seq(choice("return", $._return_at), optional($._expression))),
-			"continue",
-			$._continue_at,
-			"break",
-			$._break_at
-		),
-
-		callable_reference: $ => seq(
-			optional(alias($.simple_identifier, $.type_identifier)), // TODO
-			"::",
-			choice($.simple_identifier, "class")
-		),
-
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
 		
 		_equality_operator: $ => choice("!=", "!==", "==", "==="),
 		
-		_comparison_operator: $ => choice("<", ">", "<=", ">="),
+		_comparison_operator: $ => choice($.LANGLE, $.RANGLE, "<=", ">="),
 		
 		_in_operator: $ => choice("in", "!in"),
 		
@@ -853,9 +611,9 @@ module.exports = grammar({
 		// Modifiers
 		// ==========
 		
-		modifiers: $ => choice($.annotation, repeat1($._modifier)),
+		modifiers: $ => prec.right(repeat1(choice($.annotation, $._modifier))),
 
-		parameter_modifiers: $ => choice($.annotation, repeat1($.parameter_modifier)),
+		parameter_modifiers: $ => prec.right(choice($.annotation, repeat1($.parameter_modifier))),
 
 		_modifier: $ => choice(
 			$.class_modifier,
@@ -868,27 +626,27 @@ module.exports = grammar({
 			$.platform_modifier
 		),
 
-		type_modifiers: $ => repeat1($._type_modifier),
+		type_modifiers: $ => prec.right(repeat1($._type_modifier)),
 
-		_type_modifier: $ => choice($.annotation, "suspend"),
+		_type_modifier: $ => choice($.annotation, $.SUSPEND),
 
 		class_modifier: $ => choice(
-			"sealed",
-			"annotation",
-			"data",
-			"inner"
+			$.SEALED,
+			$.ANNOTATION,
+			$.DATA,
+			$.INNER
 		),
 
 		member_modifier: $ => choice(
-			"override",
-			"lateinit"
+			$.OVERRIDE,
+			$.LATEINIT
 		),
 
 		visibility_modifier: $ => choice(
-			"public",
-			"private",
-			"internal",
-			"protected"
+			$.PUBLIC,
+			$.PRIVATE,
+			$.INTERNAL,
+			$.PROTECTED
 		),
 
 		variance_modifier: $ => choice(
@@ -896,7 +654,7 @@ module.exports = grammar({
 			"out"
 		),
 
-		type_parameter_modifiers: $ => repeat1($._type_parameter_modifier),
+		type_parameter_modifiers: $ => prec.right(repeat1($._type_parameter_modifier)),
 
 		_type_parameter_modifier: $ => choice(
 			$.reification_modifier,
@@ -905,55 +663,38 @@ module.exports = grammar({
 		),
 
 		function_modifier: $ => choice(
-			"tailrec",
-			"operator",
-			"infix",
-			"inline",
-			"external",
-			"suspend"
+			$.TAILREC,
+			$.OPERATOR,
+			$.INFIX,
+			$.INLINE,
+			$.SUSPEND,
+			$.SUSPEND
 		),
 
-		property_modifier: $ => "const",
+		property_modifier: $ => $.CONST,
 
 		inheritance_modifier: $ => choice(
-			"abstract",
-			"final",
-			"open"
+			$.ABSTRACT,
+			$.FINAL,
+			$.OPEN
 		),
 
 		parameter_modifier: $ => choice(
-			"vararg",
-			"noinline",
-			"crossinline"
+			$.VARARG,
+			$.NOINLINE,
+			$.CROSSINLINE
 		),
 
 		reification_modifier: $ => "reified",
 
 		platform_modifier: $ => choice(
-			"expect",
-			"actual"
-		),
-		
-		// ==========
-		// Annotations
-		// ==========
-		
-		annotation: $ => seq(
-			"@",
-			$.simple_identifier
-			// TODO
-		),
-
-		_unescaped_annotation: $ => choice(
-			$.constructor_invocation,
-			$.user_type
+			$.EXPECT,
+			$.ACTUAL
 		),
 		
 		// ==========
 		// Identifiers
 		// ==========
-		
-		simple_identifier: $ => $._lexical_identifier, // TODO
 		
 		identifier: $ => sep1($.simple_identifier, "."),
 		
@@ -994,46 +735,6 @@ module.exports = grammar({
 		_not_is: $ => "!is",
 
 		_not_in: $ => "!in",
-		
-		// ==========
-		// Literals
-		// ==========
-		
-		real_literal: $ => token(choice(
-			seq(
-				choice(
-					seq(DEC_DIGITS, REAL_EXPONENT),
-					seq(optional(DEC_DIGITS), ".", DEC_DIGITS, optional(REAL_EXPONENT))
-				),
-				optional(/[fF]/)
-			),
-			seq(DEC_DIGITS, /[fF]/)
-		)),
-		
-		integer_literal: $ => token(seq(optional(/[1-9]/), DEC_DIGITS)),
-		
-		hex_literal: $ => token(seq("0", /[xX]/, HEX_DIGITS)),
-		
-		bin_literal: $ => token(seq("0", /[bB]/, BIN_DIGITS)),
-		
-		unsigned_literal: $ => seq(
-			choice($.integer_literal, $.hex_literal, $.bin_literal),
-			/[uU]/,
-			optional("L")
-		),
-		
-		long_literal: $ => seq(
-			choice($.integer_literal, $.hex_literal, $.bin_literal),
-			"L"
-		),
-		
-		boolean_literal: $ => choice("true", "false"),
-		
-		character_literal: $ => seq(
-			"'",
-			choice($._escape_seq, /[^\n\r'\\]/),
-			"'"
-		),
 
 		
 		// ==========
@@ -1045,31 +746,1749 @@ module.exports = grammar({
 			/`[^\r\n`]+`/
 		),
 
-		_uni_character_literal: $ => seq(
-			"\\",
-			"u",
-			/[0-9a-fA-F]{4}/
+
+
+
+
+
+
+		// glue for expression part converted from antlr
+		_expression: $ => $.expression,
+		constructor_invocation: $ => $.constructorInvocation,
+		value_arguments: $ => $.valueArguments,
+		type_arguments: $ => $.typeArguments,
+		_unescaped_annotation: $ => $.unescapedAnnotation,
+		simple_identifier: $ => $.simpleIdentifier,
+		_type: $ => $.type,
+		user_type: $ => $.userType,
+		function_type: $ => $.functionType,
+		_simple_user_type: $ => $.simpleUserType,
+		_semi: $ => $.semi,
+		_semis: $ => $.semis,
+		semi: $ => choice(seq(";", optional($.NLS)), $.NLS),
+		semis: $ => choice(
+			seq(
+				repeat($.NLS),
+				repeat1(seq(";", repeat($.NLS))),
+			),
+			repeat1($.NLS)
+		),
+		//_semis: $ => seq(optional($.NLS), repeat(seq(";", optional($.NLS)))),
+		//parameter: $ => "parameter",
+
+
+
+
+
+		//=================converted from antlr (expressions with some restrictions)==========================
+
+
+
+
+
+		expression: $ => $.disjunction,
+
+		constructorInvocation: $ => prec(1, seq(
+			$.userType,
+			$.valueArguments
+		)),
+
+		parameter: $ => seq(
+			$.simpleIdentifier,
+			optional($.NLS),
+			$.COLON,
+			optional($.NLS),
+			$.type
 		),
 
-		_escaped_identifier: $ => /\\[tbrn'"\\$]/,
+		type: $ => prec(1, seq(
+			optional($.typeModifiers),
+			choice(
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference,
+				$.functionType
+			)
+		)),
 
-		_escape_seq: $ => choice(
-			$._uni_character_literal,
-			$._escaped_identifier
+		typeReference: $ => prec(1, choice(
+			$.userType,
+			$.DYNAMIC
+		)),
+
+		nullableType: $ => prec.right(seq(
+			choice(
+				$.typeReference,
+				$.parenthesizedType
+			),
+			optional($.NLS),
+			repeat1($.quest)
+		)),
+
+		quest: $ => choice(
+			$.QUEST_NO_WS,
+			$.QUEST_WS
 		),
 
-		// ==========
-		// Strings
-		// ==========
-		
-		_line_str_text: $ => /[^\\"$]+/,
-		
-		_line_str_escaped_char: $ => choice(
-			$._escaped_identifier,
-			$._uni_character_literal
+		userType: $ => prec.right(seq(
+			$.simpleUserType,
+			repeat(seq(
+				//optional($.NLS),
+				$.DOT,
+				optional($.NLS),
+				$.simpleUserType
+			))
+		)),
+
+		simpleUserType: $ => prec.right(seq(
+			$.simpleIdentifier,
+			optional(seq(
+				//optional($.NLS),
+				$.typeArguments
+			))
+		)),
+
+		typeProjection: $ => choice(
+			seq(
+				optional($.typeProjectionModifiers),
+				$.type
+			),
+			$.MULT
 		),
-		
-		_multi_line_str_text: $ => /[^"$]+/
+
+		typeProjectionModifiers: $ => prec.right(repeat1($.typeProjectionModifier)),
+
+		typeProjectionModifier: $ => prec(1, choice(
+			seq(
+				$.varianceModifier,
+				optional($.NLS),
+			),
+			$.annotation
+		)),
+
+		functionType: $ => seq(
+			optional(seq(
+				$.receiverType,
+				optional($.NLS),
+				$.DOT,
+				optional($.NLS),
+			)),
+			$.functionTypeParameters,
+			optional($.NLS),
+			$.ARROW,
+			optional($.NLS),
+			$.type
+		),
+
+		functionTypeParameters: $ => seq(
+			$.LPAREN,
+			optional(seq(optional($.NLS), choice(
+				$.parameter,
+				$.type
+			))),
+			repeat(seq(
+				optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				choice(
+					$.parameter,
+					$.type
+				)
+			)),
+			optional($.NLS),
+			$.RPAREN
+		),
+
+		parenthesizedType: $ => prec(1, seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.type,
+			optional($.NLS),
+			$.RPAREN
+		)),
+
+		receiverType: $ => prec.right(seq(
+			choice(
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference
+			)
+		)),
+
+		label: $ => prec.right(seq(
+			$.simpleIdentifier,
+			choice(
+				$.AT_NO_WS,
+				$.AT_POST_WS
+			),
+			optional($.NLS)
+		)),
+
+		disjunction: $ => prec.right(seq(
+			$.conjunction,
+			repeat(seq(
+				//optional($.NLS),
+				$.DISJ,
+				optional($.NLS),
+				$.conjunction,
+				optional($.NLS)
+			))
+		)),
+
+		conjunction: $ => prec.right(seq(
+			$.equality,
+			repeat(seq(
+				//optional($.NLS),
+				$.CONJ,
+				optional($.NLS),
+				$.equality,
+		        optional($.NLS)
+			))
+		)),
+
+		equality: $ => prec.right(seq(
+			$.comparison,
+			repeat(seq(
+				$.equalityOperator,
+				optional($.NLS),
+				$.comparison
+			))
+		)),
+
+		comparison: $ => prec.right(seq(
+			$.infixOperation,
+			optional(seq(
+				$.comparisonOperator,
+				optional($.NLS),
+				$.infixOperation
+			))
+		)),
+
+		infixOperation: $ => prec.right(seq(
+			$.elvisExpression,
+			repeat(choice(
+				seq(
+					$.inOperator,
+					optional($.NLS),
+					$.elvisExpression
+				),
+				seq(
+					$.isOperator,
+					optional($.NLS),
+					$.type
+				)
+			))
+		)),
+
+		elvisExpression: $ => prec.right(seq(
+			$.infixFunctionCall,
+			repeat(seq(
+				//optional($.NLS),
+				$.elvis,
+				optional($.NLS),
+				$.infixFunctionCall,
+		        optional($.NLS)
+			))
+		)),
+
+		elvis: $ => seq(
+			$.QUEST_NO_WS,
+			$.COLON
+		),
+
+		infixFunctionCall: $ => prec.right(seq(
+			$.rangeExpression,
+			repeat(seq(
+				$.simpleIdentifier,
+				optional($.NLS),
+				$.rangeExpression
+			))
+		)),
+
+		rangeExpression: $ => prec.right(seq(
+			$.additiveExpression,
+			repeat(seq(
+				$.RANGE,
+				optional($.NLS),
+				$.additiveExpression
+			))
+		)),
+
+		additiveExpression: $ => prec.right(seq(
+			$.multiplicativeExpression,
+			repeat(seq(
+				$.additiveOperator,
+				optional($.NLS),
+				$.multiplicativeExpression
+			))
+		)),
+
+		multiplicativeExpression: $ => prec.right(seq(
+			$.asExpression,
+			repeat(seq(
+				$.multiplicativeOperator,
+				optional($.NLS),
+				$.asExpression
+			))
+		)),
+
+		asExpression: $ => prec.right(seq(
+			$.prefixUnaryExpression,
+			optional(seq(
+				//optional($.NLS),
+				$.asOperator,
+				optional($.NLS),
+				$.type
+			))
+		)),
+
+		prefixUnaryExpression: $ => seq(
+			repeat($.unaryPrefix),
+			$.postfixUnaryExpression
+		),
+
+		unaryPrefix: $ => prec.right(1, choice(
+			$.annotation,
+			$.label,
+			seq(
+				$.prefixUnaryOperator,
+				optional($.NLS)
+			)
+		)),
+
+		postfixUnaryExpression: $ => prec.right(seq(
+			$.primaryExpression,
+			repeat(seq(
+				$.postfixUnarySuffix,
+			))
+		)),
+
+		postfixUnarySuffix: $ => choice(
+			$.postfixUnaryOperator,
+			$.typeArguments,
+			$.indexingSuffix,
+			$.navigationSuffix
+		),
+
+		indexingSuffix: $ => seq(
+			$.LSQUARE,
+			optional($.NLS),
+			$.expression,
+			repeat(seq(
+				optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				$.expression
+			)),
+			optional($.NLS),
+			$.RSQUARE
+		),
+
+		navigationSuffix: $ => seq(
+			//optional($.NLS),
+			$.memberAccessOperator,
+			optional($.NLS),
+			choice(
+				$.simpleIdentifier,
+				$.parenthesizedExpression,
+				$.CLASS
+			)
+		),
+
+		typeArguments: $ => seq(
+			$.LANGLE,
+			optional($.NLS),
+			$.typeProjection,
+			repeat(seq(
+				optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				$.typeProjection
+			)),
+			optional($.NLS),
+			$.RANGLE
+		),
+
+		valueArguments: $ => choice(
+			seq(
+				$.LPAREN,
+				optional($.NLS),
+				$.RPAREN
+			),
+			seq(
+				$.LPAREN,
+				optional($.NLS),
+				$.valueArgument,
+				repeat(seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS),
+					$.valueArgument
+				)),
+				optional($.NLS),
+				$.RPAREN
+			)
+		),
+
+		valueArgument: $ => seq(
+			optional(seq($.annotation, optional($.NLS))),
+			optional(seq(
+				$.simpleIdentifier,
+				optional($.NLS),
+				$.ASSIGNMENT,
+				optional($.NLS)
+			)),
+			optional(seq($.MULT, optional($.NLS))),
+			$.expression
+		),
+
+		primaryExpression: $ => prec(1, choice(
+			$.parenthesizedExpression,
+			$.simpleIdentifier,
+			$.literalConstant,
+			$.stringLiteral,
+			$.callableReference,
+			$.collectionLiteral,
+			$.thisExpression,
+			$.superExpression,
+			$.jumpExpression
+		)),
+
+		parenthesizedExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.expression,
+			optional($.NLS),
+			$.RPAREN
+		),
+
+		collectionLiteral: $ => choice(
+			seq(
+				$.LSQUARE,
+				optional($.NLS),
+				$.expression,
+				repeat(seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS),
+					$.expression
+				)),
+				optional($.NLS),
+				$.RSQUARE
+			),
+			seq(
+				$.LSQUARE,
+				optional($.NLS),
+				$.RSQUARE
+			)
+		),
+
+		literalConstant: $ => choice(
+			$.BooleanLiteral,
+			$.IntegerLiteral,
+			$.HexLiteral,
+			$.BinLiteral,
+			$.CharacterLiteral,
+			$.RealLiteral,
+			$.NullLiteral,
+			$.LongLiteral,
+			$.UnsignedLiteral
+		),
+
+		stringLiteral: $ => $._string_literal,
+		// stringLiteral: $ => choice(
+		// 	$.lineStringLiteral,
+		// 	$.multiLineStringLiteral
+		// ),
+
+		thisExpression: $ => choice(
+			$.THIS,
+			$.THIS_AT
+		),
+
+		superExpression: $ => prec.left(choice(
+			seq(
+				$.SUPER,
+				optional(seq(
+					$.LANGLE,
+					optional($.NLS),
+					$.type,
+					optional($.NLS),
+					$.RANGLE
+				)),
+				optional(seq(
+					$.AT_NO_WS,
+					$.simpleIdentifier
+				))
+			),
+			$.SUPER_AT
+		)),
+
+		jumpExpression: $ => prec.right(choice(
+			seq(
+				$.THROW,
+				optional($.NLS),
+				$.expression
+			),
+			seq(
+				choice(
+					$.RETURN,
+					$.RETURN_AT
+				),
+				optional($.expression)
+			),
+			$.CONTINUE,
+			$.CONTINUE_AT,
+			$.BREAK,
+			$.BREAK_AT
+		)),
+
+		callableReference: $ => seq(
+			optional(seq($.receiverType, optional($.NLS))),
+			$.COLONCOLON,
+			optional($.NLS),
+			choice(
+				$.simpleIdentifier,
+				$.CLASS
+			)
+		),
+
+		equalityOperator: $ => choice(
+			$.EXCL_EQ,
+			$.EXCL_EQEQ,
+			$.EQEQ,
+			$.EQEQEQ
+		),
+
+		comparisonOperator: $ => choice(
+			$.LANGLE,
+			$.RANGLE,
+			$.LE,
+			$.GE
+		),
+
+		inOperator: $ => choice(
+			$.IN,
+			$.NOT_IN
+		),
+
+		isOperator: $ => choice(
+			$.IS,
+			$.NOT_IS
+		),
+
+		additiveOperator: $ => choice(
+			$.ADD,
+			$.SUB
+		),
+
+		multiplicativeOperator: $ => choice(
+			$.MULT,
+			$.DIV,
+			$.MOD
+		),
+
+		asOperator: $ => choice(
+			$.AS,
+			$.AS_SAFE
+		),
+
+		prefixUnaryOperator: $ => choice(
+			$.INCR,
+			$.DECR,
+			$.SUB,
+			$.ADD,
+			$.excl
+		),
+
+		postfixUnaryOperator: $ => choice(
+			$.INCR,
+			$.DECR,
+			seq(
+				$.EXCL_NO_WS,
+				$.excl
+			)
+		),
+
+		excl: $ => choice(
+			$.EXCL_NO_WS,
+			$.EXCL_WS
+		),
+
+		memberAccessOperator: $ => choice(
+			$.DOT,
+			$.safeNav,
+			$.COLONCOLON
+		),
+
+		safeNav: $ => seq(
+			$.QUEST_NO_WS,
+			$.DOT
+		),
+
+		typeModifiers: $ => prec.right(repeat1($.typeModifier)),
+
+		typeModifier: $ => choice(
+			$.annotation,
+			seq(
+				$.SUSPEND,
+				optional($.NLS)
+			)
+		),
+
+		varianceModifier: $ => choice(
+			$.IN,
+			$.OUT
+		),
+
+		annotation: $ => prec.right(seq(
+			choice(
+				$.singleAnnotation,
+				$.multiAnnotation
+			),
+			optional($.NLS)
+		)),
+
+		singleAnnotation: $ => choice(
+			seq(
+				$.annotationUseSiteTarget,
+				optional($.NLS),
+				$.unescapedAnnotation
+			),
+			seq(
+				choice(
+					$.AT_NO_WS,
+					$.AT_PRE_WS
+				),
+				$.unescapedAnnotation
+			)
+		),
+
+		multiAnnotation: $ => choice(
+			seq(
+				$.annotationUseSiteTarget,
+				optional($.NLS),
+				$.LSQUARE,
+				repeat1($.unescapedAnnotation),
+				$.RSQUARE
+			),
+			seq(
+				choice(
+					$.AT_NO_WS,
+					$.AT_PRE_WS
+				),
+				$.LSQUARE,
+				repeat1($.unescapedAnnotation),
+				$.RSQUARE
+			)
+		),
+
+		annotationUseSiteTarget: $ => seq(
+			choice(
+				$.AT_NO_WS,
+				$.AT_PRE_WS
+			),
+			choice(
+				$.FIELD,
+				$.PROPERTY,
+				$.GET,
+				$.SET,
+				$.RECEIVER,
+				$.PARAM,
+				$.SETPARAM,
+				$.DELEGATE
+			),
+			optional($.NLS),
+			$.COLON
+		),
+
+		unescapedAnnotation: $ => choice(
+			$.constructorInvocation,
+			$.userType
+		),
+
+		simpleIdentifier: $ => prec(2, choice(
+			$.Identifier,
+			$.ABSTRACT,
+			$.ANNOTATION,
+			$.BY,
+			$.CATCH,
+			$.COMPANION,
+			$.CONSTRUCTOR,
+			$.CROSSINLINE,
+			$.DATA,
+			$.DYNAMIC,
+			$.ENUM,
+			$.EXTERNAL,
+			$.FINAL,
+			$.FINALLY,
+			$.GET,
+			$.IMPORT,
+			$.INFIX,
+			$.INIT,
+			$.INLINE,
+			$.INNER,
+			$.INTERNAL,
+			$.LATEINIT,
+			$.NOINLINE,
+			$.OPEN,
+			$.OPERATOR,
+			$.OUT,
+			$.OVERRIDE,
+			$.PRIVATE,
+			$.PROTECTED,
+			$.PUBLIC,
+			$.REIFIED,
+			$.SEALED,
+			$.TAILREC,
+			$.SET,
+			$.VARARG,
+			$.WHERE,
+			$.FIELD,
+			$.PROPERTY,
+			$.RECEIVER,
+			$.PARAM,
+			$.SETPARAM,
+			$.DELEGATE,
+			$.FILE,
+			$.EXPECT,
+			$.ACTUAL,
+			$.CONST,
+			$.SUSPEND
+		)),
+
+		DelimitedComment: $ => token(seq(
+			"/*",
+			repeat(/.|\n/),
+			"*/"
+		)),
+
+		LineComment: $ => token(seq(
+			"//",
+			repeat(/[^\r\n]/)
+		)),
+
+		WS: $ => token(/[\u0020\u0009\u000C]/),
+
+		NLS: $ => prec.right(repeat1(/(\n|\r\n)/)),
+
+		Hidden: $ => token(choice(
+			seq(
+				"/*",
+				repeat(/.|\n/),
+				"*/"
+			),
+			token(seq(
+				"//",
+				repeat(/[^\r\n]/)
+			)),
+			token(/[\u0020\u0009\u000C]/)
+		)),
+
+		DOT: $ => token("."),
+
+		COMMA: $ => token(","),
+
+		LPAREN: $ => token("("),
+
+		RPAREN: $ => token(")"),
+
+		LSQUARE: $ => token("["),
+
+		RSQUARE: $ => token("]"),
+
+		RCURL: $ => token("}"),
+
+		MULT: $ => token("*"),
+
+		MOD: $ => token("%"),
+
+		DIV: $ => token("/"),
+
+		ADD: $ => token("+"),
+
+		SUB: $ => token("-"),
+
+		INCR: $ => token("++"),
+
+		DECR: $ => token("--"),
+
+		CONJ: $ => token("&&"),
+
+		DISJ: $ => token("||"),
+
+		EXCL_WS: $ => token(seq(
+			"!",
+			choice(
+				seq(
+					"/*",
+					repeat(/.|\n/),
+					"*/"
+				),
+				token(seq(
+					"//",
+					repeat(/[^\r\n]/)
+				)),
+				token(/[\u0020\u0009\u000C]/)
+			)
+		)),
+
+		EXCL_NO_WS: $ => token("!"),
+
+		COLON: $ => token(":"),
+
+		ASSIGNMENT: $ => token("="),
+
+		ARROW: $ => token("->"),
+
+		RANGE: $ => token(".."),
+
+		COLONCOLON: $ => token("::"),
+
+		AT_NO_WS: $ => token("@"),
+
+		AT_POST_WS: $ => token(seq(
+			"@",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		AT_PRE_WS: $ => token(seq(
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			),
+			"@"
+		)),
+
+		QUEST_WS: $ => token(seq(
+			"?",
+			choice(
+				seq(
+					"/*",
+					repeat(/.|\n/),
+					"*/"
+				),
+				token(seq(
+					"//",
+					repeat(/[^\r\n]/)
+				)),
+				token(/[\u0020\u0009\u000C]/)
+			)
+		)),
+
+		QUEST_NO_WS: $ => token("?"),
+
+		LANGLE: $ => token("<"),
+
+		RANGLE: $ => token(">"),
+
+		LE: $ => token("<="),
+
+		GE: $ => token(">="),
+
+		EXCL_EQ: $ => token("!="),
+
+		EXCL_EQEQ: $ => token("!=="),
+
+		AS_SAFE: $ => token("as?"),
+
+		EQEQ: $ => token("=="),
+
+		EQEQEQ: $ => token("==="),
+
+		RETURN_AT: $ => token(seq(
+			"return@",
+			choice(
+				seq(
+					choice(
+						/[a-zA-Z]/,
+						"_"
+					),
+					repeat(choice(
+						/[a-zA-Z]/,
+						"_",
+						/[0-9]/
+					))
+				),
+				seq(
+					"`",
+					repeat1(/[^\r\n`]/),
+					"`"
+				)
+			)
+		)),
+
+		CONTINUE_AT: $ => token(seq(
+			"continue@",
+			choice(
+				seq(
+					choice(
+						/[a-zA-Z]/,
+						"_"
+					),
+					repeat(choice(
+						/[a-zA-Z]/,
+						"_",
+						/[0-9]/
+					))
+				),
+				seq(
+					"`",
+					repeat1(/[^\r\n`]/),
+					"`"
+				)
+			)
+		)),
+
+		BREAK_AT: $ => token(seq(
+			"break@",
+			choice(
+				seq(
+					choice(
+						/[a-zA-Z]/,
+						"_"
+					),
+					repeat(choice(
+						/[a-zA-Z]/,
+						"_",
+						/[0-9]/
+					))
+				),
+				seq(
+					"`",
+					repeat1(/[^\r\n`]/),
+					"`"
+				)
+			)
+		)),
+
+		THIS_AT: $ => token(seq(
+			"this@",
+			choice(
+				seq(
+					choice(
+						/[a-zA-Z]/,
+						"_"
+					),
+					repeat(choice(
+						/[a-zA-Z]/,
+						"_",
+						/[0-9]/
+					))
+				),
+				seq(
+					"`",
+					repeat1(/[^\r\n`]/),
+					"`"
+				)
+			)
+		)),
+
+		SUPER_AT: $ => token(seq(
+			"super@",
+			choice(
+				seq(
+					choice(
+						/[a-zA-Z]/,
+						"_"
+					),
+					repeat(choice(
+						/[a-zA-Z]/,
+						"_",
+						/[0-9]/
+					))
+				),
+				seq(
+					"`",
+					repeat1(/[^\r\n`]/),
+					"`"
+				)
+			)
+		)),
+
+		FILE: $ => token("file"),
+
+		FIELD: $ => token("field"),
+
+		PROPERTY: $ => token("property"),
+
+		GET: $ => token("get"),
+
+		SET: $ => token("set"),
+
+		RECEIVER: $ => token("receiver"),
+
+		PARAM: $ => token("param"),
+
+		SETPARAM: $ => token("setparam"),
+
+		DELEGATE: $ => token("delegate"),
+
+		IMPORT: $ => token("import"),
+
+		CLASS: $ => token("class"),
+
+		CONSTRUCTOR: $ => token("constructor"),
+
+		BY: $ => token("by"),
+
+		COMPANION: $ => token("companion"),
+
+		INIT: $ => token("init"),
+
+		THIS: $ => token("this"),
+
+		SUPER: $ => token("super"),
+
+		WHERE: $ => token("where"),
+
+		CATCH: $ => token("catch"),
+
+		FINALLY: $ => token("finally"),
+
+		THROW: $ => token("throw"),
+
+		RETURN: $ => token("return"),
+
+		CONTINUE: $ => token("continue"),
+
+		BREAK: $ => token("break"),
+
+		AS: $ => token("as"),
+
+		IS: $ => token("is"),
+
+		IN: $ => token("in"),
+
+		NOT_IS: $ => token(seq(
+			"!is",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		NOT_IN: $ => token(seq(
+			"!in",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		OUT: $ => token("out"),
+
+		DYNAMIC: $ => token("dynamic"),
+
+		PUBLIC: $ => token("public"),
+
+		PRIVATE: $ => token("private"),
+
+		PROTECTED: $ => token("protected"),
+
+		INTERNAL: $ => token("internal"),
+
+		ENUM: $ => token("enum"),
+
+		SEALED: $ => token("sealed"),
+
+		ANNOTATION: $ => token("annotation"),
+
+		DATA: $ => token("data"),
+
+		INNER: $ => token("inner"),
+
+		TAILREC: $ => token("tailrec"),
+
+		OPERATOR: $ => token("operator"),
+
+		INLINE: $ => token("inline"),
+
+		INFIX: $ => token("infix"),
+
+		EXTERNAL: $ => token("external"),
+
+		SUSPEND: $ => token("suspend"),
+
+		OVERRIDE: $ => token("override"),
+
+		ABSTRACT: $ => token("abstract"),
+
+		FINAL: $ => token("final"),
+
+		OPEN: $ => token("open"),
+
+		CONST: $ => token("const"),
+
+		LATEINIT: $ => token("lateinit"),
+
+		VARARG: $ => token("vararg"),
+
+		NOINLINE: $ => token("noinline"),
+
+		CROSSINLINE: $ => token("crossinline"),
+
+		REIFIED: $ => token("reified"),
+
+		EXPECT: $ => token("expect"),
+
+		ACTUAL: $ => token("actual"),
+
+		DecDigit: $ => token(/[0123456789]/),
+
+		DecDigitNoZero: $ => token(/[123456789]/),
+
+		DecDigitOrSeparator: $ => token(choice(
+			token(/[0123456789]/),
+			"_"
+		)),
+
+		DecDigits: $ => token(choice(
+			seq(
+				token(/[0123456789]/),
+				repeat(choice(
+					token(/[0123456789]/),
+					"_"
+				)),
+				token(/[0123456789]/)
+			),
+			token(/[0123456789]/)
+		)),
+
+		DoubleExponent: $ => token(seq(
+			/[eE]/,
+			optional(/[+-]/),
+			choice(
+				seq(
+					token(/[0123456789]/),
+					repeat(choice(
+						token(/[0123456789]/),
+						"_"
+					)),
+					token(/[0123456789]/)
+				),
+				token(/[0123456789]/)
+			)
+		)),
+
+		RealLiteral: $ => token(choice(
+			choice(
+				seq(
+					choice(
+						seq(
+							optional(choice(
+								seq(
+									token(/[0123456789]/),
+									repeat(choice(
+										token(/[0123456789]/),
+										"_"
+									)),
+									token(/[0123456789]/)
+								),
+								token(/[0123456789]/)
+							)),
+							".",
+							choice(
+								seq(
+									token(/[0123456789]/),
+									repeat(choice(
+										token(/[0123456789]/),
+										"_"
+									)),
+									token(/[0123456789]/)
+								),
+								token(/[0123456789]/)
+							),
+							optional(seq(
+								/[eE]/,
+								optional(/[+-]/),
+								choice(
+									seq(
+										token(/[0123456789]/),
+										repeat(choice(
+											token(/[0123456789]/),
+											"_"
+										)),
+										token(/[0123456789]/)
+									),
+									token(/[0123456789]/)
+								)
+							))
+						),
+						seq(
+							choice(
+								seq(
+									token(/[0123456789]/),
+									repeat(choice(
+										token(/[0123456789]/),
+										"_"
+									)),
+									token(/[0123456789]/)
+								),
+								token(/[0123456789]/)
+							),
+							seq(
+								/[eE]/,
+								optional(/[+-]/),
+								choice(
+									seq(
+										token(/[0123456789]/),
+										repeat(choice(
+											token(/[0123456789]/),
+											"_"
+										)),
+										token(/[0123456789]/)
+									),
+									token(/[0123456789]/)
+								)
+							)
+						)
+					),
+					/[fF]/
+				),
+				seq(
+					choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					),
+					/[fF]/
+				)
+			),
+			choice(
+				seq(
+					optional(choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					)),
+					".",
+					choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					),
+					optional(seq(
+						/[eE]/,
+						optional(/[+-]/),
+						choice(
+							seq(
+								token(/[0123456789]/),
+								repeat(choice(
+									token(/[0123456789]/),
+									"_"
+								)),
+								token(/[0123456789]/)
+							),
+							token(/[0123456789]/)
+						)
+					))
+				),
+				seq(
+					choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					),
+					seq(
+						/[eE]/,
+						optional(/[+-]/),
+						choice(
+							seq(
+								token(/[0123456789]/),
+								repeat(choice(
+									token(/[0123456789]/),
+									"_"
+								)),
+								token(/[0123456789]/)
+							),
+							token(/[0123456789]/)
+						)
+					)
+				)
+			)
+		)),
+
+		FloatLiteral: $ => token(choice(
+			seq(
+				choice(
+					seq(
+						optional(choice(
+							seq(
+								token(/[0123456789]/),
+								repeat(choice(
+									token(/[0123456789]/),
+									"_"
+								)),
+								token(/[0123456789]/)
+							),
+							token(/[0123456789]/)
+						)),
+						".",
+						choice(
+							seq(
+								token(/[0123456789]/),
+								repeat(choice(
+									token(/[0123456789]/),
+									"_"
+								)),
+								token(/[0123456789]/)
+							),
+							token(/[0123456789]/)
+						),
+						optional(seq(
+							/[eE]/,
+							optional(/[+-]/),
+							choice(
+								seq(
+									token(/[0123456789]/),
+									repeat(choice(
+										token(/[0123456789]/),
+										"_"
+									)),
+									token(/[0123456789]/)
+								),
+								token(/[0123456789]/)
+							)
+						))
+					),
+					seq(
+						choice(
+							seq(
+								token(/[0123456789]/),
+								repeat(choice(
+									token(/[0123456789]/),
+									"_"
+								)),
+								token(/[0123456789]/)
+							),
+							token(/[0123456789]/)
+						),
+						seq(
+							/[eE]/,
+							optional(/[+-]/),
+							choice(
+								seq(
+									token(/[0123456789]/),
+									repeat(choice(
+										token(/[0123456789]/),
+										"_"
+									)),
+									token(/[0123456789]/)
+								),
+								token(/[0123456789]/)
+							)
+						)
+					)
+				),
+				/[fF]/
+			),
+			seq(
+				choice(
+					seq(
+						token(/[0123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				),
+				/[fF]/
+			)
+		)),
+
+		DoubleLiteral: $ => token(choice(
+			seq(
+				optional(choice(
+					seq(
+						token(/[0123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				)),
+				".",
+				choice(
+					seq(
+						token(/[0123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				),
+				optional(seq(
+					/[eE]/,
+					optional(/[+-]/),
+					choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					)
+				))
+			),
+			seq(
+				choice(
+					seq(
+						token(/[0123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				),
+				seq(
+					/[eE]/,
+					optional(/[+-]/),
+					choice(
+						seq(
+							token(/[0123456789]/),
+							repeat(choice(
+								token(/[0123456789]/),
+								"_"
+							)),
+							token(/[0123456789]/)
+						),
+						token(/[0123456789]/)
+					)
+				)
+			)
+		)),
+
+		IntegerLiteral: $ => token(choice(
+			seq(
+				token(/[123456789]/),
+				repeat(choice(
+					token(/[0123456789]/),
+					"_"
+				)),
+				token(/[0123456789]/)
+			),
+			token(/[0123456789]/)
+		)),
+
+		HexDigit: $ => token(/[0-9a-fA-F]/),
+
+		HexDigitOrSeparator: $ => token(choice(
+			token(/[0-9a-fA-F]/),
+			"_"
+		)),
+
+		HexLiteral: $ => token(choice(
+			seq(
+				"0",
+				/[xX]/,
+				token(/[0-9a-fA-F]/),
+				repeat(choice(
+					token(/[0-9a-fA-F]/),
+					"_"
+				)),
+				token(/[0-9a-fA-F]/)
+			),
+			seq(
+				"0",
+				/[xX]/,
+				token(/[0-9a-fA-F]/)
+			)
+		)),
+
+		BinDigit: $ => token(/[01]/),
+
+		BinDigitOrSeparator: $ => token(choice(
+			token(/[01]/),
+			"_"
+		)),
+
+		BinLiteral: $ => token(choice(
+			seq(
+				"0",
+				/[bB]/,
+				token(/[01]/),
+				repeat(choice(
+					token(/[01]/),
+					"_"
+				)),
+				token(/[01]/)
+			),
+			seq(
+				"0",
+				/[bB]/,
+				token(/[01]/)
+			)
+		)),
+
+		UnsignedLiteral: $ => token(seq(
+			choice(
+				choice(
+					seq(
+						token(/[123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				),
+				choice(
+					seq(
+						"0",
+						/[xX]/,
+						token(/[0-9a-fA-F]/),
+						repeat(choice(
+							token(/[0-9a-fA-F]/),
+							"_"
+						)),
+						token(/[0-9a-fA-F]/)
+					),
+					seq(
+						"0",
+						/[xX]/,
+						token(/[0-9a-fA-F]/)
+					)
+				),
+				choice(
+					seq(
+						"0",
+						/[bB]/,
+						token(/[01]/),
+						repeat(choice(
+							token(/[01]/),
+							"_"
+						)),
+						token(/[01]/)
+					),
+					seq(
+						"0",
+						/[bB]/,
+						token(/[01]/)
+					)
+				)
+			),
+			/[uU]/,
+			optional("L")
+		)),
+
+		LongLiteral: $ => token(seq(
+			choice(
+				choice(
+					seq(
+						token(/[123456789]/),
+						repeat(choice(
+							token(/[0123456789]/),
+							"_"
+						)),
+						token(/[0123456789]/)
+					),
+					token(/[0123456789]/)
+				),
+				choice(
+					seq(
+						"0",
+						/[xX]/,
+						token(/[0-9a-fA-F]/),
+						repeat(choice(
+							token(/[0-9a-fA-F]/),
+							"_"
+						)),
+						token(/[0-9a-fA-F]/)
+					),
+					seq(
+						"0",
+						/[xX]/,
+						token(/[0-9a-fA-F]/)
+					)
+				),
+				choice(
+					seq(
+						"0",
+						/[bB]/,
+						token(/[01]/),
+						repeat(choice(
+							token(/[01]/),
+							"_"
+						)),
+						token(/[01]/)
+					),
+					seq(
+						"0",
+						/[bB]/,
+						token(/[01]/)
+					)
+				)
+			),
+			"L"
+		)),
+
+		BooleanLiteral: $ => token(choice(
+			"true",
+			"false"
+		)),
+
+		NullLiteral: $ => token("null"),
+
+		CharacterLiteral: $ => token(seq(
+			"\'",
+			choice(
+				choice(
+					seq(
+						"\\",
+						"u",
+						token(/[0-9a-fA-F]/),
+						token(/[0-9a-fA-F]/),
+						token(/[0-9a-fA-F]/),
+						token(/[0-9a-fA-F]/)
+					),
+					token(seq(
+						"\\",
+						choice(
+							"t",
+							"b",
+							"r",
+							"n",
+							"\'",
+							"\"",
+							"\\",
+							"$"
+						)
+					))
+				),
+				/[^\n\r'\\]/
+			),
+			"\'"
+		)),
+
+		Identifier: $ => token(choice(
+			seq(
+				choice(
+					/[a-zA-Z]/,
+					"_"
+				),
+				repeat(choice(
+					/[a-zA-Z]/,
+					"_",
+					/[0-9]/
+				))
+			),
+			seq(
+				"`",
+				repeat1(/[^\r\n`]/),
+				"`"
+			)
+		)),
+
+		EOF: $ => token(/[\r\n]/),
+
 	}
 });
 

@@ -392,3 +392,104 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                     (valueArguments
                                       (LPAREN)
                                       (RPAREN))))))))))))))))))))
+
+==================
+Infix expressions
+==================
+1 should 5 should with (2) {
+    3
+}
+---
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))
+                  (WS)
+                  (simpleIdentifier
+                    (Identifier))
+                  (WS)
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))
+                  (WS)
+                  (simpleIdentifier
+                    (Identifier))
+                  (WS)
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))
+                              (WS)
+                              (postfixUnarySuffix
+                                (callSuffix
+                                  (valueArguments
+                                    (LPAREN)
+                                    (valueArgument
+                                      (expression
+                                        (disjunction
+                                          (conjunction
+                                            (equality
+                                              (comparison
+                                                (infixOperation
+                                                  (elvisExpression
+                                                    (infixFunctionCall
+                                                      (rangeExpression
+                                                        (additiveExpression
+                                                          (multiplicativeExpression
+                                                            (asExpression
+                                                              (prefixUnaryExpression
+                                                                (postfixUnaryExpression
+                                                                  (primaryExpression
+                                                                    (literalConstant
+                                                                      (IntegerLiteral))))))))))))))))))
+                                    (RPAREN))
+                                  (WS)
+                                  (annotated_lambda
+                                    (lambda_literal
+                                      (NLS)
+                                      (WS)
+                                      (statements
+                                        (expression
+                                          (disjunction
+                                            (conjunction
+                                              (equality
+                                                (comparison
+                                                  (infixOperation
+                                                    (elvisExpression
+                                                      (infixFunctionCall
+                                                        (rangeExpression
+                                                          (additiveExpression
+                                                            (multiplicativeExpression
+                                                              (asExpression
+                                                                (prefixUnaryExpression
+                                                                  (postfixUnaryExpression
+                                                                    (primaryExpression
+                                                                      (literalConstant
+                                                                        (IntegerLiteral)))))))))))))))))
+                                        (semis
+                                          (NLS))))))))))))))))))))))

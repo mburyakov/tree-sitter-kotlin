@@ -92,22 +92,30 @@ module.exports = grammar({
 		source_file: $ => seq(
 			optional($.shebang_line),
 			optional($.NLS),
-			optional(seq(repeat1($.file_annotation), optional($.NLS))),
+			optional(seq(repeat1($.file_annotation))),
 			optional($.package_header),
 			repeat($.import_header),
 			repeat(seq($._statement, $._semis)),
 			optional($._statement)
 		),
-		
+
 		shebang_line: $ => seq("#!", /[^\r\n]*/),
 
-		file_annotation: $ => prec(-1, seq(
-			"@", "file", ":",
+		file_annotation: $ => seq(
 			choice(
-				seq("[", repeat1($._unescaped_annotation), "]"),
+				$.AT_NO_WS,
+				$.AT_PRE_WS,
+			),
+			$.FILE,
+			optional($.NLS),
+			$.COLON,
+			optional($.NLS),
+			choice(
+				seq($.LSQUARE, repeat1($._unescaped_annotation), $.RSQUARE),
 				$._unescaped_annotation
-			)
-		)),
+			),
+			optional($.NLS),
+		),
 		
 		package_header: $ => seq("package", $.identifier, $._semi),
 		
@@ -467,9 +475,16 @@ module.exports = grammar({
 
 		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
-			optional(seq(optional($.lambda_parameters), "->")),
-			optional($.statements),
-			"}"
+			optional(seq(
+				optional($.NLS),
+				optional($.lambda_parameters),
+				"->",
+			)),
+			optional(seq(
+				optional($.NLS),
+				$.statements,
+			)),
+			"}",
 		)),
 
 		lambda_parameters: $ => sep1($._lambda_parameter, ","),

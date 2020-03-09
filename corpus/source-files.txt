@@ -1,0 +1,66 @@
+==================
+File annotations
+==================
+@file:JvmName("HelloWorld")
+
+val x = 4
+---
+
+(source_file
+  (file_annotation
+    (AT_NO_WS)
+    (FILE)
+    (COLON)
+    (unescapedAnnotation
+      (constructorInvocation
+        (userType
+          (simpleUserType
+            (simpleIdentifier
+              (Identifier))))
+        (valueArguments
+          (LPAREN)
+          (valueArgument
+            (expression
+              (disjunction
+                (conjunction
+                  (equality
+                    (comparison
+                      (infixOperation
+                        (elvisExpression
+                          (infixFunctionCall
+                            (rangeExpression
+                              (additiveExpression
+                                (multiplicativeExpression
+                                  (asExpression
+                                    (prefixUnaryExpression
+                                      (postfixUnaryExpression
+                                        (primaryExpression
+                                          (stringLiteral
+                                            (line_string_literal))))))))))))))))))
+          (RPAREN))))
+    (NLS))
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier))))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral)))))))))))))))))))

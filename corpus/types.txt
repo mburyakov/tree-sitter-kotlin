@@ -1,0 +1,568 @@
+==================
+Type references
+==================
+something as Int
+something as A
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
+==================
+Nested types
+==================
+something as Some.NestedType
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))
+                                (DOT)
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
+==================
+Deeply nested types
+==================
+somethingElse as A.Deeply.Nested.Type
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))
+                                (DOT)
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))
+                                (DOT)
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))
+                                (DOT)
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
+==================
+Generic wildcard types
+==================
+something as Generic<*>
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier))
+                                  (typeArguments
+                                    (LANGLE)
+                                    (typeProjection
+                                      (MULT))
+                                    (RANGLE)))))))))))))))))))
+
+==================
+Generic parameterized types
+==================
+something as Generic<T>
+something as Generic<A, Type>
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier))
+                                  (typeArguments
+                                    (LANGLE)
+                                    (typeProjection
+                                      (type
+                                        (typeReference
+                                          (userType
+                                            (simpleUserType
+                                              (simpleIdentifier
+                                                (Identifier)))))))
+                                    (RANGLE))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (simpleIdentifier
+                                    (Identifier))
+                                  (typeArguments
+                                    (LANGLE)
+                                    (typeProjection
+                                      (type
+                                        (typeReference
+                                          (userType
+                                            (simpleUserType
+                                              (simpleIdentifier
+                                                (Identifier)))))))
+                                    (COMMA)
+                                    (WS)
+                                    (typeProjection
+                                      (type
+                                        (typeReference
+                                          (userType
+                                            (simpleUserType
+                                              (simpleIdentifier
+                                                (Identifier)))))))
+                                    (RANGLE)))))))))))))))))))
+
+==================
+Function types
+==================
+unitFunction as () -> Unit
+consumer as (Int) -> Unit
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (functionTypeParameters
+                                (LPAREN)
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier))))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (functionTypeParameters
+                                (LPAREN)
+                                (type
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier))))))
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier)))))))))))))))))))))
+
+==================
+Function types with multiple parameters
+==================
+a as (Int, Generic<*>, Boolean) -> Unit
+b as (Nested.Type, (Int)) -> Unit
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (functionTypeParameters
+                                (LPAREN)
+                                (type
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier))))))
+                                (COMMA)
+                                (WS)
+                                (type
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier))
+                                        (typeArguments
+                                          (LANGLE)
+                                          (typeProjection
+                                            (MULT))
+                                          (RANGLE))))))
+                                (COMMA)
+                                (WS)
+                                (type
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier))))))
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier))))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (functionTypeParameters
+                                (LPAREN)
+                                (type
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier)))
+                                      (DOT)
+                                      (simpleUserType
+                                        (simpleIdentifier
+                                          (Identifier))))))
+                                (COMMA)
+                                (WS)
+                                (type
+                                  (parenthesizedType
+                                    (LPAREN)
+                                    (type
+                                      (typeReference
+                                        (userType
+                                          (simpleUserType
+                                            (simpleIdentifier
+                                              (Identifier))))))
+                                    (RPAREN)))
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier)))))))))))))))))))))
+
+==================
+Function types with named parameters
+==================
+a as (first: A, second: B) -> Unit
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (functionTypeParameters
+                                (LPAREN)
+                                (parameter
+                                  (simpleIdentifier
+                                    (Identifier))
+                                  (COLON)
+                                  (WS)
+                                  (type
+                                    (typeReference
+                                      (userType
+                                        (simpleUserType
+                                          (simpleIdentifier
+                                            (Identifier)))))))
+                                (COMMA)
+                                (WS)
+                                (parameter
+                                  (simpleIdentifier
+                                    (Identifier))
+                                  (COLON)
+                                  (WS)
+                                  (type
+                                    (typeReference
+                                      (userType
+                                        (simpleUserType
+                                          (simpleIdentifier
+                                            (Identifier)))))))
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier)))))))))))))))))))))

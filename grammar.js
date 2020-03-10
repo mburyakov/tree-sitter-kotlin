@@ -752,7 +752,6 @@ module.exports = grammar({
 		_expression: $ => $.expression,
 		constructor_invocation: $ => $.constructorInvocation,
 		value_arguments: $ => $.valueArguments,
-		type_arguments: $ => $.typeArguments,
 		_unescaped_annotation: $ => $.unescapedAnnotation,
 		simple_identifier: $ => $.simpleIdentifier,
 		_type: $ => $.type,
@@ -781,8 +780,6 @@ module.exports = grammar({
 
 
 
-
-		expression: $ => $.disjunction,
 
 		constructorInvocation: $ => prec(1, seq(
 			$.userType,
@@ -930,6 +927,8 @@ module.exports = grammar({
 			),
 			optional($.NLS)
 		)),
+
+		expression: $ => $._jumpExpression,
 
 		disjunction: $ => prec.right(seq(
 			$.conjunction,
@@ -1171,7 +1170,6 @@ module.exports = grammar({
 			$.collectionLiteral,
 			$.thisExpression,
 			$.superExpression,
-			$.jumpExpression
 		),
 
 		parenthesizedExpression: $ => seq(
@@ -1244,23 +1242,24 @@ module.exports = grammar({
 			$.SUPER_AT
 		)),
 
-		jumpExpression: $ => prec.right(choice(
+		_jumpExpression: $ => prec.right(choice(
+			$.disjunction,
 			seq(
 				$.THROW,
 				optional($.NLS),
-				$.expression
+				$._jumpExpression,
 			),
 			seq(
 				choice(
 					$.RETURN,
-					$.RETURN_AT
+					$.RETURN_AT,
 				),
-				optional($.expression)
+				optional($._jumpExpression),
 			),
 			$.CONTINUE,
 			$.CONTINUE_AT,
 			$.BREAK,
-			$.BREAK_AT
+			$.BREAK_AT,
 		)),
 
 		callableReference: $ => seq(
@@ -1269,7 +1268,7 @@ module.exports = grammar({
 			optional($.NLS),
 			choice(
 				$.simpleIdentifier,
-				$.CLASS
+				$.CLASS,
 			)
 		),
 

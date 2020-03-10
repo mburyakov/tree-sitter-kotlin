@@ -471,14 +471,13 @@ class Something {
               (Identifier)))
           (WS)
           (type
-            (nullableType
-              (typeReference
-                (userType
-                  (simpleUserType
-                    (simpleIdentifier
-                      (Identifier)))))
-              (quest
-                (QUEST_NO_WS))))))
+            (typeReference
+              (userType
+                (simpleUserType
+                  (simpleIdentifier
+                    (Identifier)))))
+            (quest
+              (QUEST_NO_WS)))))
       (semis
         (NLS))
       (WS)

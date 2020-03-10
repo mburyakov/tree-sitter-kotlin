@@ -379,14 +379,13 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                                   (LANGLE)
                                                   (typeProjection
                                                     (type
-                                                      (nullableType
-                                                        (typeReference
-                                                          (userType
-                                                            (simpleUserType
-                                                              (simpleIdentifier
-                                                                (Identifier)))))
-                                                        (quest
-                                                          (QUEST_NO_WS)))))
+                                                      (typeReference
+                                                        (userType
+                                                          (simpleUserType
+                                                            (simpleIdentifier
+                                                              (Identifier)))))
+                                                      (quest
+                                                        (QUEST_NO_WS))))
                                                   (RANGLE)))))))
                                       (RANGLE))
                                     (valueArguments

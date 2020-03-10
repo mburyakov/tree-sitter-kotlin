@@ -1,17 +1,4 @@
 ==================
-Qualified type with receiver
-==================
-val c = f as kotlin.Int?.() -> Int
----
-
-==================
-Parametrized qualified type
-==================
-val kFunction0: () -> Int? = c.Inner(4)::method
-val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
----
-
-==================
 Valid confusing comparisons
 ==================
 (1 < 2 > false)::class::toString

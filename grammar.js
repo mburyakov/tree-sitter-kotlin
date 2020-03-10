@@ -800,9 +800,7 @@ module.exports = grammar({
 		type: $ => prec(1, seq(
 			optional($.typeModifiers),
 			choice(
-				$.parenthesizedType,
-				$.nullableType,
-				$.typeReference,
+				$._nullableTypeOrParenTypeOrTypeReference,
 				$.functionType
 			)
 		)),
@@ -812,14 +810,21 @@ module.exports = grammar({
 			$.DYNAMIC
 		)),
 
-		nullableType: $ => prec.right(seq(
-			choice(
-				$.typeReference,
-				$.parenthesizedType
-			),
-			optional($.NLS),
-			repeat1($.quest)
+		_nullableTypeOrParenTypeOrTypeReference: $ => prec.right(choice(
+			seq($.typeReference),
+			seq($.typeReference, prec.right(repeat1($.quest))),
+			seq($.parenthesizedType),
+			seq($.parenthesizedType, prec.right(repeat1($.quest))),
 		)),
+
+		// nullableType: $ => prec.right(-1000, seq(
+		// 	choice(
+		// 		$.typeReference,
+		// 		$.parenthesizedType
+		// 	),
+		// 	//optional($.NLS),
+		// 	repeat1($.quest)
+		// )),
 
 		quest: $ => choice(
 			$.QUEST_NO_WS,
@@ -907,18 +912,15 @@ module.exports = grammar({
 
 		receiverType: $ => prec.right(seq(
 			choice(
-				$.parenthesizedType,
-				$.nullableType,
-				$.typeReference
+				$._nullableTypeOrParenTypeOrTypeReference,
 			)
 		)),
 
 		receiverTypeWithDot: $ => prec.right(seq(
 			choice(
-				seq($.parenthesizedType, optional($.NLS), $.DOT),
-				seq($.nullableType, optional($.NLS), $.DOT),
+				seq($._nullableTypeOrParenTypeOrTypeReference, optional($.NLS), $.DOT),
 				$.userTypeWithDot,
-				seq($.DYNAMIC, optional($.NLS), $.DOT)
+				seq($.DYNAMIC, optional($.NLS), $.DOT),
 			)
 		)),
 
@@ -1156,7 +1158,7 @@ module.exports = grammar({
 			optional(seq($.annotation, optional($.NLS))),
 			optional(seq(
 				$.simpleIdentifier,
-				optional($.NLS),
+				//optional($.NLS),
 				$.ASSIGNMENT,
 				optional($.NLS)
 			)),

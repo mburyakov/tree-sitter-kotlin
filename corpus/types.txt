@@ -752,3 +752,278 @@ Callable reference for nullable type
                                     (COLONCOLON))
                                   (simpleIdentifier
                                     (Identifier)))))))))))))))))))
+
+==================
+Nullable dynamic type
+==================
+val x: dynamic? = null
+---
+
+(source_file
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier)))
+      (WS)
+      (type
+        (nullableType
+          (typeReference
+            (DYNAMIC))
+          (quest
+            (QUEST_WS)))))
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (NullLiteral)))))))))))))))))))
+
+==================
+Comparisons
+==================
+1<2
+2==1
+4 > 5+3
+x<y
+x<y+1
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))
+            (comparisonOperator
+              (LANGLE))
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))
+          (equalityOperator
+            (EQEQ))
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))
+            (WS)
+            (comparisonOperator
+              (RANGLE))
+            (WS)
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))
+                      (additiveOperator
+                        (ADD))
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier))))))))))))
+            (comparisonOperator
+              (LANGLE))
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier))))))))))))
+            (comparisonOperator
+              (LANGLE))
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))))
+                      (additiveOperator
+                        (ADD))
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+Generic method call
+==================
+meth<Int>()
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))
+                              (postfixUnarySuffix
+                                (callSuffix
+                                  (typeArguments
+                                    (LANGLE)
+                                    (typeProjection
+                                      (type
+                                        (typeReference
+                                          (userType
+                                            (simpleUserType
+                                              (simpleIdentifier
+                                                (Identifier)))))))
+                                    (RANGLE))
+                                  (valueArguments
+                                    (LPAREN)
+                                    (RPAREN)))))))))))))))))))

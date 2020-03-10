@@ -74,6 +74,9 @@ module.exports = grammar({
 		[$.primaryExpression, $.simpleUserType, $.valueArgument],
 		[$.primaryExpression, $.simpleUserType, $.parameter],
 		[$.primaryExpression, $.simpleUserType],
+
+		// type arguments conflict with comparison operator
+		[$.postfixUnaryExpression],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -930,7 +933,7 @@ module.exports = grammar({
 
 		expression: $ => $._jumpExpression,
 
-		disjunction: $ => prec.right(seq(
+		disjunction: $ => seq(
 			$.conjunction,
 			repeat(seq(
 				//optional($.NLS),
@@ -939,9 +942,9 @@ module.exports = grammar({
 				$.conjunction,
 				optional($.NLS)
 			))
-		)),
+		),
 
-		conjunction: $ => prec.right(seq(
+		conjunction: $ => seq(
 			$.equality,
 			repeat(seq(
 				//optional($.NLS),
@@ -950,27 +953,27 @@ module.exports = grammar({
 				$.equality,
 		        optional($.NLS)
 			))
-		)),
+		),
 
-		equality: $ => prec.right(seq(
+		equality: $ => seq(
 			$.comparison,
 			repeat(seq(
 				$.equalityOperator,
 				optional($.NLS),
 				$.comparison
 			))
-		)),
+		),
 
-		comparison: $ => prec.right(seq(
+		comparison: $ => seq(
 			$.infixOperation,
 			optional(seq(
 				$.comparisonOperator,
 				optional($.NLS),
 				$.infixOperation
 			))
-		)),
+		),
 
-		infixOperation: $ => prec.right(seq(
+		infixOperation: $ => seq(
 			$.elvisExpression,
 			repeat(choice(
 				seq(
@@ -984,9 +987,9 @@ module.exports = grammar({
 					$.type
 				)
 			))
-		)),
+		),
 
-		elvisExpression: $ => prec.right(seq(
+		elvisExpression: $ => seq(
 			$.infixFunctionCall,
 			repeat(seq(
 				//optional($.NLS),
@@ -995,7 +998,7 @@ module.exports = grammar({
 				$.infixFunctionCall,
 		        optional($.NLS)
 			))
-		)),
+		),
 
 		elvis: $ => seq(
 			$.QUEST_NO_WS,
@@ -1011,34 +1014,34 @@ module.exports = grammar({
 			))
 		)),
 
-		rangeExpression: $ => prec.right(seq(
+		rangeExpression: $ => seq(
 			$.additiveExpression,
 			repeat(seq(
 				$.RANGE,
 				optional($.NLS),
 				$.additiveExpression
 			))
-		)),
+		),
 
-		additiveExpression: $ => prec.right(seq(
+		additiveExpression: $ => seq(
 			$.multiplicativeExpression,
 			repeat(seq(
 				$.additiveOperator,
 				optional($.NLS),
 				$.multiplicativeExpression
 			))
-		)),
+		),
 
-		multiplicativeExpression: $ => prec.right(seq(
+		multiplicativeExpression: $ => seq(
 			$.asExpression,
 			repeat(seq(
 				$.multiplicativeOperator,
 				optional($.NLS),
 				$.asExpression
 			))
-		)),
+		),
 
-		asExpression: $ => prec.right(seq(
+		asExpression: $ => seq(
 			$.prefixUnaryExpression,
 			optional(seq(
 				//optional($.NLS),
@@ -1046,7 +1049,7 @@ module.exports = grammar({
 				optional($.NLS),
 				$.type
 			))
-		)),
+		),
 
 		prefixUnaryExpression: $ => seq(
 			repeat($.unaryPrefix),
@@ -1062,12 +1065,12 @@ module.exports = grammar({
 			)
 		)),
 
-		postfixUnaryExpression: $ => prec.right(seq(
+		postfixUnaryExpression: $ => seq(
 			$.primaryExpression,
 			repeat(seq(
 				$.postfixUnarySuffix,
 			))
-		)),
+		),
 
 		postfixUnarySuffix: $ => choice(
 			$.postfixUnaryOperator,

@@ -12,21 +12,6 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
 ---
 
 ==================
-Nullable dynamic type
-==================
-val x: dynamic? = null
----
-
-==================
-Comparisons
-==================
-1<2
-2==1
-4 > 5+3
----
-
-
-==================
 Valid confusing comparisons
 ==================
 (1 < 2 > false)::class::toString

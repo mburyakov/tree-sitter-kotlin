@@ -1,14 +1,39 @@
 ==================
-Function types with receiver
+Qualified type with receiver
 ==================
-a as T.() -> Unit
+val c = f as kotlin.Int?.() -> Int
 ---
 
-(source_file
-	(as_expression
-		(simple_identifier)
-		(function_type
-			(type_identifier)
-			(function_type_parameters)
-			(user_type (type_identifier)))))
+==================
+Parametrized qualified type
+==================
+val kFunction0: () -> Int? = c.Inner(4)::method
+val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
+---
 
+==================
+Nullable dynamic type
+==================
+val x: dynamic? = null
+---
+
+==================
+Comparisons
+==================
+1<2
+2==1
+4 > 5+3
+---
+
+
+==================
+Valid confusing comparisons
+==================
+(1 < 2 > false)::class::toString
+---
+
+==================
+Invalid confusing comparisons
+==================
+(1 < y > false)::class::toString
+---

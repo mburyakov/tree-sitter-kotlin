@@ -94,10 +94,12 @@ something as Some.NestedType
                           (type
                             (typeReference
                               (userType
-                                (simpleUserType
-                                  (simpleIdentifier
-                                    (Identifier)))
-                                (DOT)
+                                (userTypeWithDot
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier))))
+                                  (DOT))
                                 (simpleUserType
                                   (simpleIdentifier
                                     (Identifier)))))))))))))))))))
@@ -133,18 +135,24 @@ somethingElse as A.Deeply.Nested.Type
                           (type
                             (typeReference
                               (userType
-                                (simpleUserType
-                                  (simpleIdentifier
-                                    (Identifier)))
-                                (DOT)
-                                (simpleUserType
-                                  (simpleIdentifier
-                                    (Identifier)))
-                                (DOT)
-                                (simpleUserType
-                                  (simpleIdentifier
-                                    (Identifier)))
-                                (DOT)
+                                (userTypeWithDot
+                                  (userType
+                                    (userTypeWithDot
+                                      (userType
+                                        (userTypeWithDot
+                                          (userType
+                                            (simpleUserType
+                                              (simpleIdentifier
+                                                (Identifier))))
+                                          (DOT))
+                                        (simpleUserType
+                                          (simpleIdentifier
+                                            (Identifier))))
+                                      (DOT))
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier))))
+                                  (DOT))
                                 (simpleUserType
                                   (simpleIdentifier
                                     (Identifier)))))))))))))))))))
@@ -470,10 +478,12 @@ b as (Nested.Type, (Int)) -> Unit
                                 (type
                                   (typeReference
                                     (userType
-                                      (simpleUserType
-                                        (simpleIdentifier
-                                          (Identifier)))
-                                      (DOT)
+                                      (userTypeWithDot
+                                        (userType
+                                          (simpleUserType
+                                            (simpleIdentifier
+                                              (Identifier))))
+                                        (DOT))
                                       (simpleUserType
                                         (simpleIdentifier
                                           (Identifier))))))
@@ -566,3 +576,179 @@ a as (first: A, second: B) -> Unit
                                     (simpleUserType
                                       (simpleIdentifier
                                         (Identifier)))))))))))))))))))))
+
+==================
+Function types with receiver
+==================
+a as T.() -> Unit
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier)))))
+                          (WS)
+                          (asOperator
+                            (AS))
+                          (WS)
+                          (type
+                            (functionType
+                              (receiverTypeWithDot
+                                (userTypeWithDot
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier))))
+                                  (DOT)))
+                              (functionTypeParameters
+                                (LPAREN)
+                                (RPAREN))
+                              (WS)
+                              (ARROW)
+                              (WS)
+                              (type
+                                (typeReference
+                                  (userType
+                                    (simpleUserType
+                                      (simpleIdentifier
+                                        (Identifier)))))))))))))))))))))
+
+==================
+Callable reference
+==================
+Int::toString
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (callableReference
+                                  (receiverType
+                                    (typeReference
+                                      (userType
+                                        (simpleUserType
+                                          (simpleIdentifier
+                                            (Identifier))))))
+                                  (COLONCOLON)
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
+==================
+Callable reference for nullable type
+==================
+Int?::toString
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (callableReference
+                                  (receiverType
+                                    (nullableType
+                                      (typeReference
+                                        (userType
+                                          (simpleUserType
+                                            (simpleIdentifier
+                                              (Identifier)))))
+                                      (quest
+                                        (QUEST_NO_WS))))
+                                  (COLONCOLON)
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
+==================
+Callable reference for nullable type
+==================
+(1+2)::toString
+---
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (parenthesizedExpression
+                                  (LPAREN)
+                                  (expression
+                                    (disjunction
+                                      (conjunction
+                                        (equality
+                                          (comparison
+                                            (infixOperation
+                                              (elvisExpression
+                                                (infixFunctionCall
+                                                  (rangeExpression
+                                                    (additiveExpression
+                                                      (multiplicativeExpression
+                                                        (asExpression
+                                                          (prefixUnaryExpression
+                                                            (postfixUnaryExpression
+                                                              (primaryExpression
+                                                                (literalConstant
+                                                                  (IntegerLiteral)))))))
+                                                      (additiveOperator
+                                                        (ADD))
+                                                      (multiplicativeExpression
+                                                        (asExpression
+                                                          (prefixUnaryExpression
+                                                            (postfixUnaryExpression
+                                                              (primaryExpression
+                                                                (literalConstant
+                                                                  (IntegerLiteral)))))))))))))))))
+                                  (RPAREN)))
+                              (postfixUnarySuffix
+                                (navigationSuffix
+                                  (memberAccessOperator
+                                    (COLONCOLON))
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))

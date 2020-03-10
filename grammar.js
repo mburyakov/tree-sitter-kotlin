@@ -25,11 +25,11 @@
 // Using an adapted version of https://kotlinlang.org/docs/reference/grammar.html
 
 const PREC = {
-	// 'dynamic' '?' -- not type but expression
+	// 'dynamic?' means dynamic type
 	// 'import' 'x' -- not infix call but import statement
 	// 'internal' 'open' 'class' -- not infix call but class declaration
-	SIMPLE_IDENTIDIER: -1,
-	TYPE_REFERENCE: -2,
+	SIMPLE_IDENTIDIER: -2,
+	TYPE_REFERENCE: -1,
 
 	TYPE_ARGS: 17,
 	POSTFIX: 16,
@@ -71,7 +71,9 @@ module.exports = grammar({
 		//[$.anonymous_function],
 
 		// Member access operator '::' conflicts with callable reference
-		//[$._primary_expression, $.callable_reference]
+		[$.primaryExpression, $.simpleUserType, $.valueArgument],
+		[$.primaryExpression, $.simpleUserType, $.parameter],
+		[$.primaryExpression, $.simpleUserType],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -388,12 +390,6 @@ module.exports = grammar({
 			optional($.value_arguments),
 			optional($.class_body)
 		),
-		
-		// ==========
-		// Types
-		// ==========
-
-		_quest: $ => "?",
 
 		// ==========
 		// Statements
@@ -830,15 +826,19 @@ module.exports = grammar({
 			$.QUEST_WS
 		),
 
-		userType: $ => prec.right(seq(
-			$.simpleUserType,
-			repeat(seq(
-				//optional($.NLS),
-				$.DOT,
+		userType: $ => seq(
+			optional(seq(
+				$.userTypeWithDot,
 				optional($.NLS),
-				$.simpleUserType
-			))
-		)),
+			)),
+			$.simpleUserType,
+		),
+
+		userTypeWithDot: $ => seq(
+			$.userType,
+			//optional($.NLS),
+			$.DOT,
+		),
 
 		simpleUserType: $ => prec.right(seq(
 			$.simpleIdentifier,
@@ -868,9 +868,7 @@ module.exports = grammar({
 
 		functionType: $ => seq(
 			optional(seq(
-				$.receiverType,
-				optional($.NLS),
-				$.DOT,
+				$.receiverTypeWithDot,
 				optional($.NLS),
 			)),
 			$.functionTypeParameters,
@@ -912,6 +910,15 @@ module.exports = grammar({
 				$.parenthesizedType,
 				$.nullableType,
 				$.typeReference
+			)
+		)),
+
+		receiverTypeWithDot: $ => prec.right(seq(
+			choice(
+				seq($.parenthesizedType, optional($.NLS), $.DOT),
+				seq($.nullableType, optional($.NLS), $.DOT),
+				$.userTypeWithDot,
+				seq($.DYNAMIC, optional($.NLS), $.DOT)
 			)
 		)),
 
@@ -1155,7 +1162,7 @@ module.exports = grammar({
 			$.expression
 		),
 
-		primaryExpression: $ => prec(1, choice(
+		primaryExpression: $ => choice(
 			$.parenthesizedExpression,
 			$.simpleIdentifier,
 			$.literalConstant,
@@ -1165,7 +1172,7 @@ module.exports = grammar({
 			$.thisExpression,
 			$.superExpression,
 			$.jumpExpression
-		)),
+		),
 
 		parenthesizedExpression: $ => seq(
 			$.LPAREN,

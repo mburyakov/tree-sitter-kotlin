@@ -70,17 +70,7 @@
     "fields": {}
   },
   {
-    "type": "IS",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "LPAREN",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "OUT",
     "named": true,
     "fields": {}
   },
@@ -2505,11 +2495,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "inOperator",
           "named": true
         }
       ]
@@ -2902,11 +2896,11 @@
       "required": true,
       "types": [
         {
-          "type": "simpleIdentifier",
+          "type": "typeArguments",
           "named": true
         },
         {
-          "type": "typeArguments",
+          "type": "type_identifier",
           "named": true
         }
       ]
@@ -3427,6 +3421,194 @@
       "required": true,
       "types": [
         {
+          "type": "ABSTRACT",
+          "named": true
+        },
+        {
+          "type": "ACTUAL",
+          "named": true
+        },
+        {
+          "type": "ANNOTATION",
+          "named": true
+        },
+        {
+          "type": "BY",
+          "named": true
+        },
+        {
+          "type": "CATCH",
+          "named": true
+        },
+        {
+          "type": "COMPANION",
+          "named": true
+        },
+        {
+          "type": "CONST",
+          "named": true
+        },
+        {
+          "type": "CONSTRUCTOR",
+          "named": true
+        },
+        {
+          "type": "CROSSINLINE",
+          "named": true
+        },
+        {
+          "type": "DATA",
+          "named": true
+        },
+        {
+          "type": "DELEGATE",
+          "named": true
+        },
+        {
+          "type": "DYNAMIC",
+          "named": true
+        },
+        {
+          "type": "ENUM",
+          "named": true
+        },
+        {
+          "type": "EXPECT",
+          "named": true
+        },
+        {
+          "type": "EXTERNAL",
+          "named": true
+        },
+        {
+          "type": "FIELD",
+          "named": true
+        },
+        {
+          "type": "FILE",
+          "named": true
+        },
+        {
+          "type": "FINAL",
+          "named": true
+        },
+        {
+          "type": "FINALLY",
+          "named": true
+        },
+        {
+          "type": "GET",
+          "named": true
+        },
+        {
+          "type": "IMPORT",
+          "named": true
+        },
+        {
+          "type": "INFIX",
+          "named": true
+        },
+        {
+          "type": "INIT",
+          "named": true
+        },
+        {
+          "type": "INLINE",
+          "named": true
+        },
+        {
+          "type": "INNER",
+          "named": true
+        },
+        {
+          "type": "INTERNAL",
+          "named": true
+        },
+        {
+          "type": "Identifier",
+          "named": true
+        },
+        {
+          "type": "LATEINIT",
+          "named": true
+        },
+        {
+          "type": "NOINLINE",
+          "named": true
+        },
+        {
+          "type": "OPEN",
+          "named": true
+        },
+        {
+          "type": "OPERATOR",
+          "named": true
+        },
+        {
+          "type": "OUT",
+          "named": true
+        },
+        {
+          "type": "OVERRIDE",
+          "named": true
+        },
+        {
+          "type": "PARAM",
+          "named": true
+        },
+        {
+          "type": "PRIVATE",
+          "named": true
+        },
+        {
+          "type": "PROPERTY",
+          "named": true
+        },
+        {
+          "type": "PROTECTED",
+          "named": true
+        },
+        {
+          "type": "PUBLIC",
+          "named": true
+        },
+        {
+          "type": "RECEIVER",
+          "named": true
+        },
+        {
+          "type": "REIFIED",
+          "named": true
+        },
+        {
+          "type": "SEALED",
+          "named": true
+        },
+        {
+          "type": "SET",
+          "named": true
+        },
+        {
+          "type": "SETPARAM",
+          "named": true
+        },
+        {
+          "type": "SUSPEND",
+          "named": true
+        },
+        {
+          "type": "TAILREC",
+          "named": true
+        },
+        {
+          "type": "VARARG",
+          "named": true
+        },
+        {
+          "type": "WHERE",
+          "named": true
+        },
+        {
           "type": "simpleIdentifier",
           "named": true
         }
@@ -3473,7 +3655,7 @@
           "named": true
         },
         {
-          "type": "variance_modifier",
+          "type": "varianceModifier",
           "named": true
         }
       ]
@@ -3507,11 +3689,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "isOperator",
           "named": true
         }
       ]
@@ -3740,11 +3926,6 @@
     }
   },
   {
-    "type": "variance_modifier",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "visibility_modifier",
     "named": true,
     "fields": {},
@@ -3858,10 +4039,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "!in",
-    "named": false
   },
   {
     "type": "#!",
@@ -4108,6 +4285,10 @@
     "named": true
   },
   {
+    "type": "IS",
+    "named": true
+  },
+  {
     "type": "Identifier",
     "named": true
   },
@@ -4169,6 +4350,10 @@
   },
   {
     "type": "OPERATOR",
+    "named": true
+  },
+  {
+    "type": "OUT",
     "named": true
   },
   {
@@ -4276,10 +4461,6 @@
     "named": false
   },
   {
-    "type": "break@",
-    "named": false
-  },
-  {
     "type": "by",
     "named": false
   },
@@ -4293,10 +4474,6 @@
   },
   {
     "type": "constructor",
-    "named": false
-  },
-  {
-    "type": "continue@",
     "named": false
   },
   {
@@ -4340,19 +4517,11 @@
     "named": false
   },
   {
-    "type": "is",
-    "named": false
-  },
-  {
     "type": "line_string_literal",
     "named": true
   },
   {
     "type": "object",
-    "named": false
-  },
-  {
-    "type": "out",
     "named": false
   },
   {
@@ -4364,10 +4533,6 @@
     "named": false
   },
   {
-    "type": "return@",
-    "named": false
-  },
-  {
     "type": "set",
     "named": false
   },
@@ -4376,15 +4541,7 @@
     "named": false
   },
   {
-    "type": "super@",
-    "named": false
-  },
-  {
     "type": "this",
-    "named": false
-  },
-  {
-    "type": "this@",
     "named": false
   },
   {

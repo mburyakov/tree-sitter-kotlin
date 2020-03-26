@@ -510,14 +510,6 @@ module.exports = grammar({
 			$.class_body
 		),
 
-		this_expression: $ => "this",
-
-		super_expression: $ => seq(
-			"super",
-			// TODO optional(seq("<", $._type, ">")),
-			// TODO optional(seq("@", $.simple_identifier))
-		),
-
 		if_expression: $ => prec.right(seq(
 			"if",
 			"(", $._expression, ")",
@@ -597,9 +589,9 @@ module.exports = grammar({
 
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
 		
-		_in_operator: $ => choice("in", "!in"),
+		_in_operator: $ => $.inOperator,
 		
-		_is_operator: $ => choice("is", $._not_is),
+		_is_operator: $ => $.isOperator,
 
 		directly_assignable_expression: $ => choice(
 			$.simple_identifier
@@ -648,16 +640,11 @@ module.exports = grammar({
 			$.PROTECTED
 		),
 
-		variance_modifier: $ => choice(
-			"in",
-			"out"
-		),
-
 		type_parameter_modifiers: $ => prec.right(repeat1($._type_parameter_modifier)),
 
 		_type_parameter_modifier: $ => choice(
 			$.reification_modifier,
-			$.variance_modifier,
+			$.varianceModifier,
 			$.annotation
 		),
 
@@ -696,62 +683,11 @@ module.exports = grammar({
 		// ==========
 		
 		identifier: $ => sep1($.simple_identifier, "."),
-		
-		// ====================
-		// Lexical grammar
-		// ====================
-		
-		
-		// ==========
-		// General
-		// ==========
-		
-		// Source: https://github.com/tree-sitter/tree-sitter-java/blob/bc7124d924723e933b6ffeb5f22c4cf5248416b7/grammar.js#L1030
-		comment: $ => token(prec(PREC.COMMENT, choice(
-			seq("//", /.*/),
-			seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")
-		))),
 
 		// ==========
-		// Separators and operations
+		// Glue for expression part converted from antlr
 		// ==========
-		
-		
-		// ==========
-		// Keywords
-		// ==========
-		
-		_return_at: $ => seq("return@", $._lexical_identifier),
 
-		_continue_at: $ => seq("continue@", $._lexical_identifier),
-
-		_break_at: $ => seq("break@", $._lexical_identifier),
-
-		_this_at: $ => seq("this@", $._lexical_identifier),
-
-		_super_at: $ => seq("super@", $._lexical_identifier),
-
-		_not_is: $ => "!is",
-
-		_not_in: $ => "!in",
-
-		
-		// ==========
-		// Identifiers
-		// ==========
-		
-		_lexical_identifier: $ => choice(
-			/[a-zA-Z_][a-zA-Z_0-9]*/,
-			/`[^\r\n`]+`/
-		),
-
-
-
-
-
-
-
-		// glue for expression part converted from antlr
 		_expression: $ => $.expression,
 		constructor_invocation: $ => $.constructorInvocation,
 		value_arguments: $ => $.valueArguments,
@@ -846,7 +782,7 @@ module.exports = grammar({
 		),
 
 		simpleUserType: $ => prec.right(seq(
-			$.simpleIdentifier,
+			alias($.simpleIdentifier, $.type_identifier),
 			optional(seq(
 				//optional($.NLS),
 				$.typeArguments

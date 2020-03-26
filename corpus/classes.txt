@@ -289,7 +289,7 @@ data class Vector2D(
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier)))))))
       (NLS)
       (WS)
@@ -303,7 +303,7 @@ data class Vector2D(
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier)))))))
       (NLS))))
 
@@ -332,7 +332,7 @@ class D : SomeInterface
         (constructorInvocation
           (userType
             (simpleUserType
-              (simpleIdentifier
+              (type_identifier
                 (Identifier))))
           (valueArguments
             (LPAREN)
@@ -357,7 +357,7 @@ class D : SomeInterface
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier))))))))
     (WS)
     (COLON)
@@ -367,7 +367,7 @@ class D : SomeInterface
         (constructorInvocation
           (userType
             (simpleUserType
-              (simpleIdentifier
+              (type_identifier
                 (Identifier))))
           (valueArguments
             (LPAREN)
@@ -404,7 +404,7 @@ class D : SomeInterface
     (delegation_specifier
       (userType
         (simpleUserType
-          (simpleIdentifier
+          (type_identifier
             (Identifier)))))))
 
 ==================
@@ -439,7 +439,7 @@ class Something {
             (typeReference
               (userType
                 (simpleUserType
-                  (simpleIdentifier
+                  (type_identifier
                     (Identifier)))))))
         (WS)
         (WS)
@@ -474,7 +474,7 @@ class Something {
             (typeReference
               (userType
                 (simpleUserType
-                  (simpleIdentifier
+                  (type_identifier
                     (Identifier)))))
             (quest
               (QUEST_NO_WS)))))
@@ -492,7 +492,7 @@ class Something {
             (typeReference
               (userType
                 (simpleUserType
-                  (simpleIdentifier
+                  (type_identifier
                     (Identifier)))))))
         (WS)
         (getter
@@ -544,7 +544,7 @@ class Test(x: Int, y: Int) {
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier)))))))
       (WS)
       (class_parameter
@@ -556,7 +556,7 @@ class Test(x: Int, y: Int) {
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier))))))))
     (WS)
     (class_body
@@ -681,7 +681,7 @@ enum class Color(val rgb: Int) {
           (typeReference
             (userType
               (simpleUserType
-                (simpleIdentifier
+                (type_identifier
                   (Identifier))))))))
     (WS)
     (enum_class_body

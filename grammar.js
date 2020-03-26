@@ -418,7 +418,14 @@ module.exports = grammar({
 
 		control_structure_body: $ => choice($._block, $._statement),
 
-		_block: $ => prec(PREC.BLOCK, seq("{", optional($.statements), "}")),
+		_block: $ => seq(
+			"{",
+			optional(choice(
+				seq(optional($.NLS), $.statements),
+				$.semis
+			)),
+			"}",
+		),
 
 		_loop_statement: $ => choice(
 			$.for_statement,

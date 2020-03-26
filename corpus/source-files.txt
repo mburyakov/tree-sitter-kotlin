@@ -15,7 +15,7 @@ val x = 4
       (constructorInvocation
         (userType
           (simpleUserType
-            (simpleIdentifier
+            (type_identifier
               (Identifier))))
         (valueArguments
           (LPAREN)

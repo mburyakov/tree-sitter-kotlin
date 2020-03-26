@@ -267,9 +267,17 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "semis",
+          "named": true
+        },
         {
           "type": "statements",
           "named": true
@@ -405,7 +413,15 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "semis",
           "named": true
         },
         {
@@ -772,6 +788,10 @@
       "required": false,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "annotation",
           "named": true
         },
@@ -809,6 +829,10 @@
         },
         {
           "type": "property_declaration",
+          "named": true
+        },
+        {
+          "type": "semis",
           "named": true
         },
         {
@@ -1221,9 +1245,17 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "semis",
+          "named": true
+        },
         {
           "type": "statements",
           "named": true
@@ -1329,11 +1361,19 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "semis",
           "named": true
         },
         {
@@ -2604,6 +2644,10 @@
       "required": false,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "constructor_delegation_call",
           "named": true
         },
@@ -2621,6 +2665,10 @@
         },
         {
           "type": "parameter_modifiers",
+          "named": true
+        },
+        {
+          "type": "semis",
           "named": true
         },
         {

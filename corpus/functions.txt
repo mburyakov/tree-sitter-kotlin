@@ -14,6 +14,46 @@ fun main() {}
     (function_body )))
 
 ==================
+Empty multiline function body
+==================
+fun main() {
+
+}
+---
+
+(source_file
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (function_body
+      (semis
+        (NLS)))))
+
+==================
+Empty semicolon function body
+==================
+fun main() {
+  ;
+}
+---
+
+(source_file
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (function_body
+      (semis
+        (NLS)
+        (WS)
+        (NLS)))))
+
+==================
 Generic functions
 ==================
 <T> fun test() {}
@@ -59,7 +99,7 @@ fun sum(a: Int, b: Int) = a + b
         (typeReference 
           (userType 
             (simpleUserType 
-              (simpleIdentifier 
+              (type_identifier
                 (Identifier ))
               (typeArguments 
                 (LANGLE )
@@ -68,7 +108,7 @@ fun sum(a: Int, b: Int) = a + b
                     (typeReference 
                       (userType 
                         (simpleUserType 
-                          (simpleIdentifier 
+                          (type_identifier
                             (Identifier )))))))
                 (RANGLE )))))))
     (WS )
@@ -89,7 +129,7 @@ fun sum(a: Int, b: Int) = a + b
         (typeReference 
           (userType 
             (simpleUserType 
-              (simpleIdentifier 
+              (type_identifier
                 (Identifier )))))))
     (WS )
     (parameter 
@@ -101,7 +141,7 @@ fun sum(a: Int, b: Int) = a + b
         (typeReference 
           (userType 
             (simpleUserType 
-              (simpleIdentifier 
+              (type_identifier
                 (Identifier )))))))
     (WS )
     (function_body 
@@ -152,7 +192,7 @@ fun answerToTheUltimateQuestionOfLifeTheUniverseAndEverything(): Int = 42
       (typeReference 
         (userType 
           (simpleUserType 
-            (simpleIdentifier 
+            (type_identifier
               (Identifier ))))))
     (WS )
     (function_body 

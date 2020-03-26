@@ -364,7 +364,7 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                           (typeReference
                                             (userType
                                               (simpleUserType
-                                                (simpleIdentifier
+                                                (type_identifier
                                                   (Identifier)))))))
                                       (COMMA)
                                       (WS)
@@ -373,7 +373,7 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                           (typeReference
                                             (userType
                                               (simpleUserType
-                                                (simpleIdentifier
+                                                (type_identifier
                                                   (Identifier))
                                                 (typeArguments
                                                   (LANGLE)
@@ -382,7 +382,7 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                                       (typeReference
                                                         (userType
                                                           (simpleUserType
-                                                            (simpleIdentifier
+                                                            (type_identifier
                                                               (Identifier)))))
                                                       (quest
                                                         (QUEST_NO_WS))))

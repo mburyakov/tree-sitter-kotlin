@@ -31,7 +31,7 @@ something as A
                             (typeReference
                               (userType
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier))))))))))))))))))
   (semis
     (NLS))
@@ -60,7 +60,7 @@ something as A
                             (typeReference
                               (userType
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier)))))))))))))))))))
 
 ==================
@@ -97,11 +97,11 @@ something as Some.NestedType
                                 (userTypeWithDot
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier))))
                                   (DOT))
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier)))))))))))))))))))
 
 ==================
@@ -142,19 +142,19 @@ somethingElse as A.Deeply.Nested.Type
                                         (userTypeWithDot
                                           (userType
                                             (simpleUserType
-                                              (simpleIdentifier
+                                              (type_identifier
                                                 (Identifier))))
                                           (DOT))
                                         (simpleUserType
-                                          (simpleIdentifier
+                                          (type_identifier
                                             (Identifier))))
                                       (DOT))
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier))))
                                   (DOT))
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier)))))))))))))))))))
 
 ==================
@@ -189,7 +189,7 @@ something as Generic<*>
                             (typeReference
                               (userType
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier))
                                   (typeArguments
                                     (LANGLE)
@@ -230,7 +230,7 @@ something as Generic<A, Type>
                             (typeReference
                               (userType
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier))
                                   (typeArguments
                                     (LANGLE)
@@ -239,7 +239,7 @@ something as Generic<A, Type>
                                         (typeReference
                                           (userType
                                             (simpleUserType
-                                              (simpleIdentifier
+                                              (type_identifier
                                                 (Identifier)))))))
                                     (RANGLE))))))))))))))))))
   (semis
@@ -269,7 +269,7 @@ something as Generic<A, Type>
                             (typeReference
                               (userType
                                 (simpleUserType
-                                  (simpleIdentifier
+                                  (type_identifier
                                     (Identifier))
                                   (typeArguments
                                     (LANGLE)
@@ -278,7 +278,7 @@ something as Generic<A, Type>
                                         (typeReference
                                           (userType
                                             (simpleUserType
-                                              (simpleIdentifier
+                                              (type_identifier
                                                 (Identifier)))))))
                                     (COMMA)
                                     (WS)
@@ -287,7 +287,7 @@ something as Generic<A, Type>
                                         (typeReference
                                           (userType
                                             (simpleUserType
-                                              (simpleIdentifier
+                                              (type_identifier
                                                 (Identifier)))))))
                                     (RANGLE)))))))))))))))))))
 
@@ -332,7 +332,7 @@ consumer as (Int) -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier))))))))))))))))))))
   (semis
     (NLS))
@@ -365,7 +365,7 @@ consumer as (Int) -> Unit
                                   (typeReference
                                     (userType
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))))))
                                 (RPAREN))
                               (WS)
@@ -375,7 +375,7 @@ consumer as (Int) -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier)))))))))))))))))))))
 
 ==================
@@ -415,7 +415,7 @@ b as (Nested.Type, (Int)) -> Unit
                                   (typeReference
                                     (userType
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))))))
                                 (COMMA)
                                 (WS)
@@ -423,7 +423,7 @@ b as (Nested.Type, (Int)) -> Unit
                                   (typeReference
                                     (userType
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))
                                         (typeArguments
                                           (LANGLE)
@@ -436,7 +436,7 @@ b as (Nested.Type, (Int)) -> Unit
                                   (typeReference
                                     (userType
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))))))
                                 (RPAREN))
                               (WS)
@@ -446,7 +446,7 @@ b as (Nested.Type, (Int)) -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier))))))))))))))))))))
   (semis
     (NLS))
@@ -481,11 +481,11 @@ b as (Nested.Type, (Int)) -> Unit
                                       (userTypeWithDot
                                         (userType
                                           (simpleUserType
-                                            (simpleIdentifier
+                                            (type_identifier
                                               (Identifier))))
                                         (DOT))
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))))))
                                 (COMMA)
                                 (WS)
@@ -496,7 +496,7 @@ b as (Nested.Type, (Int)) -> Unit
                                       (typeReference
                                         (userType
                                           (simpleUserType
-                                            (simpleIdentifier
+                                            (type_identifier
                                               (Identifier))))))
                                     (RPAREN)))
                                 (RPAREN))
@@ -507,7 +507,7 @@ b as (Nested.Type, (Int)) -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier)))))))))))))))))))))
 
 ==================
@@ -551,7 +551,7 @@ a as (first: A, second: B) -> Unit
                                     (typeReference
                                       (userType
                                         (simpleUserType
-                                          (simpleIdentifier
+                                          (type_identifier
                                             (Identifier)))))))
                                 (COMMA)
                                 (WS)
@@ -564,7 +564,7 @@ a as (first: A, second: B) -> Unit
                                     (typeReference
                                       (userType
                                         (simpleUserType
-                                          (simpleIdentifier
+                                          (type_identifier
                                             (Identifier)))))))
                                 (RPAREN))
                               (WS)
@@ -574,7 +574,7 @@ a as (first: A, second: B) -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier)))))))))))))))))))))
 
 ==================
@@ -611,7 +611,7 @@ a as T.() -> Unit
                                 (userTypeWithDot
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier))))
                                   (DOT)))
                               (functionTypeParameters
@@ -624,7 +624,7 @@ a as T.() -> Unit
                                 (typeReference
                                   (userType
                                     (simpleUserType
-                                      (simpleIdentifier
+                                      (type_identifier
                                         (Identifier)))))))))))))))))))))
 
 ==================
@@ -654,7 +654,7 @@ Int::toString
                                     (typeReference
                                       (userType
                                         (simpleUserType
-                                          (simpleIdentifier
+                                          (type_identifier
                                             (Identifier))))))
                                   (COLONCOLON)
                                   (simpleIdentifier
@@ -687,7 +687,7 @@ Int?::toString
                                     (typeReference
                                       (userType
                                         (simpleUserType
-                                          (simpleIdentifier
+                                          (type_identifier
                                             (Identifier)))))
                                     (quest
                                       (QUEST_NO_WS)))
@@ -1019,7 +1019,7 @@ meth<Int>()
                                         (typeReference
                                           (userType
                                             (simpleUserType
-                                              (simpleIdentifier
+                                              (type_identifier
                                                 (Identifier)))))))
                                     (RANGLE))
                                   (valueArguments
@@ -1070,11 +1070,11 @@ val c = f as kotlin.Int?.() -> Int
                                       (userTypeWithDot
                                         (userType
                                           (simpleUserType
-                                            (simpleIdentifier
+                                            (type_identifier
                                               (Identifier))))
                                         (DOT))
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier)))))
                                   (quest
                                     (QUEST_NO_WS))
@@ -1089,7 +1089,7 @@ val c = f as kotlin.Int?.() -> Int
                                   (typeReference
                                     (userType
                                       (simpleUserType
-                                        (simpleIdentifier
+                                        (type_identifier
                                           (Identifier))))))))))))))))))))))
 
 ==================
@@ -1119,7 +1119,7 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
             (typeReference
               (userType
                 (simpleUserType
-                  (simpleIdentifier
+                  (type_identifier
                     (Identifier)))))
             (quest
               (QUEST_WS))))))
@@ -1195,7 +1195,7 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                   (userTypeWithDot
                     (userType
                       (simpleUserType
-                        (simpleIdentifier
+                        (type_identifier
                           (Identifier))
                         (typeArguments
                           (LANGLE)
@@ -1204,12 +1204,12 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                               (typeReference
                                 (userType
                                   (simpleUserType
-                                    (simpleIdentifier
+                                    (type_identifier
                                       (Identifier)))))))
                           (RANGLE))))
                     (DOT))
                   (simpleUserType
-                    (simpleIdentifier
+                    (type_identifier
                       (Identifier))))))
             (RPAREN))
           (WS)
@@ -1219,7 +1219,7 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
             (typeReference
               (userType
                 (simpleUserType
-                  (simpleIdentifier
+                  (type_identifier
                     (Identifier)))))
             (quest
               (QUEST_WS))))))
@@ -1248,11 +1248,11 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                                               (userTypeWithDot
                                                 (userType
                                                   (simpleUserType
-                                                    (simpleIdentifier
+                                                    (type_identifier
                                                       (Identifier))))
                                                 (DOT))
                                               (simpleUserType
-                                                (simpleIdentifier
+                                                (type_identifier
                                                   (Identifier))
                                                 (typeArguments
                                                   (LANGLE)
@@ -1261,12 +1261,12 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                                                       (typeReference
                                                         (userType
                                                           (simpleUserType
-                                                            (simpleIdentifier
+                                                            (type_identifier
                                                               (Identifier)))))))
                                                   (RANGLE))))
                                             (DOT))
                                           (simpleUserType
-                                            (simpleIdentifier
+                                            (type_identifier
                                               (Identifier))))))
                                     (COLONCOLON)
                                     (simpleIdentifier

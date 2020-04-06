@@ -80,6 +80,7 @@ module.exports = grammar({
 	],
 
 	extras: $ => [$.WS, $.Hidden],
+	word: $ => $.Identifier,
 
 	rules: {
 		// ====================
@@ -136,8 +137,10 @@ module.exports = grammar({
 		top_level_object: $ => seq($._declaration, optional($._semis)),
 
 		type_alias: $ => seq(
+			optional($.modifiers),
 			"typealias",
 			alias($.simple_identifier, $.type_identifier),
+			optional($.type_parameters),
 			"=",
 			$._type
 		),
@@ -282,18 +285,44 @@ module.exports = grammar({
 			optional(seq("=", $._expression))
 		),
 
-		function_declaration: $ => prec.right(seq( // TODO
+		function_declaration: $ => seq(
 			optional($.modifiers),
-			optional($.type_parameters),
 			"fun",
+			optional(seq(
+				optional($.NLS),
+				$.type_parameters
+			)),
+			optional(seq(
+				optional($.NLS),
+				$.receiverTypeWithDot,
+			)),
 			$.simple_identifier,
+			optional($.NLS),
 			$._function_value_parameters,
-			optional(seq(":", $._type)),
-			optional($.type_constraints),
-			optional($.function_body)
-		)),
+			optional(seq(
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$._type,
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.type_constraints,
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.function_body,
+			)),
+		),
 
-		function_body: $ => choice($._block, seq("=", $._expression)),
+		function_body: $ => choice(
+			$._block,
+			seq(
+				"=",
+				optional($.NLS),
+				$._expression
+			)
+		),
 		
 		variable_declaration: $ => seq(
 			// repeat($.annotation), TODO
@@ -743,21 +772,22 @@ module.exports = grammar({
 		type: $ => prec(1, seq(
 			optional($.typeModifiers),
 			choice(
-				$._nullableTypeOrParenTypeOrTypeReference,
+				$.nullableTypeOrParenTypeOrTypeReference,
 				$.functionType
 			)
 		)),
 
-		typeReference: $ => prec(PREC.TYPE_REFERENCE, choice(
+		typeReference: $ => choice(
 			$.userType,
 			$.DYNAMIC
-		)),
+		),
 
-		_nullableTypeOrParenTypeOrTypeReference: $ => prec.right(choice(
-			seq($.typeReference),
-			seq($.typeReference, prec.right(repeat1($.quest))),
+		nullableTypeOrParenTypeOrTypeReference: $ => prec.right(choice(
+			seq($.DYNAMIC),
+			seq($.userType),
+			seq($.userType, prec.right(repeat1($.NLSQUEST))),
 			seq($.parenthesizedType),
-			seq($.parenthesizedType, prec.right(repeat1($.quest))),
+			seq($.parenthesizedType, prec.right(repeat1($.NLSQUEST))),
 		)),
 
 		// nullableType: $ => prec.right(-1000, seq(
@@ -769,24 +799,22 @@ module.exports = grammar({
 		// 	repeat1($.quest)
 		// )),
 
-		quest: $ => choice(
-			$.QUEST_NO_WS,
-			$.QUEST_WS
-		),
+		quest: $ => $.NLSQUEST,
 
 		userType: $ => seq(
 			optional(seq(
-				$.userTypeWithDot,
-				optional($.NLS),
+				$.userType,
+				$.NLSDOT,
+				optional($.NLS)
 			)),
 			$.simpleUserType,
 		),
 
-		userTypeWithDot: $ => seq(
+		userTypeWithDot: $ => prec.right(seq(
 			$.userType,
-			//optional($.NLS),
-			$.DOT,
-		),
+			$.NLSDOT,
+			optional($.NLS),
+		)),
 
 		simpleUserType: $ => prec.right(seq(
 			alias($.simpleIdentifier, $.type_identifier),
@@ -817,7 +845,6 @@ module.exports = grammar({
 		functionType: $ => seq(
 			optional(seq(
 				$.receiverTypeWithDot,
-				optional($.NLS),
 			)),
 			$.functionTypeParameters,
 			optional($.NLS),
@@ -855,17 +882,18 @@ module.exports = grammar({
 
 		receiverType: $ => prec.right(seq(
 			choice(
-				$._nullableTypeOrParenTypeOrTypeReference,
+				$.nullableTypeOrParenTypeOrTypeReference,
 			)
 		)),
 
-		receiverTypeWithDot: $ => prec.right(seq(
-			choice(
-				seq($._nullableTypeOrParenTypeOrTypeReference, optional($.NLS), $.DOT),
-				$.userTypeWithDot,
-				seq($.DYNAMIC, optional($.NLS), $.DOT),
+		receiverTypeWithDot: $ => choice(
+			$.userTypeWithDot,
+			seq(
+				$.nullableTypeOrParenTypeOrTypeReference,
+				$.NLSDOT,
+				optional($.NLS),
 			)
-		)),
+		),
 
 		label: $ => prec.right(seq(
 			$.simpleIdentifier,
@@ -945,10 +973,7 @@ module.exports = grammar({
 			))
 		),
 
-		elvis: $ => seq(
-			$.QUEST_NO_WS,
-			$.COLON
-		),
+		elvis: $ => seq($.NLSQUEST, $.COLON),
 
 		infixFunctionCall: $ => prec.right(seq(
 			$.rangeExpression,
@@ -1288,10 +1313,7 @@ module.exports = grammar({
 			$.COLONCOLON
 		),
 
-		safeNav: $ => seq(
-			$.QUEST_NO_WS,
-			$.DOT
-		),
+		safeNav: $ => seq($.NLSQUEST, $.DOT),
 
 		typeModifiers: $ => prec.right(repeat1($.typeModifier)),
 
@@ -1454,6 +1476,8 @@ module.exports = grammar({
 
 		DOT: $ => token("."),
 
+		NLSDOT: $ => seq(prec.right(repeat(/(\n|\r\n)/)), "."),
+
 		COMMA: $ => token(","),
 
 		LPAREN: $ => token("("),
@@ -1580,7 +1604,9 @@ module.exports = grammar({
 			)
 		)),
 
-		QUEST_NO_WS: $ => token("?"),
+		NLSQUEST: $ => /(\n|\r\n)*\?/,
+
+		QUEST: $ => token("?"),
 
 		LANGLE: $ => token("<"),
 

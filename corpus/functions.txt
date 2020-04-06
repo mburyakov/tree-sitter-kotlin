@@ -56,7 +56,7 @@ fun main() {
 ==================
 Generic functions
 ==================
-<T> fun test() {}
+fun <T> test() {}
 ---
 
 (source_file 

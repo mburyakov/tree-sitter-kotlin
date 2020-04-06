@@ -75,6 +75,11 @@
     "fields": {}
   },
   {
+    "type": "NLSDOT",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "REIFIED",
     "named": true,
     "fields": {}
@@ -947,7 +952,7 @@
           "named": true
         },
         {
-          "type": "QUEST_NO_WS",
+          "type": "NLSQUEST",
           "named": true
         }
       ]
@@ -1392,6 +1397,14 @@
       "required": true,
       "types": [
         {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -1409,6 +1422,10 @@
         },
         {
           "type": "parameter_modifiers",
+          "named": true
+        },
+        {
+          "type": "receiverTypeWithDot",
           "named": true
         },
         {
@@ -2489,25 +2506,6 @@
     }
   },
   {
-    "type": "quest",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "QUEST_NO_WS",
-          "named": true
-        },
-        {
-          "type": "QUEST_WS",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "rangeExpression",
     "named": true,
     "fields": {},
@@ -2558,15 +2556,19 @@
       "required": true,
       "types": [
         {
+          "type": "DYNAMIC",
+          "named": true
+        },
+        {
+          "type": "NLSQUEST",
+          "named": true
+        },
+        {
           "type": "parenthesizedType",
           "named": true
         },
         {
-          "type": "quest",
-          "named": true
-        },
-        {
-          "type": "typeReference",
+          "type": "userType",
           "named": true
         }
       ]
@@ -2581,10 +2583,6 @@
       "required": true,
       "types": [
         {
-          "type": "DOT",
-          "named": true
-        },
-        {
           "type": "DYNAMIC",
           "named": true
         },
@@ -2593,19 +2591,19 @@
           "named": true
         },
         {
+          "type": "NLSDOT",
+          "named": true
+        },
+        {
+          "type": "NLSQUEST",
+          "named": true
+        },
+        {
           "type": "parenthesizedType",
           "named": true
         },
         {
-          "type": "quest",
-          "named": true
-        },
-        {
-          "type": "typeReference",
-          "named": true
-        },
-        {
-          "type": "userTypeWithDot",
+          "type": "userType",
           "named": true
         }
       ]
@@ -2629,7 +2627,7 @@
           "named": true
         },
         {
-          "type": "QUEST_NO_WS",
+          "type": "NLSQUEST",
           "named": true
         }
       ]
@@ -3232,6 +3230,14 @@
       "required": true,
       "types": [
         {
+          "type": "DYNAMIC",
+          "named": true
+        },
+        {
+          "type": "NLSQUEST",
+          "named": true
+        },
+        {
           "type": "functionType",
           "named": true
         },
@@ -3240,15 +3246,11 @@
           "named": true
         },
         {
-          "type": "quest",
-          "named": true
-        },
-        {
           "type": "typeModifiers",
           "named": true
         },
         {
-          "type": "typeReference",
+          "type": "userType",
           "named": true
         }
       ]
@@ -3379,25 +3381,6 @@
       "types": [
         {
           "type": "typeProjectionModifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "typeReference",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "DYNAMIC",
-          "named": true
-        },
-        {
-          "type": "userType",
           "named": true
         }
       ]
@@ -3806,10 +3789,6 @@
       "required": true,
       "types": [
         {
-          "type": "NLS",
-          "named": true
-        },
-        {
           "type": "simpleUserType",
           "named": true
         },
@@ -3829,7 +3808,11 @@
       "required": true,
       "types": [
         {
-          "type": "DOT",
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "NLSDOT",
           "named": true
         },
         {
@@ -4377,6 +4360,10 @@
     "named": true
   },
   {
+    "type": "NLSQUEST",
+    "named": true
+  },
+  {
     "type": "NOINLINE",
     "named": true
   },
@@ -4426,14 +4413,6 @@
   },
   {
     "type": "PUBLIC",
-    "named": true
-  },
-  {
-    "type": "QUEST_NO_WS",
-    "named": true
-  },
-  {
-    "type": "QUEST_WS",
     "named": true
   },
   {

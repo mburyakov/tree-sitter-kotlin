@@ -71,12 +71,14 @@ module.exports = grammar({
 		//[$.anonymous_function],
 
 		// Member access operator '::' conflicts with callable reference
-		[$.primaryExpression, $.simpleUserType, $.valueArgument],
+		//[$.primaryExpression, $.simpleUserType, $.valueArgument],
 		[$.primaryExpression, $.simpleUserType, $.parameter],
 		[$.primaryExpression, $.simpleUserType],
 
 		// type arguments conflict with comparison operator
 		[$.postfixUnaryExpression],
+
+		[$.typeReference, $.userType],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -769,52 +771,40 @@ module.exports = grammar({
 			$.type
 		),
 
-		type: $ => prec(1, seq(
+		type: $ => seq(
 			optional($.typeModifiers),
 			choice(
-				$.nullableTypeOrParenTypeOrTypeReference,
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference,
 				$.functionType
 			)
-		)),
+		),
 
 		typeReference: $ => choice(
 			$.userType,
 			$.DYNAMIC
 		),
 
-		nullableTypeOrParenTypeOrTypeReference: $ => prec.right(choice(
-			seq($.DYNAMIC),
-			seq($.userType),
-			seq($.userType, prec.right(repeat1($.NLSQUEST))),
-			seq($.parenthesizedType),
-			seq($.parenthesizedType, prec.right(repeat1($.NLSQUEST))),
+		nullableType: $ => prec.right(seq(
+			choice(
+				$.typeReference,
+				$.parenthesizedType
+			),
+			//optional($.NLS),
+			repeat1($.quest)
 		)),
-
-		// nullableType: $ => prec.right(-1000, seq(
-		// 	choice(
-		// 		$.typeReference,
-		// 		$.parenthesizedType
-		// 	),
-		// 	//optional($.NLS),
-		// 	repeat1($.quest)
-		// )),
 
 		quest: $ => $.NLSQUEST,
 
 		userType: $ => seq(
 			optional(seq(
 				$.userType,
-				$.NLSDOT,
+				alias($.NLSDOT, $.DOT),
 				optional($.NLS)
 			)),
 			$.simpleUserType,
 		),
-
-		userTypeWithDot: $ => prec.right(seq(
-			$.userType,
-			$.NLSDOT,
-			optional($.NLS),
-		)),
 
 		simpleUserType: $ => prec.right(seq(
 			alias($.simpleIdentifier, $.type_identifier),
@@ -880,17 +870,18 @@ module.exports = grammar({
 			$.RPAREN
 		)),
 
-		receiverType: $ => prec.right(seq(
+		receiverType: $ => seq(
 			choice(
-				$.nullableTypeOrParenTypeOrTypeReference,
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference
 			)
-		)),
+		),
 
 		receiverTypeWithDot: $ => choice(
-			$.userTypeWithDot,
 			seq(
-				$.nullableTypeOrParenTypeOrTypeReference,
-				$.NLSDOT,
+				$.receiverType,
+				alias($.NLSDOT, $.DOT),
 				optional($.NLS),
 			)
 		),
@@ -973,7 +964,8 @@ module.exports = grammar({
 			))
 		),
 
-		elvis: $ => seq($.NLSQUEST, $.COLON),
+		elvis: $ => "?:",
+		nullableCallable: $ => "?::",
 
 		infixFunctionCall: $ => prec.right(seq(
 			$.rangeExpression,
@@ -1236,8 +1228,21 @@ module.exports = grammar({
 		)),
 
 		callableReference: $ => seq(
-			optional(seq($.receiverType, optional($.NLS))),
-			$.COLONCOLON,
+			choice(
+				seq(
+					optional($.receiverType),
+					//optional($.NLS)
+					$.COLONCOLON,
+				),
+				seq(
+					$.parenthesizedType,
+					$.nullableCallable,
+				),
+				seq(
+					$.typeReference,
+					$.nullableCallable,
+				),
+			),
 			optional($.NLS),
 			choice(
 				$.simpleIdentifier,
@@ -1463,11 +1468,13 @@ module.exports = grammar({
 
 		Hidden: $ => token(choice(
 			seq(
+				repeat("\r\n"),
 				"/*",
 				repeat(/.|\n/),
 				"*/"
 			),
 			token(seq(
+				repeat("\r\n"),
 				"//",
 				repeat(/[^\r\n]/)
 			)),

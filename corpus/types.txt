@@ -1271,3 +1271,56 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                                     (COLONCOLON)
                                     (simpleIdentifier
                                       (Identifier))))))))))))))))))))
+
+==================
+Type alias
+==================
+typealias AliasSet<Item> = io.lacuna.bifurcan.Set<Item>
+---
+(source_file
+  (type_alias
+    (WS)
+    (type_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (type_parameters
+      (LANGLE)
+      (type_parameter
+        (type_identifier
+          (simpleIdentifier
+            (Identifier))))
+      (RANGLE))
+    (WS)
+    (WS)
+    (type
+      (userType
+        (userTypeWithDot
+          (userType
+            (userTypeWithDot
+              (userType
+                (userTypeWithDot
+                  (userType
+                    (simpleUserType
+                      (type_identifier
+                        (Identifier))))
+                  (NLSDOT))
+                (simpleUserType
+                  (type_identifier
+                    (Identifier))))
+              (NLSDOT))
+            (simpleUserType
+              (type_identifier
+                (Identifier))))
+          (NLSDOT))
+        (simpleUserType
+          (type_identifier
+            (Identifier))
+          (typeArguments
+            (LANGLE)
+            (typeProjection
+              (type
+                (userType
+                  (simpleUserType
+                    (type_identifier
+                      (Identifier))))))
+            (RANGLE)))))))

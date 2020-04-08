@@ -324,7 +324,7 @@ sum(1, 2)
                                     (RPAREN)))))))))))))))))))
 
 ==================
-Function calls
+Constructor with generics
 ==================
 val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
 ---

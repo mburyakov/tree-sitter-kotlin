@@ -75,11 +75,6 @@
     "fields": {}
   },
   {
-    "type": "NLSDOT",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "REIFIED",
     "named": true,
     "fields": {}
@@ -399,11 +394,23 @@
           "named": true
         },
         {
+          "type": "nullableCallable",
+          "named": true
+        },
+        {
+          "type": "parenthesizedType",
+          "named": true
+        },
+        {
           "type": "receiverType",
           "named": true
         },
         {
           "type": "simpleIdentifier",
+          "named": true
+        },
+        {
+          "type": "typeReference",
           "named": true
         }
       ]
@@ -934,25 +941,6 @@
         },
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "elvis",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "COLON",
-          "named": true
-        },
-        {
-          "type": "NLSQUEST",
           "named": true
         }
       ]
@@ -2033,6 +2021,29 @@
     }
   },
   {
+    "type": "nullableType",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parenthesizedType",
+          "named": true
+        },
+        {
+          "type": "quest",
+          "named": true
+        },
+        {
+          "type": "typeReference",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "object_declaration",
     "named": true,
     "fields": {},
@@ -2506,6 +2517,21 @@
     }
   },
   {
+    "type": "quest",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "NLSQUEST",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "rangeExpression",
     "named": true,
     "fields": {},
@@ -2552,15 +2578,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "DYNAMIC",
-          "named": true
-        },
-        {
-          "type": "NLSQUEST",
+          "type": "nullableType",
           "named": true
         },
         {
@@ -2568,7 +2590,7 @@
           "named": true
         },
         {
-          "type": "userType",
+          "type": "typeReference",
           "named": true
         }
       ]
@@ -2583,7 +2605,7 @@
       "required": true,
       "types": [
         {
-          "type": "DYNAMIC",
+          "type": "DOT",
           "named": true
         },
         {
@@ -2591,19 +2613,7 @@
           "named": true
         },
         {
-          "type": "NLSDOT",
-          "named": true
-        },
-        {
-          "type": "NLSQUEST",
-          "named": true
-        },
-        {
-          "type": "parenthesizedType",
-          "named": true
-        },
-        {
-          "type": "userType",
+          "type": "receiverType",
           "named": true
         }
       ]
@@ -3230,15 +3240,11 @@
       "required": true,
       "types": [
         {
-          "type": "DYNAMIC",
-          "named": true
-        },
-        {
-          "type": "NLSQUEST",
-          "named": true
-        },
-        {
           "type": "functionType",
+          "named": true
+        },
+        {
+          "type": "nullableType",
           "named": true
         },
         {
@@ -3250,7 +3256,7 @@
           "named": true
         },
         {
-          "type": "userType",
+          "type": "typeReference",
           "named": true
         }
       ]
@@ -3387,6 +3393,25 @@
     }
   },
   {
+    "type": "typeReference",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "DYNAMIC",
+          "named": true
+        },
+        {
+          "type": "userType",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type_alias",
     "named": true,
     "fields": {},
@@ -3395,11 +3420,19 @@
       "required": true,
       "types": [
         {
+          "type": "modifiers",
+          "named": true
+        },
+        {
           "type": "type",
           "named": true
         },
         {
           "type": "type_identifier",
+          "named": true
+        },
+        {
+          "type": "type_parameters",
           "named": true
         }
       ]
@@ -3789,30 +3822,15 @@
       "required": true,
       "types": [
         {
-          "type": "simpleUserType",
+          "type": "DOT",
           "named": true
         },
-        {
-          "type": "userTypeWithDot",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "userTypeWithDot",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
         {
           "type": "NLS",
           "named": true
         },
         {
-          "type": "NLSDOT",
+          "type": "simpleUserType",
           "named": true
         },
         {
@@ -4512,6 +4530,10 @@
     "named": false
   },
   {
+    "type": "elvis",
+    "named": true
+  },
+  {
     "type": "finally",
     "named": false
   },
@@ -4545,6 +4567,10 @@
   },
   {
     "type": "line_string_literal",
+    "named": true
+  },
+  {
+    "type": "nullableCallable",
     "named": true
   },
   {

@@ -1,5 +1,6 @@
 {
   "name": "kotlin",
+  "word": "Identifier",
   "rules": {
     "source_file": {
       "type": "SEQ",
@@ -304,6 +305,18 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "modifiers"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "STRING",
           "value": "typealias"
         },
@@ -315,6 +328,18 @@
           },
           "named": true,
           "value": "type_identifier"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "type_parameters"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -3713,38 +3738,42 @@
       ]
     },
     "type": {
-      "type": "PREC",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "typeModifiers"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_nullableTypeOrParenTypeOrTypeReference"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "functionType"
-              }
-            ]
-          }
-        ]
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "typeModifiers"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "parenthesizedType"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "nullableType"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "typeReference"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "functionType"
+            }
+          ]
+        }
+      ]
     },
     "typeReference": {
       "type": "CHOICE",
@@ -3759,53 +3788,19 @@
         }
       ]
     },
-    "_nullableTypeOrParenTypeOrTypeReference": {
+    "nullableType": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
-        "type": "CHOICE",
+        "type": "SEQ",
         "members": [
           {
-            "type": "SEQ",
+            "type": "CHOICE",
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "DYNAMIC"
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "userType"
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "userType"
+                "name": "typeReference"
               },
-              {
-                "type": "PREC_RIGHT",
-                "value": 0,
-                "content": {
-                  "type": "REPEAT1",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "NLSQUEST"
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
               {
                 "type": "SYMBOL",
                 "name": "parenthesizedType"
@@ -3813,24 +3808,11 @@
             ]
           },
           {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "parenthesizedType"
-              },
-              {
-                "type": "PREC_RIGHT",
-                "value": 0,
-                "content": {
-                  "type": "REPEAT1",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "NLSQUEST"
-                  }
-                }
-              }
-            ]
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "quest"
+            }
           }
         ]
       }
@@ -3850,7 +3832,28 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "userTypeWithDot"
+                  "name": "userType"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "NLSDOT"
+                  },
+                  "named": true,
+                  "value": "DOT"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "NLS"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
                 }
               ]
             },
@@ -3864,35 +3867,6 @@
           "name": "simpleUserType"
         }
       ]
-    },
-    "userTypeWithDot": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "userType"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "NLSDOT"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "NLS"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      }
     },
     "simpleUserType": {
       "type": "PREC_RIGHT",
@@ -4220,43 +4194,57 @@
       }
     },
     "receiverType": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_nullableTypeOrParenTypeOrTypeReference"
-              }
-            ]
-          }
-        ]
-      }
-    },
-    "receiverTypeWithDot": {
       "type": "SEQ",
       "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_nullableTypeOrParenTypeOrTypeReference"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "NLSDOT"
-        },
         {
           "type": "CHOICE",
           "members": [
             {
               "type": "SYMBOL",
-              "name": "NLS"
+              "name": "parenthesizedType"
             },
             {
-              "type": "BLANK"
+              "type": "SYMBOL",
+              "name": "nullableType"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "typeReference"
+            }
+          ]
+        }
+      ]
+    },
+    "receiverTypeWithDot": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "receiverType"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "NLSDOT"
+              },
+              "named": true,
+              "value": "DOT"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "NLS"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
             }
           ]
         }
@@ -4598,17 +4586,12 @@
       ]
     },
     "elvis": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "NLSQUEST"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "COLON"
-        }
-      ]
+      "type": "STRING",
+      "value": "?:"
+    },
+    "nullableCallable": {
+      "type": "STRING",
+      "value": "?::"
     },
     "infixFunctionCall": {
       "type": "PREC_RIGHT",
@@ -5807,31 +5790,50 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "receiverType"
-                },
-                {
                   "type": "CHOICE",
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "NLS"
+                      "name": "receiverType"
                     },
                     {
                       "type": "BLANK"
                     }
                   ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "COLONCOLON"
                 }
               ]
             },
             {
-              "type": "BLANK"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "parenthesizedType"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "nullableCallable"
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "typeReference"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "nullableCallable"
+                }
+              ]
             }
           ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "COLONCOLON"
         },
         {
           "type": "CHOICE",
@@ -6639,6 +6641,13 @@
             "type": "SEQ",
             "members": [
               {
+                "type": "REPEAT",
+                "content": {
+                  "type": "STRING",
+                  "value": "\r\n"
+                }
+              },
+              {
                 "type": "STRING",
                 "value": "/*"
               },
@@ -6660,6 +6669,13 @@
             "content": {
               "type": "SEQ",
               "members": [
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "STRING",
+                    "value": "\r\n"
+                  }
+                },
                 {
                   "type": "STRING",
                   "value": "//"
@@ -10778,11 +10794,6 @@
     [
       "primaryExpression",
       "simpleUserType",
-      "valueArgument"
-    ],
-    [
-      "primaryExpression",
-      "simpleUserType",
       "parameter"
     ],
     [
@@ -10791,6 +10802,10 @@
     ],
     [
       "postfixUnaryExpression"
+    ],
+    [
+      "typeReference",
+      "userType"
     ]
   ],
   "externals": [],

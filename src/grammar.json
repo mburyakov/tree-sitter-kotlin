@@ -2589,35 +2589,6 @@
         }
       ]
     },
-    "_string_literal": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "line_string_literal"
-        }
-      ]
-    },
-    "line_string_literal": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "\""
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^\\\\\"$]+"
-          },
-          {
-            "type": "STRING",
-            "value": "\""
-          }
-        ]
-      }
-    },
     "lambda_literal": {
       "type": "PREC",
       "value": 0,
@@ -5588,8 +5559,229 @@
       ]
     },
     "stringLiteral": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "lineStringLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "multiLineStringLiteral"
+        }
+      ]
+    },
+    "lineStringLiteral": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "lineStringContent"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "lineStringExpression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        }
+      ]
+    },
+    "multiLineStringLiteral": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "TRIPLE_QUOTE_OPEN"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "multiLineStringContent"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "multiLineStringExpression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "TRIPLE_QUOTE_CLOSE"
+        }
+      ]
+    },
+    "lineStringContent": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "LineStrText"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "LineStrEscapedChar"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "LineStrRef"
+        }
+      ]
+    },
+    "lineStringExpression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "${"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "multiLineStringContent": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "MultiLineStrText"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "MultiLineStrQuote"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "MultiLineStrRef"
+        }
+      ]
+    },
+    "multiLineStringExpression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "${"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "LineStrText": {
+      "type": "PATTERN",
+      "value": "[^\\\\\"$]+|\\$"
+    },
+    "MultiLineStrText": {
+      "type": "PATTERN",
+      "value": "[^\"$]+|\\$"
+    },
+    "LineStrEscapedChar": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "EscapedIdentifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "UniCharacterLiteral"
+        }
+      ]
+    },
+    "LineStrRef": {
       "type": "SYMBOL",
-      "name": "_string_literal"
+      "name": "FieldIdentifier"
+    },
+    "MultiLineStrQuote": {
+      "type": "PATTERN",
+      "value": "\"?\""
+    },
+    "MultiLineStrRef": {
+      "type": "SYMBOL",
+      "name": "FieldIdentifier"
+    },
+    "EscapedIdentifier": {
+      "type": "PATTERN",
+      "value": "\\\\[tbrn'\"\\\\$]"
+    },
+    "UniCharacterLiteral": {
+      "type": "PATTERN",
+      "value": "\\\\u[0-9a-fA-F]{4}"
+    },
+    "FieldIdentifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "$"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "simpleIdentifier"
+        }
+      ]
+    },
+    "TRIPLE_QUOTE_OPEN": {
+      "type": "PATTERN",
+      "value": "\"\"\""
+    },
+    "TRIPLE_QUOTE_CLOSE": {
+      "type": "PATTERN",
+      "value": "\"*\"\"\""
     },
     "thisExpression": {
       "type": "CHOICE",

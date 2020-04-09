@@ -503,13 +503,6 @@ module.exports = grammar({
 			$.lambda_literal
 		),
 
-		_string_literal: $ => choice(
-			$.line_string_literal,
-			//$.multi_line_string_literal
-		),
-
-		line_string_literal: $ => token(seq('"', /[^\\"$]+/, '"')),
-
 		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
 			optional(seq(
@@ -1178,11 +1171,72 @@ module.exports = grammar({
 			$.UnsignedLiteral
 		),
 
-		stringLiteral: $ => $._string_literal,
-		// stringLiteral: $ => choice(
-		// 	$.lineStringLiteral,
-		// 	$.multiLineStringLiteral
-		// ),
+		stringLiteral: $ => choice(
+			$.lineStringLiteral,
+			$.multiLineStringLiteral
+		),
+
+		lineStringLiteral: $ => seq(
+			"\"",
+			repeat(choice(
+				$.lineStringContent,
+				$.lineStringExpression,
+			)),
+			"\"",
+		),
+
+		multiLineStringLiteral: $ => seq(
+			$.TRIPLE_QUOTE_OPEN,
+			repeat(choice(
+				$.multiLineStringContent,
+				$.multiLineStringExpression,
+			)),
+			$.TRIPLE_QUOTE_CLOSE,
+		),
+
+		lineStringContent: $ => choice(
+			$.LineStrText,
+			$.LineStrEscapedChar,
+			$.LineStrRef,
+		),
+
+		lineStringExpression: $ => seq(
+			"${",
+			$.expression,
+			"}",
+		),
+
+		multiLineStringContent: $ => choice(
+			$.MultiLineStrText,
+			$.MultiLineStrQuote,
+			$.MultiLineStrRef,
+		),
+
+		multiLineStringExpression: $ => seq(
+			"${",
+			optional($.NLS),
+			$.expression,
+			optional($.NLS),
+			"}",
+		),
+
+		LineStrText: $ => /[^\\"$]+|\$/,
+		MultiLineStrText: $ => /[^"$]+|\$/,
+		LineStrEscapedChar: $ => choice(
+			$.EscapedIdentifier,
+			$.UniCharacterLiteral,
+		),
+		LineStrRef: $ => $.FieldIdentifier,
+		MultiLineStrQuote: $ => /"?"/,
+		MultiLineStrRef: $ => $.FieldIdentifier,
+		EscapedIdentifier: $ => /\\[tbrn'"\\$]/,
+		UniCharacterLiteral: $ => /\\u[0-9a-fA-F]{4}/,
+		FieldIdentifier: $ => seq(
+			"$",
+			$.simpleIdentifier,
+		),
+		TRIPLE_QUOTE_OPEN: $ => /"""/,
+		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
 
 		thisExpression: $ => choice(
 			$.THIS,

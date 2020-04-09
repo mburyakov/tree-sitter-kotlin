@@ -264,3 +264,200 @@ Real literals
                                 (literalConstant 
                                   (RealLiteral ))))))))))))))))))
 
+==================
+String literals
+==================
+"Hello World!"
+"""
+This is a "multiline"
+string.
+"""
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (stringLiteral
+                                  (lineStringLiteral
+                                    (lineStringContent
+                                      (LineStrText)))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (stringLiteral
+                                  (multiLineStringLiteral
+                                    (TRIPLE_QUOTE_OPEN)
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (multiLineStringContent
+                                      (MultiLineStrQuote))
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (multiLineStringContent
+                                      (MultiLineStrQuote))
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (TRIPLE_QUOTE_CLOSE)))))))))))))))))))
+
+==================
+String interpolation
+==================
+"Sample $string.interpolation literal"
+"Sample ${"string.interpolation"} literal"
+"""
+Multiline
+${"""string interpolation"""} $literal
+"""
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (stringLiteral
+                                  (lineStringLiteral
+                                    (lineStringContent
+                                      (LineStrText))
+                                    (lineStringContent
+                                      (LineStrRef
+                                        (FieldIdentifier
+                                          (simpleIdentifier
+                                            (Identifier)))))
+                                    (lineStringContent
+                                      (LineStrText)))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (stringLiteral
+                                  (lineStringLiteral
+                                    (lineStringContent
+                                      (LineStrText))
+                                    (lineStringExpression
+                                      (expression
+                                        (disjunction
+                                          (conjunction
+                                            (equality
+                                              (comparison
+                                                (infixOperation
+                                                  (elvisExpression
+                                                    (infixFunctionCall
+                                                      (rangeExpression
+                                                        (additiveExpression
+                                                          (multiplicativeExpression
+                                                            (asExpression
+                                                              (prefixUnaryExpression
+                                                                (postfixUnaryExpression
+                                                                  (primaryExpression
+                                                                    (stringLiteral
+                                                                      (lineStringLiteral
+                                                                        (lineStringContent
+                                                                          (LineStrText))))))))))))))))))))
+                                    (lineStringContent
+                                      (LineStrText)))))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (stringLiteral
+                                  (multiLineStringLiteral
+                                    (TRIPLE_QUOTE_OPEN)
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (multiLineStringExpression
+                                      (expression
+                                        (disjunction
+                                          (conjunction
+                                            (equality
+                                              (comparison
+                                                (infixOperation
+                                                  (elvisExpression
+                                                    (infixFunctionCall
+                                                      (rangeExpression
+                                                        (additiveExpression
+                                                          (multiplicativeExpression
+                                                            (asExpression
+                                                              (prefixUnaryExpression
+                                                                (postfixUnaryExpression
+                                                                  (primaryExpression
+                                                                    (stringLiteral
+                                                                      (multiLineStringLiteral
+                                                                        (TRIPLE_QUOTE_OPEN)
+                                                                        (multiLineStringContent
+                                                                          (MultiLineStrText))
+                                                                        (TRIPLE_QUOTE_CLOSE)))))))))))))))))))
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (multiLineStringContent
+                                      (MultiLineStrRef
+                                        (FieldIdentifier
+                                          (simpleIdentifier
+                                            (Identifier)))))
+                                    (multiLineStringContent
+                                      (MultiLineStrText))
+                                    (TRIPLE_QUOTE_CLOSE)))))))))))))))))))

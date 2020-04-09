@@ -492,3 +492,139 @@ Infix expressions
                                                                         (IntegerLiteral)))))))))))))))))
                                         (semis
                                           (NLS))))))))))))))))))))))
+
+==================
+Properties with getters and setters
+==================
+x = 2
+val x
+    ;
+    public get
+val y = 5
+    set (
+    v
+    )
+
+    {
+  field = v
+    }
+---
+(source_file
+  (assignment
+    (directly_assignable_expression
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier))))
+    (WS)
+    (ASSIGNMENT)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))))))))))
+  (semis
+    (NLS))
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier))))
+    (semi
+      (NLS))
+    (WS)
+    (semi
+      (NLS))
+    (WS)
+    (getter
+      (modifiers
+        (visibility_modifier
+          (PUBLIC)))
+      (WS)))
+  (semis
+    (NLS))
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier))))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral)))))))))))))))))
+    (semi
+      (NLS))
+    (WS)
+    (setter
+      (WS)
+      (NLS)
+      (WS)
+      (parameter_with_optional_type
+        (simple_identifier
+          (simpleIdentifier
+            (Identifier))))
+      (NLS)
+      (WS)
+      (NLS)
+      (WS)
+      (function_body
+        (NLS)
+        (WS)
+        (statements
+          (assignment
+            (directly_assignable_expression
+              (simple_identifier
+                (simpleIdentifier
+                  (FIELD))))
+            (WS)
+            (ASSIGNMENT)
+            (WS)
+            (expression
+              (disjunction
+                (conjunction
+                  (equality
+                    (comparison
+                      (infixOperation
+                        (elvisExpression
+                          (infixFunctionCall
+                            (rangeExpression
+                              (additiveExpression
+                                (multiplicativeExpression
+                                  (asExpression
+                                    (prefixUnaryExpression
+                                      (postfixUnaryExpression
+                                        (primaryExpression
+                                          (simpleIdentifier
+                                            (Identifier))))))))))))))))))
+          (semis
+            (NLS)))
+        (WS)))))

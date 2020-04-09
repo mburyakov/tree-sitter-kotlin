@@ -79,6 +79,13 @@ module.exports = grammar({
 		[$.postfixUnaryExpression],
 
 		[$.typeReference, $.userType],
+
+        // getter can be confused with subsequent declaration:
+		// val x = 5 • public get
+		[$.property_declaration],
+
+		// to recognize such as 'label@x++'
+		[$.label, $.primaryExpression],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -332,11 +339,17 @@ module.exports = grammar({
 			optional(seq(":", $._type))
 		),
 
-		property_declaration: $ => prec.right(seq(
+		property_declaration: $ => seq(
 			optional($.modifiers),
 			choice("val", "var"),
-			optional($.type_parameters),
-			// TODO: Receiver type
+			optional(seq(
+				optional($.NLS),
+				$.type_parameters
+			)),
+			optional(seq(
+				optional($.NLS),
+				$.receiverTypeWithDot,
+			)),
 			$.variable_declaration, // TODO: Multi-variable-declaration
 			optional($.type_constraints),
 			optional(choice(
@@ -344,35 +357,74 @@ module.exports = grammar({
 				$.property_delegate
 			)),
 			choice(
-				// TODO: Getter-setter combinations
-				optional($.getter),
-				optional($.setter)
+				seq(
+					optional(seq(
+						//$.NLS,
+						$.semi,
+					)),
+					optional($.getter),
+					optional(seq(
+						//optional($.NLS),
+						optional($.semi),
+						$.setter,
+					)),
+				),
+				seq(
+					optional(seq(
+						//$.NLS,
+						$.semi,
+					)),
+					optional($.setter),
+					optional(seq(
+						//optional($.NLS),
+						optional($.semi),
+						$.getter,
+					)),
+				),
 			)
-		)),
+		),
 
 		property_delegate: $ => seq("by", $._expression),
 
-		getter: $ => prec.right(seq(
-			// optional(seq($._semi, $.modifiers)), // TODO
+		getter: $ => seq(
+			optional($.modifiers),
 			"get",
 			optional(seq(
-				"(", ")",
-				optional(seq(":", $._type)),
+				//optional($.NLS),
+				"(",
+				optional($.NLS),
+				")",
+				optional(seq(
+					optional($.NLS),
+					":",
+					optional($.NLS),
+					$.type
+				)),
+				optional($.NLS),
 				$.function_body
 			))
-		)),
+		),
 
-		setter: $ => prec.right(seq(
-			// optional(seq($._semi, $.modifiers)), // TODO
+		setter: $ => seq(
+			optional($.modifiers),
 			"set",
 			optional(seq(
+				//optional($.NLS),
 				"(",
+				optional($.NLS),
 				$.parameter_with_optional_type,
+				optional($.NLS),
 				")",
-				optional(seq(":", $._type)),
+				optional(seq(
+					optional($.NLS),
+					":",
+					optional($.NLS),
+					$._type
+				)),
+				optional($.NLS),
 				$.function_body
 			))
-		)),
+		),
 
 		parameters_with_optional_type: $ => seq("(", sep1($.parameter_with_optional_type, ","), ")"),
 
@@ -730,7 +782,7 @@ module.exports = grammar({
 		_simple_user_type: $ => $.simpleUserType,
 		_semi: $ => $.semi,
 		_semis: $ => $.semis,
-		semi: $ => choice(seq(";", optional($.NLS)), $.NLS),
+		semi: $ => prec.right(choice(seq(";", optional($.NLS)), $.NLS)),
 		semis: $ => choice(
 			seq(
 				repeat($.NLS),

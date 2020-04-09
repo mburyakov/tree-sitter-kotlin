@@ -1554,7 +1554,15 @@
       "required": false,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "function_body",
+          "named": true
+        },
+        {
+          "type": "modifiers",
           "named": true
         },
         {
@@ -2642,6 +2650,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -2655,6 +2667,14 @@
         },
         {
           "type": "property_delegate",
+          "named": true
+        },
+        {
+          "type": "receiverTypeWithDot",
+          "named": true
+        },
+        {
+          "type": "semi",
           "named": true
         },
         {
@@ -2915,7 +2935,15 @@
       "required": false,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "function_body",
+          "named": true
+        },
+        {
+          "type": "modifiers",
           "named": true
         },
         {

@@ -30,6 +30,10 @@ const PREC = {
 	// 'internal' 'open' 'class' -- not infix call but class declaration
 	SIMPLE_IDENTIDIER: -2,
 	TYPE_REFERENCE: -1,
+
+	// lambda literal without parameters look same as block, block is preferred when both suitable (inside 'do { } while (true) ')
+	BLOCK: 0,
+	LAMBDA_LITERAL: -1,
 };
 
 module.exports = grammar({
@@ -72,6 +76,10 @@ module.exports = grammar({
 		// to distinguish expression/assignableExpression/directlyAssignableExpression
 		[$.prefixUnaryExpression, $.directlyAssignableExpression],
 		[$.asExpression, $.assignableExpression],
+
+		// for such anonymous functions as 'fun (Int).():Int'
+		[$.parameter_modifiers, $.typeModifier],
+		[$.simpleUserType, $.parameterWithOptionalType]
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -261,7 +269,7 @@ module.exports = grammar({
 			$.secondary_constructor
 		),
 
-		anonymous_initializer: $ => seq("init", $._block),
+		anonymous_initializer: $ => seq("init", $.block),
 
 		companion_object: $ => seq(
 			optional($.modifiers),
@@ -311,7 +319,7 @@ module.exports = grammar({
 		),
 
 		function_body: $ => choice(
-			$._block,
+			$.block,
 			seq(
 				"=",
 				optional($.NLS),
@@ -398,7 +406,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				"(",
 				optional($.NLS),
-				$.parameter_with_optional_type,
+				$.parameterWithOptionalType,
 				optional($.NLS),
 				")",
 				optional(seq(
@@ -412,12 +420,31 @@ module.exports = grammar({
 			))
 		),
 
-		parameters_with_optional_type: $ => seq("(", sep1($.parameter_with_optional_type, ","), ")"),
+		parametersWithOptionalType: $ => seq(
+			$.LPAREN,
+			optional(seq(
+				optional($.NLS),
+				$.parameterWithOptionalType,
+				repeat(seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS),
+					$.parameterWithOptionalType,
+				)),
+			)),
+			optional($.NLS),
+			$.RPAREN,
+		),
 
-		parameter_with_optional_type: $ => seq(
+		parameterWithOptionalType: $ => seq(
 			optional($.parameter_modifiers),
-			$.simple_identifier,
-			optional(seq(":", $._type))
+			$.simpleIdentifier,
+			optional(seq(
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$._type
+			))
 		),
 
 		object_declaration: $ => prec.right(seq(
@@ -433,7 +460,7 @@ module.exports = grammar({
 			"constructor",
 			$._function_value_parameters,
 			optional(seq(":", $.constructor_delegation_call)),
-			optional($._block)
+			optional($.block)
 		),
 
 		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
@@ -485,16 +512,16 @@ module.exports = grammar({
 			)
 		),
 
-		control_structure_body: $ => choice($._block, $._statement),
+		control_structure_body: $ => choice($.block, $._statement),
 
-		_block: $ => seq(
+		block: $ => prec(PREC.BLOCK, seq(
 			"{",
 			optional(choice(
 				seq(optional($.NLS), $.statements),
 				$.semis
 			)),
 			"}",
-		),
+		)),
 
 		_loop_statement: $ => choice(
 			$.for_statement,
@@ -551,7 +578,7 @@ module.exports = grammar({
 			$.lambda_literal
 		),
 
-		lambda_literal: $ => seq(
+		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
 			optional(seq(
 				optional($.NLS),
@@ -563,7 +590,7 @@ module.exports = grammar({
 				$.statements,
 			)),
 			"}",
-		),
+		)),
 
 		lambda_parameters: $ => sep1($._lambda_parameter, ","),
 
@@ -573,9 +600,26 @@ module.exports = grammar({
 
 		anonymous_function: $ => seq(
 			"fun",
-			optional(seq(sep1($._simple_user_type, "."), ".")), // TODO
-			"(", ")",
-			optional($.function_body)
+			optional(seq(
+				optional($.NLS),
+				$.receiverTypeWithDot,
+			)),
+			$.parametersWithOptionalType,
+			optional(seq(
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$._type,
+			)),
+			// optional(seq(
+			// 	optional($.NLS),
+			// 	$.type_constraints,
+			// )),
+			// optional(seq(
+			// 	//optional($.NLS),
+			// 	$.function_body,
+			// )),
+			$.function_body
 		),
 
 		_function_literal: $ => choice(
@@ -646,7 +690,7 @@ module.exports = grammar({
 
 		try_expression: $ => seq(
 			"try",
-			$._block,
+			$.block,
 			choice(
 				seq(repeat1($.catch_block), optional($.finally_block)),
 				$.finally_block
@@ -661,10 +705,10 @@ module.exports = grammar({
 			":",
 			$._type,
 			")",
-			$._block,
+			$.block,
 		),
 
-		finally_block: $ => seq("finally", $._block),
+		finally_block: $ => seq("finally", $.block),
 
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
 		
@@ -1212,7 +1256,7 @@ module.exports = grammar({
 			//$.if_expression,
 			//$.when_expression,
 			//$.try_expression,
-			// jumpExpression was move to the top, see expression rule
+			// jumpExpression was moved to the top, see expression rule
 		),
 
 		parenthesizedExpression: $ => seq(

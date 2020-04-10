@@ -321,14 +321,30 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "function_body",
           "named": true
         },
         {
-          "type": "simpleUserType",
+          "type": "parametersWithOptionalType",
+          "named": true
+        },
+        {
+          "type": "receiverTypeWithDot",
+          "named": true
+        },
+        {
+          "type": "type",
           "named": true
         }
       ]
@@ -339,19 +355,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "NLS",
-          "named": true
-        },
-        {
-          "type": "semis",
-          "named": true
-        },
-        {
-          "type": "statements",
+          "type": "block",
           "named": true
         }
       ]
@@ -477,6 +485,29 @@
     }
   },
   {
+    "type": "block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "semis",
+          "named": true
+        },
+        {
+          "type": "statements",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "callSuffix",
     "named": true,
     "fields": {},
@@ -551,23 +582,15 @@
       "required": true,
       "types": [
         {
-          "type": "NLS",
-          "named": true
-        },
-        {
           "type": "annotation",
           "named": true
         },
         {
-          "type": "semis",
+          "type": "block",
           "named": true
         },
         {
           "type": "simple_identifier",
-          "named": true
-        },
-        {
-          "type": "statements",
           "named": true
         },
         {
@@ -923,18 +946,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
-        {
-          "type": "NLS",
-          "named": true
-        },
         {
           "type": "annotation",
           "named": true
         },
         {
           "type": "assignment",
+          "named": true
+        },
+        {
+          "type": "block",
           "named": true
         },
         {
@@ -967,14 +990,6 @@
         },
         {
           "type": "property_declaration",
-          "named": true
-        },
-        {
-          "type": "semis",
-          "named": true
-        },
-        {
-          "type": "statements",
           "named": true
         },
         {
@@ -1376,19 +1391,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "NLS",
-          "named": true
-        },
-        {
-          "type": "semis",
-          "named": true
-        },
-        {
-          "type": "statements",
+          "type": "block",
           "named": true
         }
       ]
@@ -1493,22 +1500,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "NLS",
           "named": true
         },
         {
+          "type": "block",
+          "named": true
+        },
+        {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "semis",
-          "named": true
-        },
-        {
-          "type": "statements",
           "named": true
         }
       ]
@@ -2389,6 +2392,37 @@
     }
   },
   {
+    "type": "parameterWithOptionalType",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "parameter_modifiers",
+          "named": true
+        },
+        {
+          "type": "simpleIdentifier",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "parameter_modifier",
     "named": true,
     "fields": {},
@@ -2431,7 +2465,7 @@
     }
   },
   {
-    "type": "parameter_with_optional_type",
+    "type": "parametersWithOptionalType",
     "named": true,
     "fields": {},
     "children": {
@@ -2439,15 +2473,23 @@
       "required": true,
       "types": [
         {
-          "type": "parameter_modifiers",
+          "type": "COMMA",
           "named": true
         },
         {
-          "type": "simple_identifier",
+          "type": "LPAREN",
           "named": true
         },
         {
-          "type": "type",
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
+          "type": "parameterWithOptionalType",
           "named": true
         }
       ]
@@ -2990,7 +3032,7 @@
       "required": false,
       "types": [
         {
-          "type": "NLS",
+          "type": "block",
           "named": true
         },
         {
@@ -3011,14 +3053,6 @@
         },
         {
           "type": "parameter_modifiers",
-          "named": true
-        },
-        {
-          "type": "semis",
-          "named": true
-        },
-        {
-          "type": "statements",
           "named": true
         }
       ]
@@ -3075,7 +3109,7 @@
           "named": true
         },
         {
-          "type": "parameter_with_optional_type",
+          "type": "parameterWithOptionalType",
           "named": true
         },
         {

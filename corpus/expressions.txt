@@ -30,7 +30,9 @@ val text = "a " +
                               (postfixUnaryExpression
                                 (primaryExpression
                                   (stringLiteral
-                                    (line_string_literal)))))))
+                                    (lineStringLiteral
+                                      (lineStringContent
+                                        (LineStrText)))))))))
                         (WS)
                         (additiveOperator
                           (ADD))
@@ -42,7 +44,9 @@ val text = "a " +
                               (postfixUnaryExpression
                                 (primaryExpression
                                   (stringLiteral
-                                    (line_string_literal)))))))))))))))))))
+                                    (lineStringLiteral
+                                      (lineStringContent
+                                        (LineStrText)))))))))))))))))))))
 
 ==================
 Incorrect multiline expression
@@ -76,7 +80,9 @@ val text = "a "
                               (postfixUnaryExpression
                                 (primaryExpression
                                   (stringLiteral
-                                    (line_string_literal))))))))))))))))))
+                                    (lineStringLiteral
+                                      (lineStringContent
+                                        (LineStrText))))))))))))))))))))
   (semis
     (NLS))
   (WS)
@@ -100,7 +106,9 @@ val text = "a "
                             (postfixUnaryExpression
                               (primaryExpression
                                 (stringLiteral
-                                  (line_string_literal))))))))))))))))))
+                                  (lineStringLiteral
+                                    (lineStringContent
+                                      (LineStrText))))))))))))))))))))
 
 ==================
 Method call
@@ -125,17 +133,17 @@ ob.callMethod(16 + 14 / 5)
                             (postfixUnaryExpression
                               (primaryExpression
                                 (simpleIdentifier
-                                  (Identifier )))
+                                  (Identifier)))
                               (postfixUnarySuffix
                                 (navigationSuffix
                                   (memberAccessOperator
-                                    (DOT ))
+                                    (DOT))
                                   (simpleIdentifier
-                                    (Identifier ))))
+                                    (Identifier))))
                               (postfixUnarySuffix
                                 (callSuffix
                                   (valueArguments
-                                    (LPAREN )
+                                    (LPAREN)
                                     (valueArgument
                                       (expression
                                         (disjunction
@@ -153,29 +161,29 @@ ob.callMethod(16 + 14 / 5)
                                                                 (postfixUnaryExpression
                                                                   (primaryExpression
                                                                     (literalConstant
-                                                                      (IntegerLiteral )))))))
-                                                          (WS )
+                                                                      (IntegerLiteral)))))))
+                                                          (WS)
                                                           (additiveOperator
-                                                            (ADD ))
-                                                          (WS )
+                                                            (ADD))
+                                                          (WS)
                                                           (multiplicativeExpression
                                                             (asExpression
                                                               (prefixUnaryExpression
                                                                 (postfixUnaryExpression
                                                                   (primaryExpression
                                                                     (literalConstant
-                                                                      (IntegerLiteral ))))))
-                                                            (WS )
+                                                                      (IntegerLiteral))))))
+                                                            (WS)
                                                             (multiplicativeOperator
-                                                              (DIV ))
-                                                            (WS )
+                                                              (DIV))
+                                                            (WS)
                                                             (asExpression
                                                               (prefixUnaryExpression
                                                                 (postfixUnaryExpression
                                                                   (primaryExpression
                                                                     (literalConstant
-                                                                      (IntegerLiteral ))))))))))))))))))
-                                    (RPAREN )))))))))))))))))))
+                                                                      (IntegerLiteral))))))))))))))))))
+                                    (RPAREN)))))))))))))))))))
 
 ==================
 Multiplication expression
@@ -258,7 +266,9 @@ sum(1, 2)
                                                                 (postfixUnaryExpression
                                                                   (primaryExpression
                                                                     (stringLiteral
-                                                                      (line_string_literal))))))))))))))))))
+                                                                      (lineStringLiteral
+                                                                        (lineStringContent
+                                                                          (LineStrText))))))))))))))))))))
                                     (RPAREN))))))))))))))))))
   (semis
     (NLS))
@@ -379,13 +389,14 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
                                                   (LANGLE)
                                                   (typeProjection
                                                     (type
-                                                      (typeReference
-                                                        (userType
-                                                          (simpleUserType
-                                                            (type_identifier
-                                                              (Identifier)))))
-                                                      (quest
-                                                        (QUEST_NO_WS))))
+                                                      (nullableType
+                                                        (typeReference
+                                                          (userType
+                                                            (simpleUserType
+                                                              (type_identifier
+                                                                (Identifier)))))
+                                                        (quest
+                                                          (NLSQUEST)))))
                                                   (RANGLE)))))))
                                       (RANGLE))
                                     (valueArguments
@@ -399,6 +410,7 @@ Infix expressions
     3
 }
 ---
+
 (source_file
   (expression
     (disjunction
@@ -509,12 +521,12 @@ val y = 5
   field = v
     }
 ---
+
 (source_file
   (assignment
-    (directly_assignable_expression
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+    (directlyAssignableExpression
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (ASSIGNMENT)
     (WS)
@@ -588,43 +600,43 @@ val y = 5
       (WS)
       (NLS)
       (WS)
-      (parameter_with_optional_type
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+      (parameterWithOptionalType
+        (simpleIdentifier
+          (Identifier)))
       (NLS)
       (WS)
       (NLS)
       (WS)
       (function_body
-        (NLS)
-        (WS)
-        (statements
-          (assignment
-            (directly_assignable_expression
-              (simple_identifier
+        (block
+          (NLS)
+          (WS)
+          (statements
+            (assignment
+              (directlyAssignableExpression
                 (simpleIdentifier
-                  (FIELD))))
-            (WS)
-            (ASSIGNMENT)
-            (WS)
-            (expression
-              (disjunction
-                (conjunction
-                  (equality
-                    (comparison
-                      (infixOperation
-                        (elvisExpression
-                          (infixFunctionCall
-                            (rangeExpression
-                              (additiveExpression
-                                (multiplicativeExpression
-                                  (asExpression
-                                    (prefixUnaryExpression
-                                      (postfixUnaryExpression
-                                        (primaryExpression
-                                          (simpleIdentifier
-                                            (Identifier))))))))))))))))))
-          (semis
-            (NLS)))
-        (WS)))))
+                  (FIELD)))
+              (WS)
+              (ASSIGNMENT)
+              (WS)
+              (expression
+                (disjunction
+                  (conjunction
+                    (equality
+                      (comparison
+                        (infixOperation
+                          (elvisExpression
+                            (infixFunctionCall
+                              (rangeExpression
+                                (additiveExpression
+                                  (multiplicativeExpression
+                                    (asExpression
+                                      (prefixUnaryExpression
+                                        (postfixUnaryExpression
+                                          (primaryExpression
+                                            (simpleIdentifier
+                                              (Identifier))))))))))))))))))
+            (semis
+              (NLS)))
+          (WS))))))
+

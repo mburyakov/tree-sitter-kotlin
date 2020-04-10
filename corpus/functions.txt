@@ -4,14 +4,15 @@ Top-level functions
 fun main() {}
 ---
 
-(source_file 
-  (function_declaration 
-    (WS )
-    (simple_identifier 
-      (simpleIdentifier 
-        (Identifier )))
-    (WS )
-    (function_body )))
+(source_file
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (function_body
+      (block))))
 
 ==================
 Empty multiline function body
@@ -29,8 +30,9 @@ fun main() {
         (Identifier)))
     (WS)
     (function_body
-      (semis
-        (NLS)))))
+      (block
+        (semis
+          (NLS))))))
 
 ==================
 Empty semicolon function body
@@ -48,10 +50,11 @@ fun main() {
         (Identifier)))
     (WS)
     (function_body
-      (semis
-        (NLS)
-        (WS)
-        (NLS)))))
+      (block
+        (semis
+          (NLS)
+          (WS)
+          (NLS))))))
 
 ==================
 Generic functions
@@ -59,22 +62,23 @@ Generic functions
 fun <T> test() {}
 ---
 
-(source_file 
-  (function_declaration 
-    (type_parameters 
-      (LANGLE )
-      (type_parameter 
-        (type_identifier 
-          (simpleIdentifier 
-            (Identifier ))))
-      (RANGLE ))
-    (WS )
-    (WS )
-    (simple_identifier 
-      (simpleIdentifier 
-        (Identifier )))
-    (WS )
-    (function_body )))
+(source_file
+  (function_declaration
+    (WS)
+    (type_parameters
+      (LANGLE)
+      (type_parameter
+        (type_identifier
+          (simpleIdentifier
+            (Identifier))))
+      (RANGLE))
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (function_body
+      (block))))
 
 ==================
 Functions with parameters
@@ -84,96 +88,97 @@ fun main(args: Array<String>) {}
 fun sum(a: Int, b: Int) = a + b
 ---
 
-(source_file 
-  (function_declaration 
-    (WS )
-    (simple_identifier 
-      (simpleIdentifier 
-        (Identifier )))
-    (parameter 
-      (simpleIdentifier 
-        (Identifier ))
-      (COLON )
-      (WS )
-      (type 
-        (typeReference 
-          (userType 
-            (simpleUserType 
+(source_file
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (parameter
+      (simpleIdentifier
+        (Identifier))
+      (COLON)
+      (WS)
+      (type
+        (typeReference
+          (userType
+            (simpleUserType
               (type_identifier
-                (Identifier ))
-              (typeArguments 
-                (LANGLE )
-                (typeProjection 
-                  (type 
-                    (typeReference 
-                      (userType 
-                        (simpleUserType 
+                (Identifier))
+              (typeArguments
+                (LANGLE)
+                (typeProjection
+                  (type
+                    (typeReference
+                      (userType
+                        (simpleUserType
                           (type_identifier
-                            (Identifier )))))))
-                (RANGLE )))))))
-    (WS )
-    (function_body ))
-  (semis 
-    (NLS ))
-  (function_declaration 
-    (WS )
-    (simple_identifier 
-      (simpleIdentifier 
-        (Identifier )))
-    (parameter 
-      (simpleIdentifier 
-        (Identifier ))
-      (COLON )
-      (WS )
-      (type 
-        (typeReference 
-          (userType 
-            (simpleUserType 
+                            (Identifier)))))))
+                (RANGLE)))))))
+    (WS)
+    (function_body
+      (block)))
+  (semis
+    (NLS))
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (parameter
+      (simpleIdentifier
+        (Identifier))
+      (COLON)
+      (WS)
+      (type
+        (typeReference
+          (userType
+            (simpleUserType
               (type_identifier
-                (Identifier )))))))
-    (WS )
-    (parameter 
-      (simpleIdentifier 
-        (Identifier ))
-      (COLON )
-      (WS )
-      (type 
-        (typeReference 
-          (userType 
-            (simpleUserType 
+                (Identifier)))))))
+    (WS)
+    (parameter
+      (simpleIdentifier
+        (Identifier))
+      (COLON)
+      (WS)
+      (type
+        (typeReference
+          (userType
+            (simpleUserType
               (type_identifier
-                (Identifier )))))))
-    (WS )
-    (function_body 
-      (WS )
-      (expression 
-        (disjunction 
-          (conjunction 
-            (equality 
-              (comparison 
-                (infixOperation 
-                  (elvisExpression 
-                    (infixFunctionCall 
-                      (rangeExpression 
-                        (additiveExpression 
-                          (multiplicativeExpression 
-                            (asExpression 
-                              (prefixUnaryExpression 
-                                (postfixUnaryExpression 
-                                  (primaryExpression 
-                                    (simpleIdentifier 
-                                      (Identifier )))))))
-                          (WS )
-                          (additiveOperator 
-                            (ADD ))
-                          (WS )
-                          (multiplicativeExpression 
-                            (asExpression 
-                              (prefixUnaryExpression 
-                                (postfixUnaryExpression 
-                                  (primaryExpression 
-                                    (simpleIdentifier 
-                                      (Identifier ))))))))))))))))))))
+                (Identifier)))))))
+    (WS)
+    (function_body
+      (WS)
+      (expression
+        (disjunction
+          (conjunction
+            (equality
+              (comparison
+                (infixOperation
+                  (elvisExpression
+                    (infixFunctionCall
+                      (rangeExpression
+                        (additiveExpression
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (simpleIdentifier
+                                      (Identifier)))))))
+                          (WS)
+                          (additiveOperator
+                            (ADD))
+                          (WS)
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (simpleIdentifier
+                                      (Identifier))))))))))))))))))))
 
 ==================
 Functions with return types
@@ -181,37 +186,38 @@ Functions with return types
 fun answerToTheUltimateQuestionOfLifeTheUniverseAndEverything(): Int = 42
 ---
 
-(source_file 
-  (function_declaration 
-    (WS )
-    (simple_identifier 
-      (simpleIdentifier 
-        (Identifier )))
-    (WS )
-    (type 
-      (typeReference 
-        (userType 
-          (simpleUserType 
+(source_file
+  (function_declaration
+    (WS)
+    (simple_identifier
+      (simpleIdentifier
+        (Identifier)))
+    (COLON)
+    (WS)
+    (type
+      (typeReference
+        (userType
+          (simpleUserType
             (type_identifier
-              (Identifier ))))))
-    (WS )
-    (function_body 
-      (WS )
-      (expression 
-        (disjunction 
-          (conjunction 
-            (equality 
-              (comparison 
-                (infixOperation 
-                  (elvisExpression 
-                    (infixFunctionCall 
-                      (rangeExpression 
-                        (additiveExpression 
-                          (multiplicativeExpression 
-                            (asExpression 
-                              (prefixUnaryExpression 
-                                (postfixUnaryExpression 
-                                  (primaryExpression 
-                                    (literalConstant 
-                                      (IntegerLiteral ))))))))))))))))))))
+              (Identifier))))))
+    (WS)
+    (function_body
+      (WS)
+      (expression
+        (disjunction
+          (conjunction
+            (equality
+              (comparison
+                (infixOperation
+                  (elvisExpression
+                    (infixFunctionCall
+                      (rangeExpression
+                        (additiveExpression
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (literalConstant
+                                      (IntegerLiteral))))))))))))))))))))
 

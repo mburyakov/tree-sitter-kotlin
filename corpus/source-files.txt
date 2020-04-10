@@ -36,7 +36,9 @@ val x = 4
                                       (postfixUnaryExpression
                                         (primaryExpression
                                           (stringLiteral
-                                            (line_string_literal))))))))))))))))))
+                                            (lineStringLiteral
+                                              (lineStringContent
+                                                (LineStrText))))))))))))))))))))
           (RPAREN))))
     (NLS))
   (property_declaration
@@ -64,3 +66,4 @@ val x = 4
                                 (primaryExpression
                                   (literalConstant
                                     (IntegerLiteral)))))))))))))))))))
+

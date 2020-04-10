@@ -4,24 +4,24 @@ Simple identifiers
 helloWorld
 ---
 
-(source_file 
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (simpleIdentifier 
-                                  (Identifier ))))))))))))))))))
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (simpleIdentifier
+                                  (Identifier))))))))))))))))))
 
 ==================
 Boolean literals
@@ -30,43 +30,43 @@ true
 false
 ---
 
-(source_file 
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (BooleanLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (BooleanLiteral ))))))))))))))))))
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (BooleanLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (BooleanLiteral))))))))))))))))))
 
 ==================
 Integer literals
@@ -77,81 +77,81 @@ Integer literals
 9847
 ---
 
-(source_file 
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (IntegerLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (IntegerLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (IntegerLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (IntegerLiteral ))))))))))))))))))
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
 
 ==================
 Real literals
@@ -163,106 +163,106 @@ Real literals
 +53.9e-3F
 ---
 
-(source_file 
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (RealLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (unaryPrefix 
-                              (prefixUnaryOperator 
-                                (SUB )))
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (RealLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (RealLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (RealLiteral )))))))))))))))))
-  (semis 
-    (NLS ))
-  (expression 
-    (disjunction 
-      (conjunction 
-        (equality 
-          (comparison 
-            (infixOperation 
-              (elvisExpression 
-                (infixFunctionCall 
-                  (rangeExpression 
-                    (additiveExpression 
-                      (multiplicativeExpression 
-                        (asExpression 
-                          (prefixUnaryExpression 
-                            (unaryPrefix 
-                              (prefixUnaryOperator 
-                                (ADD )))
-                            (postfixUnaryExpression 
-                              (primaryExpression 
-                                (literalConstant 
-                                  (RealLiteral ))))))))))))))))))
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (RealLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (unaryPrefix
+                              (prefixUnaryOperator
+                                (SUB)))
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (RealLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (RealLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (RealLiteral)))))))))))))))))
+  (semis
+    (NLS))
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (unaryPrefix
+                              (prefixUnaryOperator
+                                (ADD)))
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (RealLiteral))))))))))))))))))
 
 ==================
 String literals
@@ -359,9 +359,7 @@ ${"""string interpolation"""} $literal
                                       (LineStrText))
                                     (lineStringContent
                                       (LineStrRef
-                                        (FieldIdentifier
-                                          (simpleIdentifier
-                                            (Identifier)))))
+                                        (FieldIdentifier)))
                                     (lineStringContent
                                       (LineStrText)))))))))))))))))))
   (semis
@@ -455,9 +453,8 @@ ${"""string interpolation"""} $literal
                                       (MultiLineStrText))
                                     (multiLineStringContent
                                       (MultiLineStrRef
-                                        (FieldIdentifier
-                                          (simpleIdentifier
-                                            (Identifier)))))
+                                        (FieldIdentifier)))
                                     (multiLineStringContent
                                       (MultiLineStrText))
                                     (TRIPLE_QUOTE_CLOSE)))))))))))))))))))
+

@@ -4,34 +4,35 @@ For statements
 for (value in values) {}
 ---
 
-(source_file 
-  (for_statement 
-    (WS )
-    (variable_declaration 
-      (simple_identifier 
-        (simpleIdentifier 
-          (Identifier ))))
-    (WS )
-    (WS )
-    (expression 
-      (disjunction 
-        (conjunction 
-          (equality 
-            (comparison 
-              (infixOperation 
-                (elvisExpression 
-                  (infixFunctionCall 
-                    (rangeExpression 
-                      (additiveExpression 
-                        (multiplicativeExpression 
-                          (asExpression 
-                            (prefixUnaryExpression 
-                              (postfixUnaryExpression 
-                                (primaryExpression 
-                                  (simpleIdentifier 
-                                    (Identifier )))))))))))))))))
-    (WS )
-    (control_structure_body )))
+(source_file
+  (for_statement
+    (WS)
+    (variable_declaration
+      (simple_identifier
+        (simpleIdentifier
+          (Identifier))))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))
+    (WS)
+    (control_structure_body
+      (block))))
 
 ==================
 Assignment
@@ -40,9 +41,177 @@ x=2
 ((1+2)[c]) = x
 ---
 
+(source_file
+  (assignment
+    (directlyAssignableExpression
+      (simpleIdentifier
+        (Identifier)))
+    (ASSIGNMENT)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))))))))))
+  (semis
+    (NLS))
+  (assignment
+    (directlyAssignableExpression
+      (parenthesizedDirectlyAssignableExpression
+        (LPAREN)
+        (directlyAssignableExpression
+          (postfixUnaryExpression
+            (primaryExpression
+              (parenthesizedExpression
+                (LPAREN)
+                (expression
+                  (disjunction
+                    (conjunction
+                      (equality
+                        (comparison
+                          (infixOperation
+                            (elvisExpression
+                              (infixFunctionCall
+                                (rangeExpression
+                                  (additiveExpression
+                                    (multiplicativeExpression
+                                      (asExpression
+                                        (prefixUnaryExpression
+                                          (postfixUnaryExpression
+                                            (primaryExpression
+                                              (literalConstant
+                                                (IntegerLiteral)))))))
+                                    (additiveOperator
+                                      (ADD))
+                                    (multiplicativeExpression
+                                      (asExpression
+                                        (prefixUnaryExpression
+                                          (postfixUnaryExpression
+                                            (primaryExpression
+                                              (literalConstant
+                                                (IntegerLiteral)))))))))))))))))
+                (RPAREN))))
+          (assignableSuffix
+            (indexingSuffix
+              (LSQUARE)
+              (expression
+                (disjunction
+                  (conjunction
+                    (equality
+                      (comparison
+                        (infixOperation
+                          (elvisExpression
+                            (infixFunctionCall
+                              (rangeExpression
+                                (additiveExpression
+                                  (multiplicativeExpression
+                                    (asExpression
+                                      (prefixUnaryExpression
+                                        (postfixUnaryExpression
+                                          (primaryExpression
+                                            (simpleIdentifier
+                                              (Identifier)))))))))))))))))
+              (RSQUARE))))
+        (RPAREN)))
+    (WS)
+    (ASSIGNMENT)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (simpleIdentifier
+                                    (Identifier)))))))))))))))))))
+
 ==================
 Assignment with operator
 ==================
-
 ++x += 5
 "r" += "d"
+---
+
+(source_file
+  (assignment
+    (assignableExpression
+      (prefixUnaryExpression
+        (unaryPrefix
+          (prefixUnaryOperator
+            (INCR)))
+        (postfixUnaryExpression
+          (primaryExpression
+            (simpleIdentifier
+              (Identifier))))))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))))))))))
+  (semis
+    (NLS))
+  (assignment
+    (assignableExpression
+      (prefixUnaryExpression
+        (postfixUnaryExpression
+          (primaryExpression
+            (stringLiteral
+              (lineStringLiteral
+                (lineStringContent
+                  (LineStrText))))))))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (stringLiteral
+                                    (lineStringLiteral
+                                      (lineStringContent
+                                        (LineStrText)))))))))))))))))))))
+

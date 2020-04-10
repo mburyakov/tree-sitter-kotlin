@@ -94,12 +94,11 @@ something as Some.NestedType
                           (type
                             (typeReference
                               (userType
-                                (userTypeWithDot
-                                  (userType
-                                    (simpleUserType
-                                      (type_identifier
-                                        (Identifier))))
-                                  (DOT))
+                                (userType
+                                  (simpleUserType
+                                    (type_identifier
+                                      (Identifier))))
+                                (DOT)
                                 (simpleUserType
                                   (type_identifier
                                     (Identifier)))))))))))))))))))
@@ -135,24 +134,21 @@ somethingElse as A.Deeply.Nested.Type
                           (type
                             (typeReference
                               (userType
-                                (userTypeWithDot
+                                (userType
                                   (userType
-                                    (userTypeWithDot
-                                      (userType
-                                        (userTypeWithDot
-                                          (userType
-                                            (simpleUserType
-                                              (type_identifier
-                                                (Identifier))))
-                                          (DOT))
-                                        (simpleUserType
-                                          (type_identifier
-                                            (Identifier))))
-                                      (DOT))
+                                    (userType
+                                      (simpleUserType
+                                        (type_identifier
+                                          (Identifier))))
+                                    (DOT)
                                     (simpleUserType
                                       (type_identifier
                                         (Identifier))))
-                                  (DOT))
+                                  (DOT)
+                                  (simpleUserType
+                                    (type_identifier
+                                      (Identifier))))
+                                (DOT)
                                 (simpleUserType
                                   (type_identifier
                                     (Identifier)))))))))))))))))))
@@ -478,12 +474,11 @@ b as (Nested.Type, (Int)) -> Unit
                                 (type
                                   (typeReference
                                     (userType
-                                      (userTypeWithDot
-                                        (userType
-                                          (simpleUserType
-                                            (type_identifier
-                                              (Identifier))))
-                                        (DOT))
+                                      (userType
+                                        (simpleUserType
+                                          (type_identifier
+                                            (Identifier))))
+                                      (DOT)
                                       (simpleUserType
                                         (type_identifier
                                           (Identifier))))))
@@ -608,12 +603,13 @@ a as T.() -> Unit
                           (type
                             (functionType
                               (receiverTypeWithDot
-                                (userTypeWithDot
-                                  (userType
-                                    (simpleUserType
-                                      (type_identifier
-                                        (Identifier))))
-                                  (DOT)))
+                                (receiverType
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (type_identifier
+                                          (Identifier))))))
+                                (DOT))
                               (functionTypeParameters
                                 (LPAREN)
                                 (RPAREN))
@@ -683,15 +679,12 @@ Int?::toString
                             (postfixUnaryExpression
                               (primaryExpression
                                 (callableReference
-                                  (receiverType
-                                    (typeReference
-                                      (userType
-                                        (simpleUserType
-                                          (type_identifier
-                                            (Identifier)))))
-                                    (quest
-                                      (QUEST_NO_WS)))
-                                  (COLONCOLON)
+                                  (typeReference
+                                    (userType
+                                      (simpleUserType
+                                        (type_identifier
+                                          (Identifier)))))
+                                  (nullableCallable)
                                   (simpleIdentifier
                                     (Identifier)))))))))))))))))))
 
@@ -700,6 +693,7 @@ Callable reference for nullable type
 ==================
 (1+2)::toString
 ---
+
 (source_file
   (expression
     (disjunction
@@ -767,10 +761,12 @@ val x: dynamic? = null
           (Identifier)))
       (WS)
       (type
-        (typeReference
-          (DYNAMIC))
-        (quest
-          (QUEST_WS))))
+        (nullableType
+          (typeReference
+            (DYNAMIC))
+          (quest
+            (NLSQUEST)))))
+    (WS)
     (WS)
     (expression
       (disjunction
@@ -1065,19 +1061,20 @@ val c = f as kotlin.Int?.() -> Int
                             (type
                               (functionType
                                 (receiverTypeWithDot
-                                  (typeReference
-                                    (userType
-                                      (userTypeWithDot
+                                  (receiverType
+                                    (nullableType
+                                      (typeReference
                                         (userType
+                                          (userType
+                                            (simpleUserType
+                                              (type_identifier
+                                                (Identifier))))
+                                          (DOT)
                                           (simpleUserType
                                             (type_identifier
-                                              (Identifier))))
-                                        (DOT))
-                                      (simpleUserType
-                                        (type_identifier
-                                          (Identifier)))))
-                                  (quest
-                                    (QUEST_NO_WS))
+                                              (Identifier)))))
+                                      (quest
+                                        (NLSQUEST))))
                                   (DOT))
                                 (functionTypeParameters
                                   (LPAREN)
@@ -1116,13 +1113,15 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
           (ARROW)
           (WS)
           (type
-            (typeReference
-              (userType
-                (simpleUserType
-                  (type_identifier
-                    (Identifier)))))
-            (quest
-              (QUEST_WS))))))
+            (nullableType
+              (typeReference
+                (userType
+                  (simpleUserType
+                    (type_identifier
+                      (Identifier)))))
+              (quest
+                (NLSQUEST)))))))
+    (WS)
     (WS)
     (expression
       (disjunction
@@ -1192,22 +1191,21 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
             (type
               (typeReference
                 (userType
-                  (userTypeWithDot
-                    (userType
-                      (simpleUserType
-                        (type_identifier
-                          (Identifier))
-                        (typeArguments
-                          (LANGLE)
-                          (typeProjection
-                            (type
-                              (typeReference
-                                (userType
-                                  (simpleUserType
-                                    (type_identifier
-                                      (Identifier)))))))
-                          (RANGLE))))
-                    (DOT))
+                  (userType
+                    (simpleUserType
+                      (type_identifier
+                        (Identifier))
+                      (typeArguments
+                        (LANGLE)
+                        (typeProjection
+                          (type
+                            (typeReference
+                              (userType
+                                (simpleUserType
+                                  (type_identifier
+                                    (Identifier)))))))
+                        (RANGLE))))
+                  (DOT)
                   (simpleUserType
                     (type_identifier
                       (Identifier))))))
@@ -1216,13 +1214,15 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
           (ARROW)
           (WS)
           (type
-            (typeReference
-              (userType
-                (simpleUserType
-                  (type_identifier
-                    (Identifier)))))
-            (quest
-              (QUEST_WS))))))
+            (nullableType
+              (typeReference
+                (userType
+                  (simpleUserType
+                    (type_identifier
+                      (Identifier)))))
+              (quest
+                (NLSQUEST)))))))
+    (WS)
     (WS)
     (expression
       (disjunction
@@ -1243,28 +1243,26 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
                                     (receiverType
                                       (typeReference
                                         (userType
-                                          (userTypeWithDot
+                                          (userType
                                             (userType
-                                              (userTypeWithDot
-                                                (userType
-                                                  (simpleUserType
-                                                    (type_identifier
-                                                      (Identifier))))
-                                                (DOT))
                                               (simpleUserType
                                                 (type_identifier
-                                                  (Identifier))
-                                                (typeArguments
-                                                  (LANGLE)
-                                                  (typeProjection
-                                                    (type
-                                                      (typeReference
-                                                        (userType
-                                                          (simpleUserType
-                                                            (type_identifier
-                                                              (Identifier)))))))
-                                                  (RANGLE))))
-                                            (DOT))
+                                                  (Identifier))))
+                                            (DOT)
+                                            (simpleUserType
+                                              (type_identifier
+                                                (Identifier))
+                                              (typeArguments
+                                                (LANGLE)
+                                                (typeProjection
+                                                  (type
+                                                    (typeReference
+                                                      (userType
+                                                        (simpleUserType
+                                                          (type_identifier
+                                                            (Identifier)))))))
+                                                (RANGLE))))
+                                          (DOT)
                                           (simpleUserType
                                             (type_identifier
                                               (Identifier))))))
@@ -1277,6 +1275,7 @@ Type alias
 ==================
 typealias AliasSet<Item> = io.lacuna.bifurcan.Set<Item>
 ---
+
 (source_file
   (type_alias
     (WS)
@@ -1293,34 +1292,34 @@ typealias AliasSet<Item> = io.lacuna.bifurcan.Set<Item>
     (WS)
     (WS)
     (type
-      (userType
-        (userTypeWithDot
+      (typeReference
+        (userType
           (userType
-            (userTypeWithDot
+            (userType
               (userType
-                (userTypeWithDot
-                  (userType
-                    (simpleUserType
-                      (type_identifier
-                        (Identifier))))
-                  (NLSDOT))
                 (simpleUserType
                   (type_identifier
                     (Identifier))))
-              (NLSDOT))
+              (DOT)
+              (simpleUserType
+                (type_identifier
+                  (Identifier))))
+            (DOT)
             (simpleUserType
               (type_identifier
                 (Identifier))))
-          (NLSDOT))
-        (simpleUserType
-          (type_identifier
-            (Identifier))
-          (typeArguments
-            (LANGLE)
-            (typeProjection
-              (type
-                (userType
-                  (simpleUserType
-                    (type_identifier
-                      (Identifier))))))
-            (RANGLE)))))))
+          (DOT)
+          (simpleUserType
+            (type_identifier
+              (Identifier))
+            (typeArguments
+              (LANGLE)
+              (typeProjection
+                (type
+                  (typeReference
+                    (userType
+                      (simpleUserType
+                        (type_identifier
+                          (Identifier)))))))
+              (RANGLE))))))))
+

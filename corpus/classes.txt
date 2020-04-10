@@ -22,7 +22,7 @@ class Empty2 {}
         (Identifier)))
     (WS)
     (class_body)))
- 
+
 ==================
 Class with methods
 ==================
@@ -50,7 +50,8 @@ class HelloWorld {
           (simpleIdentifier
             (Identifier)))
         (WS)
-        (function_body))
+        (function_body
+          (block)))
       (semis
         (NLS))
       (WS)
@@ -60,7 +61,8 @@ class HelloWorld {
           (simpleIdentifier
             (Identifier)))
         (WS)
-        (function_body))
+        (function_body
+          (block)))
       (semis
         (NLS)))))
 
@@ -132,7 +134,9 @@ class Strings {
                                     (postfixUnaryExpression
                                       (primaryExpression
                                         (stringLiteral
-                                          (line_string_literal)))))))))))))))))))
+                                          (lineStringLiteral
+                                            (lineStringContent
+                                              (LineStrText)))))))))))))))))))))
       (semis
         (NLS))
       (WS)
@@ -160,7 +164,9 @@ class Strings {
                                     (postfixUnaryExpression
                                       (primaryExpression
                                         (stringLiteral
-                                          (line_string_literal)))))))
+                                          (lineStringLiteral
+                                            (lineStringContent
+                                              (LineStrText)))))))))
                               (WS)
                               (additiveOperator
                                 (ADD))
@@ -171,7 +177,9 @@ class Strings {
                                     (postfixUnaryExpression
                                       (primaryExpression
                                         (stringLiteral
-                                          (line_string_literal)))))))
+                                          (lineStringLiteral
+                                            (lineStringContent
+                                              (LineStrText)))))))))
                               (WS)
                               (additiveOperator
                                 (ADD))
@@ -182,7 +190,9 @@ class Strings {
                                     (postfixUnaryExpression
                                       (primaryExpression
                                         (stringLiteral
-                                          (line_string_literal)))))))))))))))))))
+                                          (lineStringLiteral
+                                            (lineStringContent
+                                              (LineStrText)))))))))))))))))))))
       (semis
         (NLS)))))
 
@@ -198,37 +208,37 @@ internal open class Test {
   (class_declaration
     (modifiers
       (visibility_modifier
-        (INTERNAL ))
-      (WS )
+        (INTERNAL))
+      (WS)
       (inheritance_modifier
-        (OPEN )))
-    (WS )
-    (CLASS )
-    (WS )
+        (OPEN)))
+    (WS)
+    (CLASS)
+    (WS)
     (type_identifier
       (simpleIdentifier
-        (Identifier )))
-    (WS )
+        (Identifier)))
+    (WS)
     (class_body
-      (NLS )
-      (WS )
+      (NLS)
+      (WS)
       (function_declaration
         (modifiers
           (visibility_modifier
-            (PRIVATE ))
-          (WS )
+            (PRIVATE))
+          (WS)
           (inheritance_modifier
-            (ABSTRACT ))
-          (WS )
+            (ABSTRACT))
+          (WS)
           (function_modifier
-            (INLINE )))
-        (WS )
-        (WS )
+            (INLINE)))
+        (WS)
+        (WS)
         (simple_identifier
           (simpleIdentifier
-            (Identifier ))))
+            (Identifier))))
       (semis
-        (NLS )))))
+        (NLS)))))
 
 ==================
 Objects
@@ -471,13 +481,14 @@ class Something {
               (Identifier)))
           (WS)
           (type
-            (typeReference
-              (userType
-                (simpleUserType
-                  (type_identifier
-                    (Identifier)))))
-            (quest
-              (QUEST_NO_WS)))))
+            (nullableType
+              (typeReference
+                (userType
+                  (simpleUserType
+                    (type_identifier
+                      (Identifier)))))
+              (quest
+                (NLSQUEST))))))
       (semis
         (NLS))
       (WS)
@@ -831,3 +842,4 @@ enum class Color(val rgb: Int) {
                                             (RPAREN))))))))))))))))))))
       (semis
         (NLS)))))
+

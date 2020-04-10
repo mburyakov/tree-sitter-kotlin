@@ -1,3 +1,7 @@
+# Use carefully! Review all changes made by the script.
+# Usage:
+# for f in corpus/*.txt; do awk -f update_tests.awk $f > "$f"_; mv "$f"_ $f; done
+
 BEGIN          {
                  state = "parsed"
                  filenum = 0

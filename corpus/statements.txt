@@ -33,3 +33,9 @@ for (value in values) {}
     (WS )
     (control_structure_body )))
 
+==================
+Assignment
+==================
+x=2
+((1+2)[c]) = x
+---

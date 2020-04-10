@@ -55,21 +55,6 @@
     "fields": {}
   },
   {
-    "type": "FieldIdentifier",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "simpleIdentifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "GET",
     "named": true,
     "fields": {}
@@ -4482,10 +4467,6 @@
     "named": false
   },
   {
-    "type": "$",
-    "named": false
-  },
-  {
     "type": "${",
     "named": false
   },
@@ -4699,6 +4680,10 @@
   },
   {
     "type": "FINAL",
+    "named": true
+  },
+  {
+    "type": "FieldIdentifier",
     "named": true
   },
   {

@@ -34,6 +34,12 @@ const PREC = {
 	// lambda literal without parameters look same as block, block is preferred when both suitable (inside 'do { } while (true) ')
 	BLOCK: 0,
 	LAMBDA_LITERAL: -1,
+
+	// label for expression statement is on the statement instead of expression
+	// annotation for value argument is on the argument instead of expression
+	VALUE_ARGUMENT: 1,
+	STATEMENT_LABEL: 1,
+	UNARY_PREFIX: 0,
 };
 
 module.exports = grammar({
@@ -79,7 +85,10 @@ module.exports = grammar({
 
 		// for such anonymous functions as 'fun (Int).():Int'
 		[$.parameter_modifiers, $.typeModifier],
-		[$.simpleUserType, $.parameterWithOptionalType]
+		[$.simpleUserType, $.parameterWithOptionalType],
+
+		// '(@Annotation T)?::field
+		[$.unaryPrefix, $.typeModifier],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -501,10 +510,10 @@ module.exports = grammar({
 		),
 
 		_statement: $ => choice(
-			$._declaration,
 			seq(
-				repeat(choice($.label, $.annotation)),
+				repeat(prec(PREC.STATEMENT_LABEL, choice($.label, $.annotation))),
 				choice(
+					$._declaration,
 					$.assignment,
 					$._loop_statement,
 					$._expression
@@ -560,13 +569,13 @@ module.exports = grammar({
 		assignment: $ => choice(
 			seq(
 				$.directlyAssignableExpression,
-				$._assignment_and_operator,
+				$.ASSIGNMENT,
 				optional($.NLS),
 				$.expression,
 			),
 			seq(
 				$.assignableExpression,
-				$.ASSIGNMENT,
+				$._assignment_and_operator,
 				optional($.NLS),
 				$.expression
 			),
@@ -611,6 +620,7 @@ module.exports = grammar({
 				optional($.NLS),
 				$._type,
 			)),
+			// Do really type constraints and empty body make sense?
 			// optional(seq(
 			// 	optional($.NLS),
 			// 	$.type_constraints,
@@ -1098,7 +1108,7 @@ module.exports = grammar({
 			$.postfixUnaryExpression
 		),
 
-		unaryPrefix: $ => prec.right(1, choice(
+		unaryPrefix: $ => prec(PREC.UNARY_PREFIX, choice(
 			$.annotation,
 			$.label,
 			seq(
@@ -1230,7 +1240,7 @@ module.exports = grammar({
 			)
 		),
 
-		valueArgument: $ => seq(
+		valueArgument: $ => prec(PREC.VALUE_ARGUMENT, seq(
 			optional(seq($.annotation, optional($.NLS))),
 			optional(seq(
 				$.simpleIdentifier,
@@ -1240,7 +1250,7 @@ module.exports = grammar({
 			)),
 			optional(seq($.MULT, optional($.NLS))),
 			$.expression
-		),
+		)),
 
 		primaryExpression: $ => choice(
 			$.parenthesizedExpression,
@@ -1360,10 +1370,24 @@ module.exports = grammar({
 		MultiLineStrRef: $ => $.FieldIdentifier,
 		EscapedIdentifier: $ => /\\[tbrn'"\\$]/,
 		UniCharacterLiteral: $ => /\\u[0-9a-fA-F]{4}/,
-		FieldIdentifier: $ => seq(
-			"$",
-			$.simpleIdentifier,
-		),
+		FieldIdentifier: $ => token(seq("$", choice(
+			seq(
+				choice(
+					/[a-zA-Z]/,
+					"_"
+				),
+				repeat(choice(
+					/[a-zA-Z]/,
+					"_",
+					/[0-9]/
+				))
+			),
+			seq(
+				"`",
+				repeat1(/[^\r\n`]/),
+				"`"
+			)
+		))),
 		TRIPLE_QUOTE_OPEN: $ => /"""/,
 		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
 

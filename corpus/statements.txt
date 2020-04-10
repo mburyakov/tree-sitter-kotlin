@@ -39,3 +39,10 @@ Assignment
 x=2
 ((1+2)[c]) = x
 ---
+
+==================
+Assignment with operator
+==================
+
+++x += 5
+"r" += "d"

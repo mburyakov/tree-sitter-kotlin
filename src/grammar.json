@@ -2826,25 +2826,62 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PREC_LEFT",
-          "value": 1,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "directly_assignable_expression"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_assignment_and_operator"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_expression"
-              }
-            ]
-          }
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "directlyAssignableExpression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_assignment_and_operator"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "NLS"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "assignableExpression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "ASSIGNMENT"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "NLS"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          ]
         }
       ]
     },
@@ -2852,97 +2889,112 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "annotation"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "label"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "SYMBOL",
           "name": "lambda_literal"
         }
       ]
     },
     "lambda_literal": {
-      "type": "PREC",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "{"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "NLS"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "lambda_parameters"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "->"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "NLS"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "statements"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "STRING",
-            "value": "}"
-          }
-        ]
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "NLS"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "lambda_parameters"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "->"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "NLS"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "statements"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
     },
     "lambda_parameters": {
       "type": "SEQ",
@@ -3498,15 +3550,6 @@
     "_is_operator": {
       "type": "SYMBOL",
       "name": "isOperator"
-    },
-    "directly_assignable_expression": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "simple_identifier"
-        }
-      ]
     },
     "modifiers": {
       "type": "PREC_RIGHT",
@@ -5115,6 +5158,144 @@
         {
           "type": "SYMBOL",
           "name": "callSuffix"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "indexingSuffix"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "navigationSuffix"
+        }
+      ]
+    },
+    "directlyAssignableExpression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "postfixUnaryExpression"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "assignableSuffix"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "simpleIdentifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parenthesizedDirectlyAssignableExpression"
+        }
+      ]
+    },
+    "parenthesizedDirectlyAssignableExpression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "LPAREN"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "directlyAssignableExpression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RPAREN"
+        }
+      ]
+    },
+    "assignableExpression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "prefixUnaryExpression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parenthesizedAssignableExpression"
+        }
+      ]
+    },
+    "parenthesizedAssignableExpression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "LPAREN"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "assignableExpression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "NLS"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RPAREN"
+        }
+      ]
+    },
+    "assignableSuffix": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "typeArguments"
         },
         {
           "type": "SYMBOL",
@@ -11265,6 +11446,17 @@
       "simpleUserType"
     ],
     [
+      "primaryExpression",
+      "simpleUserType",
+      "parameter",
+      "directlyAssignableExpression"
+    ],
+    [
+      "primaryExpression",
+      "simpleUserType",
+      "directlyAssignableExpression"
+    ],
+    [
       "postfixUnaryExpression"
     ],
     [
@@ -11277,6 +11469,14 @@
     [
       "label",
       "primaryExpression"
+    ],
+    [
+      "prefixUnaryExpression",
+      "directlyAssignableExpression"
+    ],
+    [
+      "asExpression",
+      "assignableExpression"
     ]
   ],
   "externals": [],

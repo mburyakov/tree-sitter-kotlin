@@ -215,9 +215,17 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "label",
+          "named": true
+        },
         {
           "type": "lambda_literal",
           "named": true
@@ -396,6 +404,48 @@
     }
   },
   {
+    "type": "assignableExpression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "parenthesizedAssignableExpression",
+          "named": true
+        },
+        {
+          "type": "prefixUnaryExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "assignableSuffix",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "indexingSuffix",
+          "named": true
+        },
+        {
+          "type": "navigationSuffix",
+          "named": true
+        },
+        {
+          "type": "typeArguments",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "assignment",
     "named": true,
     "fields": {},
@@ -404,7 +454,19 @@
       "required": true,
       "types": [
         {
-          "type": "directly_assignable_expression",
+          "type": "ASSIGNMENT",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "assignableExpression",
+          "named": true
+        },
+        {
+          "type": "directlyAssignableExpression",
           "named": true
         },
         {
@@ -954,15 +1016,27 @@
     }
   },
   {
-    "type": "directly_assignable_expression",
+    "type": "directlyAssignableExpression",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "simple_identifier",
+          "type": "assignableSuffix",
+          "named": true
+        },
+        {
+          "type": "parenthesizedDirectlyAssignableExpression",
+          "named": true
+        },
+        {
+          "type": "postfixUnaryExpression",
+          "named": true
+        },
+        {
+          "type": "simpleIdentifier",
           "named": true
         }
       ]
@@ -2374,6 +2448,60 @@
         },
         {
           "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesizedAssignableExpression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
+          "type": "assignableExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parenthesizedDirectlyAssignableExpression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
+          "type": "directlyAssignableExpression",
           "named": true
         }
       ]

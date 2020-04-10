@@ -30,28 +30,6 @@ const PREC = {
 	// 'internal' 'open' 'class' -- not infix call but class declaration
 	SIMPLE_IDENTIDIER: -2,
 	TYPE_REFERENCE: -1,
-
-	TYPE_ARGS: 17,
-	POSTFIX: 16,
-	PREFIX: 15,
-	TYPE_RHS: 14,
-	AS: 13,
-	MULTIPLICATIVE: 12,
-	ADDITIVE: 11,
-	RANGE: 10,
-	INFIX: 9,
-	ELVIS: 8,
-	CHECK: 7,
-	COMPARISON: 6,
-	EQUALITY: 5,
-	CONJUNCTION: 4,
-	DISJUNCTION: 3,
-	SPREAD: 2,
-	ASSIGNMENT: 1,
-	BLOCK: 1,
-	LAMBDA_LITERAL: 0,
-	RETURN_OR_THROW: 0,
-	COMMENT: 0
 };
 
 module.exports = grammar({
@@ -75,6 +53,10 @@ module.exports = grammar({
 		[$.primaryExpression, $.simpleUserType, $.parameter],
 		[$.primaryExpression, $.simpleUserType],
 
+		[$.primaryExpression, $.simpleUserType, $.parameter, $.directlyAssignableExpression],
+		// '(Type)::something()' starts similar with '(x) + 1'
+		[$.primaryExpression, $.simpleUserType, $.directlyAssignableExpression],
+
 		// type arguments conflict with comparison operator
 		[$.postfixUnaryExpression],
 
@@ -86,6 +68,10 @@ module.exports = grammar({
 
 		// to recognize such as 'label@x++'
 		[$.label, $.primaryExpression],
+
+		// to distinguish expression/assignableExpression/directlyAssignableExpression
+		[$.prefixUnaryExpression, $.directlyAssignableExpression],
+		[$.asExpression, $.assignableExpression],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -95,11 +81,11 @@ module.exports = grammar({
 		// ====================
 		// Syntax grammar
 		// ====================
-		
+
 		// ==========
 		// General
 		// ==========
-		
+
 		// start
 
 		//start: $ => $._statement,
@@ -131,13 +117,13 @@ module.exports = grammar({
 			),
 			optional($.NLS),
 		),
-		
+
 		package_header: $ => seq("package", $.identifier, $._semi),
-		
+
 		import_header: $ => seq(
 			$.IMPORT,
 			$.identifier,
-			optional(choice(seq(".*"), $.import_alias)), 
+			optional(choice(seq(".*"), $.import_alias)),
 			$._semi
 		),
 
@@ -153,7 +139,7 @@ module.exports = grammar({
 			"=",
 			$._type
 		),
-		
+
 		_declaration: $ => choice(
 			$.class_declaration,
 			$.object_declaration,
@@ -161,11 +147,11 @@ module.exports = grammar({
 			$.property_declaration,
 			$.type_alias
 		),
-		
+
 		// ==========
 		// Classes
 		// ==========
-		
+
 		class_declaration: $ => prec.right(choice(
 			seq(
 				optional($.modifiers),
@@ -265,7 +251,7 @@ module.exports = grammar({
 		// ==========
 		// Class members
 		// ==========
-		
+
 		_class_member_declarations: $ => repeat1(seq($._class_member_declaration, $._semis)),
 
 		_class_member_declaration: $ => choice(
@@ -332,7 +318,7 @@ module.exports = grammar({
 				$._expression
 			)
 		),
-		
+
 		variable_declaration: $ => seq(
 			// repeat($.annotation), TODO
 			$.simple_identifier,
@@ -451,11 +437,11 @@ module.exports = grammar({
 		),
 
 		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
-		
+
 		// ==========
 		// Enum classes
 		// ==========
-		
+
 		enum_class_body: $ => seq(
 			"{",
 			optional($.NLS),
@@ -480,7 +466,7 @@ module.exports = grammar({
 		// ==========
 		// Statements
 		// ==========
-		
+
 		statements: $ => seq(
 			$._statement,
 			repeat(seq($._semis, $._statement)),
@@ -515,7 +501,7 @@ module.exports = grammar({
 			$.while_statement,
 			$.do_while_statement
 		),
-		
+
 		for_statement: $ => prec.right(seq(
 			"for",
 			"(",
@@ -545,17 +531,27 @@ module.exports = grammar({
 		)),
 
 		assignment: $ => choice(
-			prec.left(PREC.ASSIGNMENT, seq($.directly_assignable_expression, $._assignment_and_operator, $._expression)),
-			// TODO
+			seq(
+				$.directlyAssignableExpression,
+				$._assignment_and_operator,
+				optional($.NLS),
+				$.expression,
+			),
+			seq(
+				$.assignableExpression,
+				$.ASSIGNMENT,
+				optional($.NLS),
+				$.expression
+			),
 		),
 
 		annotated_lambda: $ => seq(
-			// repeat($.annotation),
-			// optional($.label),
+			repeat($.annotation),
+			optional($.label),
 			$.lambda_literal
 		),
 
-		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
+		lambda_literal: $ => seq(
 			"{",
 			optional(seq(
 				optional($.NLS),
@@ -567,7 +563,7 @@ module.exports = grammar({
 				$.statements,
 			)),
 			"}",
-		)),
+		),
 
 		lambda_parameters: $ => sep1($._lambda_parameter, ","),
 
@@ -676,15 +672,10 @@ module.exports = grammar({
 		
 		_is_operator: $ => $.isOperator,
 
-		directly_assignable_expression: $ => choice(
-			$.simple_identifier
-			// TODO
-		),
-
 		// ==========
 		// Modifiers
 		// ==========
-		
+
 		modifiers: $ => prec.right(repeat1(choice($.annotation, $._modifier))),
 
 		parameter_modifiers: $ => prec.right(choice($.annotation, repeat1($.parameter_modifier))),
@@ -760,11 +751,11 @@ module.exports = grammar({
 			$.EXPECT,
 			$.ACTUAL
 		),
-		
+
 		// ==========
 		// Identifiers
 		// ==========
-		
+
 		identifier: $ => sep1($.simple_identifier, "."),
 
 		// ==========
@@ -1087,6 +1078,42 @@ module.exports = grammar({
 			$.navigationSuffix,
 		),
 
+		directlyAssignableExpression: $ => choice(
+			seq(
+				$.postfixUnaryExpression,
+				$.assignableSuffix,
+			),
+			$.simpleIdentifier,
+			$.parenthesizedDirectlyAssignableExpression,
+		),
+
+		parenthesizedDirectlyAssignableExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.directlyAssignableExpression,
+			optional($.NLS),
+			$.RPAREN,
+		),
+
+		assignableExpression: $ => choice(
+			$.prefixUnaryExpression,
+			$.parenthesizedAssignableExpression,
+		),
+
+		parenthesizedAssignableExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.assignableExpression,
+			optional($.NLS),
+			$.RPAREN,
+		),
+
+		assignableSuffix: $ => choice(
+			$.typeArguments,
+			$.indexingSuffix,
+			$.navigationSuffix,
+		),
+
 		indexingSuffix: $ => seq(
 			$.LSQUARE,
 			optional($.NLS),
@@ -1177,9 +1204,15 @@ module.exports = grammar({
 			$.literalConstant,
 			$.stringLiteral,
 			$.callableReference,
+			//$._function_literal,
+			//$.object_literal,
 			$.collectionLiteral,
 			$.thisExpression,
 			$.superExpression,
+			//$.if_expression,
+			//$.when_expression,
+			//$.try_expression,
+			// jumpExpression was move to the top, see expression rule
 		),
 
 		parenthesizedExpression: $ => seq(

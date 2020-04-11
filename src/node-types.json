@@ -1286,41 +1286,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "BREAK",
-          "named": true
-        },
-        {
-          "type": "BREAK_AT",
-          "named": true
-        },
-        {
-          "type": "CONTINUE",
-          "named": true
-        },
-        {
-          "type": "CONTINUE_AT",
-          "named": true
-        },
-        {
-          "type": "NLS",
-          "named": true
-        },
-        {
-          "type": "RETURN",
-          "named": true
-        },
-        {
-          "type": "RETURN_AT",
-          "named": true
-        },
-        {
-          "type": "THROW",
-          "named": true
-        },
         {
           "type": "disjunction",
           "named": true
@@ -3534,6 +3502,10 @@
         {
           "type": "multiLineStringLiteral",
           "named": true
+        },
+        {
+          "type": "unfinishedLineStringLiteral",
+          "named": true
         }
       ]
     }
@@ -4177,6 +4149,29 @@
         },
         {
           "type": "userType",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unfinishedLineStringLiteral",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "lineStringContent",
+          "named": true
+        },
+        {
+          "type": "lineStringExpression",
           "named": true
         }
       ]

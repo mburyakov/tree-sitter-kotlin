@@ -985,7 +985,7 @@ module.exports = grammar({
 			optional($.NLS)
 		)),
 
-		expression: $ => $._jumpExpression,
+		expression: $ => $.disjunction,
 
 		disjunction: $ => seq(
 			$.conjunction,
@@ -1312,7 +1312,9 @@ module.exports = grammar({
 
 		stringLiteral: $ => choice(
 			$.lineStringLiteral,
-			$.multiLineStringLiteral
+			$.multiLineStringLiteral,
+			// for not to break all following lines when closing quote is missing
+			$.unfinishedLineStringLiteral,
 		),
 
 		lineStringLiteral: $ => seq(
@@ -1322,6 +1324,15 @@ module.exports = grammar({
 				$.lineStringExpression,
 			)),
 			"\"",
+		),
+
+		unfinishedLineStringLiteral: $ => seq(
+			"\"",
+			repeat(choice(
+				$.lineStringContent,
+				$.lineStringExpression,
+			)),
+			$.NLS,
 		),
 
 		multiLineStringLiteral: $ => seq(
@@ -1414,25 +1425,24 @@ module.exports = grammar({
 			$.SUPER_AT
 		)),
 
-		_jumpExpression: $ => prec.right(choice(
-			$.disjunction,
+		jumpExpression: $ => choice(
 			seq(
 				$.THROW,
 				optional($.NLS),
-				$._jumpExpression,
+				$.expression,
 			),
 			seq(
 				choice(
 					$.RETURN,
 					$.RETURN_AT,
 				),
-				optional($._jumpExpression),
+				optional($.expression),
 			),
 			$.CONTINUE,
 			$.CONTINUE_AT,
 			$.BREAK,
 			$.BREAK_AT,
-		)),
+		),
 
 		callableReference: $ => seq(
 			choice(

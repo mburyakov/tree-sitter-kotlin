@@ -4664,7 +4664,7 @@
     },
     "expression": {
       "type": "SYMBOL",
-      "name": "_jumpExpression"
+      "name": "disjunction"
     },
     "disjunction": {
       "type": "SEQ",
@@ -6113,6 +6113,10 @@
         {
           "type": "SYMBOL",
           "name": "multiLineStringLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "unfinishedLineStringLiteral"
         }
       ]
     },
@@ -6142,6 +6146,35 @@
         {
           "type": "STRING",
           "value": "\""
+        }
+      ]
+    },
+    "unfinishedLineStringLiteral": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "lineStringContent"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "lineStringExpression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "NLS"
         }
       ]
     },
@@ -6495,89 +6528,81 @@
         ]
       }
     },
-    "_jumpExpression": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "disjunction"
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "THROW"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "NLS"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_jumpExpression"
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "RETURN"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "RETURN_AT"
-                  }
-                ]
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_jumpExpression"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "CONTINUE"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "CONTINUE_AT"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "BREAK"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "BREAK_AT"
-          }
-        ]
-      }
+    "jumpExpression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "THROW"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "NLS"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "RETURN"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "RETURN_AT"
+                }
+              ]
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CONTINUE"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "CONTINUE_AT"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "BREAK"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "BREAK_AT"
+        }
+      ]
     },
     "callableReference": {
       "type": "SEQ",

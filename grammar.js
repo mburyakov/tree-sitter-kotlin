@@ -40,6 +40,12 @@ const PREC = {
 	VALUE_ARGUMENT: 1,
 	STATEMENT_LABEL: 1,
 	UNARY_PREFIX: 0,
+
+	// precedence is here for not allowing such constructions looking like (incomplete) infix call:
+	// val x: Int = 1 get
+	// class A<T>(val x : I) : I by x where T : I
+	INFIX_CALL: 0,
+	ELVIS: -1,
 };
 
 module.exports = grammar({
@@ -987,110 +993,116 @@ module.exports = grammar({
 
 		expression: $ => $.disjunction,
 
-		disjunction: $ => seq(
+		disjunction: $ => choice(
 			$.conjunction,
-			repeat(seq(
+			seq(
+				$.disjunction,
 				//optional($.NLS),
 				$.DISJ,
 				optional($.NLS),
 				$.conjunction,
-				optional($.NLS)
-			))
+			)
 		),
 
-		conjunction: $ => seq(
+		conjunction: $ => choice(
 			$.equality,
-			repeat(seq(
+			seq(
+				$.conjunction,
 				//optional($.NLS),
 				$.CONJ,
 				optional($.NLS),
 				$.equality,
-		        optional($.NLS)
-			))
+			)
 		),
 
-		equality: $ => seq(
+		equality: $ => choice(
 			$.comparison,
-			repeat(seq(
+			seq(
+				$.equality,
 				$.equalityOperator,
 				optional($.NLS),
 				$.comparison
-			))
+			)
 		),
 
-		comparison: $ => seq(
+		comparison: $ => choice(
 			$.infixOperation,
-			optional(seq(
+			seq(
+				$.infixOperation,
 				$.comparisonOperator,
 				optional($.NLS),
 				$.infixOperation
-			))
+			)
 		),
 
-		infixOperation: $ => seq(
+		infixOperation: $ => choice(
 			$.elvisExpression,
-			repeat(choice(
-				seq(
-					$.inOperator,
-					optional($.NLS),
-					$.elvisExpression
-				),
-				seq(
-					$.isOperator,
-					optional($.NLS),
-					$.type
-				)
-			))
+			seq(
+				$.infixOperation,
+				$.inOperator,
+				optional($.NLS),
+				$.elvisExpression
+			),
+			seq(
+				$.infixOperation,
+				$.isOperator,
+				optional($.NLS),
+				$.type
+			),
 		),
 
-		elvisExpression: $ => seq(
+		elvisExpression: $ => prec(PREC.ELVIS, choice(
 			$.infixFunctionCall,
-			repeat(seq(
-				//optional($.NLS),
+			seq(
+				$.elvisExpression,
+				optional($.NLS),
 				$.elvis,
 				optional($.NLS),
 				$.infixFunctionCall,
-		        optional($.NLS)
-			))
-		),
+			)
+		)),
 
 		elvis: $ => "?:",
 		nullableCallable: $ => "?::",
 
-		infixFunctionCall: $ => prec.right(seq(
+		infixFunctionCall: $ => prec(PREC.INFIX_CALL, choice(
 			$.rangeExpression,
-			repeat(seq(
+			seq(
+				$.infixFunctionCall,
 				$.simpleIdentifier,
 				optional($.NLS),
 				$.rangeExpression
-			))
+			)
 		)),
 
-		rangeExpression: $ => seq(
+		rangeExpression: $ => choice(
 			$.additiveExpression,
-			repeat(seq(
+			seq(
+				$.rangeExpression,
 				$.RANGE,
 				optional($.NLS),
 				$.additiveExpression
-			))
+			),
 		),
 
-		additiveExpression: $ => seq(
+		additiveExpression: $ => choice(
 			$.multiplicativeExpression,
-			repeat(seq(
+			seq(
+				$.additiveExpression,
 				$.additiveOperator,
 				optional($.NLS),
 				$.multiplicativeExpression
-			))
+			),
 		),
 
-		multiplicativeExpression: $ => seq(
+		multiplicativeExpression: $ => choice(
 			$.asExpression,
-			repeat(seq(
+			seq(
+				$.multiplicativeExpression,
 				$.multiplicativeOperator,
 				optional($.NLS),
 				$.asExpression
-			))
+			)
 		),
 
 		asExpression: $ => seq(

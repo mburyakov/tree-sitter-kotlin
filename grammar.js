@@ -991,7 +991,21 @@ module.exports = grammar({
 			optional($.NLS)
 		)),
 
-		expression: $ => $.disjunction,
+		expression: $ => choice(
+			$.disjunction,
+			$.disjunctionWithReturn,
+		),
+
+		disjunctionWithReturn: $ => choice(
+			$.conjunctionWithReturn,
+			seq(
+				$.disjunction,
+				//optional($.NLS),
+				$.DISJ,
+				optional($.NLS),
+				$.jumpExpression,
+			)
+		),
 
 		disjunction: $ => choice(
 			$.conjunction,
@@ -1001,6 +1015,17 @@ module.exports = grammar({
 				$.DISJ,
 				optional($.NLS),
 				$.conjunction,
+			)
+		),
+
+		conjunctionWithReturn: $ => choice(
+			$.equalityWithReturn,
+			seq(
+				$.conjunction,
+				//optional($.NLS),
+				$.CONJ,
+				optional($.NLS),
+				$.jumpExpression,
 			)
 		),
 
@@ -1015,6 +1040,16 @@ module.exports = grammar({
 			)
 		),
 
+		equalityWithReturn: $ => choice(
+			$.comparisonWithReturn,
+			seq(
+				$.equality,
+				$.equalityOperator,
+				optional($.NLS),
+				$.jumpExpression,
+			)
+		),
+
 		equality: $ => choice(
 			$.comparison,
 			seq(
@@ -1022,6 +1057,16 @@ module.exports = grammar({
 				$.equalityOperator,
 				optional($.NLS),
 				$.comparison
+			)
+		),
+
+		comparisonWithReturn: $ => choice(
+			$.infixOperationWithReturn,
+			seq(
+				$.infixOperation,
+				$.comparisonOperator,
+				optional($.NLS),
+				$.jumpExpression,
 			)
 		),
 
@@ -1033,6 +1078,16 @@ module.exports = grammar({
 				optional($.NLS),
 				$.infixOperation
 			)
+		),
+
+		infixOperationWithReturn: $ => choice(
+			$.elvisExpressionWithReturn,
+			seq(
+				$.infixOperation,
+				$.inOperator,
+				optional($.NLS),
+				$.jumpExpression,
+			),
 		),
 
 		infixOperation: $ => choice(
@@ -1051,11 +1106,22 @@ module.exports = grammar({
 			),
 		),
 
+		elvisExpressionWithReturn: $ => choice(
+			$.infixFunctionCallWithReturn,
+			seq(
+				$.elvisExpression,
+				//optional($.NLS),
+				$.elvis,
+				optional($.NLS),
+				$.jumpExpression,
+			)
+		),
+
 		elvisExpression: $ => prec(PREC.ELVIS, choice(
 			$.infixFunctionCall,
 			seq(
 				$.elvisExpression,
-				optional($.NLS),
+				//optional($.NLS),
 				$.elvis,
 				optional($.NLS),
 				$.infixFunctionCall,
@@ -1064,6 +1130,16 @@ module.exports = grammar({
 
 		elvis: $ => "?:",
 		nullableCallable: $ => "?::",
+
+		infixFunctionCallWithReturn: $ => prec(PREC.INFIX_CALL, choice(
+			$.rangeExpressionWithReturn,
+			seq(
+				$.infixFunctionCall,
+				$.simpleIdentifier,
+				optional($.NLS),
+				$.jumpExpression,
+			)
+		)),
 
 		infixFunctionCall: $ => prec(PREC.INFIX_CALL, choice(
 			$.rangeExpression,
@@ -1075,6 +1151,16 @@ module.exports = grammar({
 			)
 		)),
 
+		rangeExpressionWithReturn: $ => choice(
+			$.additiveExpressionWithReturn,
+			seq(
+				$.rangeExpression,
+				$.RANGE,
+				optional($.NLS),
+				$.jumpExpression,
+			),
+		),
+
 		rangeExpression: $ => choice(
 			$.additiveExpression,
 			seq(
@@ -1082,6 +1168,16 @@ module.exports = grammar({
 				$.RANGE,
 				optional($.NLS),
 				$.additiveExpression
+			),
+		),
+
+		additiveExpressionWithReturn: $ => choice(
+			$.multiplicativeExpressionWithReturn,
+			seq(
+				$.additiveExpression,
+				$.additiveOperator,
+				optional($.NLS),
+				$.jumpExpression,
 			),
 		),
 
@@ -1095,6 +1191,16 @@ module.exports = grammar({
 			),
 		),
 
+		multiplicativeExpressionWithReturn: $ => choice(
+			$.asExpressionWithReturn,
+			seq(
+				$.multiplicativeExpression,
+				$.multiplicativeOperator,
+				optional($.NLS),
+				$.jumpExpression,
+			)
+		),
+
 		multiplicativeExpression: $ => choice(
 			$.asExpression,
 			seq(
@@ -1105,6 +1211,10 @@ module.exports = grammar({
 			)
 		),
 
+		asExpressionWithReturn: $ => choice(
+			$.prefixUnaryExpressionWithReturn,
+		),
+
 		asExpression: $ => seq(
 			$.prefixUnaryExpression,
 			optional(seq(
@@ -1113,6 +1223,11 @@ module.exports = grammar({
 				optional($.NLS),
 				$.type
 			))
+		),
+
+		prefixUnaryExpressionWithReturn: $ => seq(
+			repeat($.unaryPrefix),
+			$.jumpExpression,
 		),
 
 		prefixUnaryExpression: $ => seq(
@@ -1437,7 +1552,7 @@ module.exports = grammar({
 			$.SUPER_AT
 		)),
 
-		jumpExpression: $ => choice(
+		jumpExpression: $ => prec.right(choice(
 			seq(
 				$.THROW,
 				optional($.NLS),
@@ -1454,7 +1569,7 @@ module.exports = grammar({
 			$.CONTINUE_AT,
 			$.BREAK,
 			$.BREAK_AT,
-		),
+		)),
 
 		callableReference: $ => seq(
 			choice(

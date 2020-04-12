@@ -166,11 +166,46 @@
           "named": true
         },
         {
+          "type": "additiveExpression",
+          "named": true
+        },
+        {
           "type": "additiveOperator",
           "named": true
         },
         {
           "type": "multiplicativeExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "additiveExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "additiveExpression",
+          "named": true
+        },
+        {
+          "type": "additiveOperator",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
+        },
+        {
+          "type": "multiplicativeExpressionWithReturn",
           "named": true
         }
       ]
@@ -372,6 +407,21 @@
         },
         {
           "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "asExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "prefixUnaryExpressionWithReturn",
           "named": true
         }
       ]
@@ -854,6 +904,37 @@
     }
   },
   {
+    "type": "comparisonWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "comparisonOperator",
+          "named": true
+        },
+        {
+          "type": "infixOperation",
+          "named": true
+        },
+        {
+          "type": "infixOperationWithReturn",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "conjunction",
     "named": true,
     "fields": {},
@@ -870,7 +951,42 @@
           "named": true
         },
         {
+          "type": "conjunction",
+          "named": true
+        },
+        {
           "type": "equality",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "conjunctionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "CONJ",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "conjunction",
+          "named": true
+        },
+        {
+          "type": "equalityWithReturn",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
           "named": true
         }
       ]
@@ -1061,6 +1177,41 @@
         {
           "type": "conjunction",
           "named": true
+        },
+        {
+          "type": "disjunction",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "disjunctionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "DISJ",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "conjunctionWithReturn",
+          "named": true
+        },
+        {
+          "type": "disjunction",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
         }
       ]
     }
@@ -1101,7 +1252,42 @@
           "named": true
         },
         {
+          "type": "elvisExpression",
+          "named": true
+        },
+        {
           "type": "infixFunctionCall",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "elvisExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "elvis",
+          "named": true
+        },
+        {
+          "type": "elvisExpression",
+          "named": true
+        },
+        {
+          "type": "infixFunctionCallWithReturn",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
           "named": true
         }
       ]
@@ -1206,6 +1392,10 @@
           "named": true
         },
         {
+          "type": "equality",
+          "named": true
+        },
+        {
           "type": "equalityOperator",
           "named": true
         }
@@ -1234,6 +1424,37 @@
         },
         {
           "type": "EXCL_EQEQ",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "equalityWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "comparisonWithReturn",
+          "named": true
+        },
+        {
+          "type": "equality",
+          "named": true
+        },
+        {
+          "type": "equalityOperator",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
           "named": true
         }
       ]
@@ -1291,6 +1512,10 @@
       "types": [
         {
           "type": "disjunction",
+          "named": true
+        },
+        {
+          "type": "disjunctionWithReturn",
           "named": true
         }
       ]
@@ -1722,7 +1947,42 @@
           "named": true
         },
         {
+          "type": "infixFunctionCall",
+          "named": true
+        },
+        {
           "type": "rangeExpression",
+          "named": true
+        },
+        {
+          "type": "simpleIdentifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "infixFunctionCallWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "infixFunctionCall",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
+        },
+        {
+          "type": "rangeExpressionWithReturn",
           "named": true
         },
         {
@@ -1753,11 +2013,46 @@
           "named": true
         },
         {
+          "type": "infixOperation",
+          "named": true
+        },
+        {
           "type": "isOperator",
           "named": true
         },
         {
           "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "infixOperationWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "elvisExpressionWithReturn",
+          "named": true
+        },
+        {
+          "type": "inOperator",
+          "named": true
+        },
+        {
+          "type": "infixOperation",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
           "named": true
         }
       ]
@@ -1800,6 +2095,53 @@
         },
         {
           "type": "NOT_IS",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jumpExpression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "BREAK",
+          "named": true
+        },
+        {
+          "type": "BREAK_AT",
+          "named": true
+        },
+        {
+          "type": "CONTINUE",
+          "named": true
+        },
+        {
+          "type": "CONTINUE_AT",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RETURN",
+          "named": true
+        },
+        {
+          "type": "RETURN_AT",
+          "named": true
+        },
+        {
+          "type": "THROW",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -2185,6 +2527,41 @@
         },
         {
           "type": "asExpression",
+          "named": true
+        },
+        {
+          "type": "multiplicativeExpression",
+          "named": true
+        },
+        {
+          "type": "multiplicativeOperator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "multiplicativeExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "asExpressionWithReturn",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
+        },
+        {
+          "type": "multiplicativeExpression",
           "named": true
         },
         {
@@ -2668,6 +3045,25 @@
     }
   },
   {
+    "type": "prefixUnaryExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "jumpExpression",
+          "named": true
+        },
+        {
+          "type": "unaryPrefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "prefixUnaryOperator",
     "named": true,
     "fields": {},
@@ -2882,6 +3278,41 @@
         },
         {
           "type": "additiveExpression",
+          "named": true
+        },
+        {
+          "type": "rangeExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "rangeExpressionWithReturn",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RANGE",
+          "named": true
+        },
+        {
+          "type": "additiveExpressionWithReturn",
+          "named": true
+        },
+        {
+          "type": "jumpExpression",
+          "named": true
+        },
+        {
+          "type": "rangeExpression",
           "named": true
         }
       ]

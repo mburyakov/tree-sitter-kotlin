@@ -215,3 +215,8 @@ Assignment with operator
                                       (lineStringContent
                                         (LineStrText)))))))))))))))))))))
 
+==================
+Return expression
+==================
+1 + return x + 3
+---

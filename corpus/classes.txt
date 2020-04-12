@@ -843,3 +843,15 @@ enum class Color(val rgb: Int) {
       (semis
         (NLS)))))
 
+=========
+Property with empty getter
+=========
+val x = 1
+  get
+---
+
+=========
+Property with initializer confusing with getter
+=========
+val x = 1 get 2
+---

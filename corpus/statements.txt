@@ -85,13 +85,14 @@ x=2
                               (infixFunctionCall
                                 (rangeExpression
                                   (additiveExpression
-                                    (multiplicativeExpression
-                                      (asExpression
-                                        (prefixUnaryExpression
-                                          (postfixUnaryExpression
-                                            (primaryExpression
-                                              (literalConstant
-                                                (IntegerLiteral)))))))
+                                    (additiveExpression
+                                      (multiplicativeExpression
+                                        (asExpression
+                                          (prefixUnaryExpression
+                                            (postfixUnaryExpression
+                                              (primaryExpression
+                                                (literalConstant
+                                                  (IntegerLiteral))))))))
                                     (additiveOperator
                                       (ADD))
                                     (multiplicativeExpression
@@ -220,3 +221,60 @@ Return expression
 ==================
 1 + return x + 3
 ---
+
+(source_file
+  (expression
+    (disjunctionWithReturn
+      (conjunctionWithReturn
+        (equalityWithReturn
+          (comparisonWithReturn
+            (infixOperationWithReturn
+              (elvisExpressionWithReturn
+                (infixFunctionCallWithReturn
+                  (rangeExpressionWithReturn
+                    (additiveExpressionWithReturn
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (jumpExpression
+                        (RETURN)
+                        (WS)
+                        (expression
+                          (disjunction
+                            (conjunction
+                              (equality
+                                (comparison
+                                  (infixOperation
+                                    (elvisExpression
+                                      (infixFunctionCall
+                                        (rangeExpression
+                                          (additiveExpression
+                                            (additiveExpression
+                                              (multiplicativeExpression
+                                                (asExpression
+                                                  (prefixUnaryExpression
+                                                    (postfixUnaryExpression
+                                                      (primaryExpression
+                                                        (simpleIdentifier
+                                                          (Identifier))))))))
+                                            (WS)
+                                            (additiveOperator
+                                              (ADD))
+                                            (WS)
+                                            (multiplicativeExpression
+                                              (asExpression
+                                                (prefixUnaryExpression
+                                                  (postfixUnaryExpression
+                                                    (primaryExpression
+                                                      (literalConstant
+                                                        (IntegerLiteral)))))))))))))))))))))))))))))
+

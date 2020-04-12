@@ -722,13 +722,14 @@ Callable reference for nullable type
                                                 (infixFunctionCall
                                                   (rangeExpression
                                                     (additiveExpression
-                                                      (multiplicativeExpression
-                                                        (asExpression
-                                                          (prefixUnaryExpression
-                                                            (postfixUnaryExpression
-                                                              (primaryExpression
-                                                                (literalConstant
-                                                                  (IntegerLiteral)))))))
+                                                      (additiveExpression
+                                                        (multiplicativeExpression
+                                                          (asExpression
+                                                            (prefixUnaryExpression
+                                                              (postfixUnaryExpression
+                                                                (primaryExpression
+                                                                  (literalConstant
+                                                                    (IntegerLiteral))))))))
                                                       (additiveOperator
                                                         (ADD))
                                                       (multiplicativeExpression
@@ -834,19 +835,20 @@ x<y+1
     (disjunction
       (conjunction
         (equality
-          (comparison
-            (infixOperation
-              (elvisExpression
-                (infixFunctionCall
-                  (rangeExpression
-                    (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral)))))))))))))
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))))))
           (equalityOperator
             (EQEQ))
           (comparison
@@ -890,13 +892,14 @@ x<y+1
                 (infixFunctionCall
                   (rangeExpression
                     (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral)))))))
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))
                       (additiveOperator
                         (ADD))
                       (multiplicativeExpression
@@ -965,13 +968,14 @@ x<y+1
                 (infixFunctionCall
                   (rangeExpression
                     (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (simpleIdentifier
-                                  (Identifier)))))))
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (simpleIdentifier
+                                    (Identifier))))))))
                       (additiveOperator
                         (ADD))
                       (multiplicativeExpression

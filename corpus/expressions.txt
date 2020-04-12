@@ -24,15 +24,16 @@ val text = "a " +
                   (infixFunctionCall
                     (rangeExpression
                       (additiveExpression
-                        (multiplicativeExpression
-                          (asExpression
-                            (prefixUnaryExpression
-                              (postfixUnaryExpression
-                                (primaryExpression
-                                  (stringLiteral
-                                    (lineStringLiteral
-                                      (lineStringContent
-                                        (LineStrText)))))))))
+                        (additiveExpression
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (stringLiteral
+                                      (lineStringLiteral
+                                        (lineStringContent
+                                          (LineStrText))))))))))
                         (WS)
                         (additiveOperator
                           (ADD))
@@ -155,24 +156,26 @@ ob.callMethod(16 + 14 / 5)
                                                     (infixFunctionCall
                                                       (rangeExpression
                                                         (additiveExpression
-                                                          (multiplicativeExpression
-                                                            (asExpression
-                                                              (prefixUnaryExpression
-                                                                (postfixUnaryExpression
-                                                                  (primaryExpression
-                                                                    (literalConstant
-                                                                      (IntegerLiteral)))))))
+                                                          (additiveExpression
+                                                            (multiplicativeExpression
+                                                              (asExpression
+                                                                (prefixUnaryExpression
+                                                                  (postfixUnaryExpression
+                                                                    (primaryExpression
+                                                                      (literalConstant
+                                                                        (IntegerLiteral))))))))
                                                           (WS)
                                                           (additiveOperator
                                                             (ADD))
                                                           (WS)
                                                           (multiplicativeExpression
-                                                            (asExpression
-                                                              (prefixUnaryExpression
-                                                                (postfixUnaryExpression
-                                                                  (primaryExpression
-                                                                    (literalConstant
-                                                                      (IntegerLiteral))))))
+                                                            (multiplicativeExpression
+                                                              (asExpression
+                                                                (prefixUnaryExpression
+                                                                  (postfixUnaryExpression
+                                                                    (primaryExpression
+                                                                      (literalConstant
+                                                                        (IntegerLiteral)))))))
                                                             (WS)
                                                             (multiplicativeOperator
                                                               (DIV))
@@ -203,12 +206,13 @@ Multiplication expression
                   (rangeExpression
                     (additiveExpression
                       (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral))))))
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral)))))))
                         (WS)
                         (multiplicativeOperator
                           (MULT))
@@ -420,28 +424,30 @@ Infix expressions
             (infixOperation
               (elvisExpression
                 (infixFunctionCall
-                  (rangeExpression
-                    (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral)))))))))
-                  (WS)
-                  (simpleIdentifier
-                    (Identifier))
-                  (WS)
-                  (rangeExpression
-                    (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral)))))))))
+                  (infixFunctionCall
+                    (infixFunctionCall
+                      (rangeExpression
+                        (additiveExpression
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (literalConstant
+                                      (IntegerLiteral))))))))))
+                    (WS)
+                    (simpleIdentifier
+                      (Identifier))
+                    (WS)
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))
                   (WS)
                   (simpleIdentifier
                     (Identifier))

@@ -18,13 +18,14 @@ Comments
                 (infixFunctionCall
                   (rangeExpression
                     (additiveExpression
-                      (multiplicativeExpression
-                        (asExpression
-                          (prefixUnaryExpression
-                            (postfixUnaryExpression
-                              (primaryExpression
-                                (literalConstant
-                                  (IntegerLiteral)))))))
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))
                       (WS)
                       (additiveOperator
                         (ADD))

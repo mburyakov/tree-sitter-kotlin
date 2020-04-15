@@ -8,9 +8,8 @@ for (value in values) {}
   (for_statement
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -245,36 +244,37 @@ Return expression
                       (additiveOperator
                         (ADD))
                       (WS)
-                      (jumpExpression
-                        (RETURN)
-                        (WS)
-                        (expression
-                          (disjunction
-                            (conjunction
-                              (equality
-                                (comparison
-                                  (infixOperation
-                                    (elvisExpression
-                                      (infixFunctionCall
-                                        (rangeExpression
-                                          (additiveExpression
+                      (rightRecursiveExpression
+                        (jumpExpression
+                          (RETURN)
+                          (WS)
+                          (expression
+                            (disjunction
+                              (conjunction
+                                (equality
+                                  (comparison
+                                    (infixOperation
+                                      (elvisExpression
+                                        (infixFunctionCall
+                                          (rangeExpression
                                             (additiveExpression
+                                              (additiveExpression
+                                                (multiplicativeExpression
+                                                  (asExpression
+                                                    (prefixUnaryExpression
+                                                      (postfixUnaryExpression
+                                                        (primaryExpression
+                                                          (simpleIdentifier
+                                                            (Identifier))))))))
+                                              (WS)
+                                              (additiveOperator
+                                                (ADD))
+                                              (WS)
                                               (multiplicativeExpression
                                                 (asExpression
                                                   (prefixUnaryExpression
                                                     (postfixUnaryExpression
                                                       (primaryExpression
-                                                        (simpleIdentifier
-                                                          (Identifier))))))))
-                                            (WS)
-                                            (additiveOperator
-                                              (ADD))
-                                            (WS)
-                                            (multiplicativeExpression
-                                              (asExpression
-                                                (prefixUnaryExpression
-                                                  (postfixUnaryExpression
-                                                    (primaryExpression
-                                                      (literalConstant
-                                                        (IntegerLiteral)))))))))))))))))))))))))))))
+                                                        (literalConstant
+                                                          (IntegerLiteral))))))))))))))))))))))))))))))
 

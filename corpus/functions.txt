@@ -7,9 +7,8 @@ fun main() {}
 (source_file
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (WS)
     (function_body
       (block))))
@@ -25,9 +24,8 @@ fun main() {
 (source_file
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (WS)
     (function_body
       (block
@@ -45,9 +43,8 @@ fun main() {
 (source_file
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (WS)
     (function_body
       (block
@@ -69,13 +66,11 @@ fun <T> test() {}
       (LANGLE)
       (type_parameter
         (type_identifier
-          (simpleIdentifier
-            (Identifier))))
+          (Identifier)))
       (RANGLE))
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (WS)
     (function_body
       (block))))
@@ -91,9 +86,8 @@ fun sum(a: Int, b: Int) = a + b
 (source_file
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (parameter
       (simpleIdentifier
         (Identifier))
@@ -122,9 +116,8 @@ fun sum(a: Int, b: Int) = a + b
     (NLS))
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (parameter
       (simpleIdentifier
         (Identifier))
@@ -136,6 +129,7 @@ fun sum(a: Int, b: Int) = a + b
             (simpleUserType
               (type_identifier
                 (Identifier)))))))
+    (COMMA)
     (WS)
     (parameter
       (simpleIdentifier
@@ -190,9 +184,8 @@ fun answerToTheUltimateQuestionOfLifeTheUniverseAndEverything(): Int = 42
 (source_file
   (function_declaration
     (WS)
-    (simple_identifier
-      (simpleIdentifier
-        (Identifier)))
+    (simpleIdentifier
+      (Identifier))
     (COLON)
     (WS)
     (type

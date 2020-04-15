@@ -10,18 +10,18 @@ class Empty2 {}
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier))))
+      (Identifier)))
   (semis
     (NLS))
   (class_declaration
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
-    (class_body)))
+    (class_body
+      (LCURL)
+      (RCURL))))
 
 ==================
 Class with methods
@@ -38,17 +38,16 @@ class HelloWorld {
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (function_declaration
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (function_body
           (block)))
@@ -57,14 +56,14 @@ class HelloWorld {
       (WS)
       (function_declaration
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (function_body
           (block)))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Generic class
@@ -77,17 +76,17 @@ class Container<T> {}
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (type_parameters
       (LANGLE)
       (type_parameter
         (type_identifier
-          (simpleIdentifier
-            (Identifier))))
+          (Identifier)))
       (RANGLE))
     (WS)
-    (class_body)))
+    (class_body
+      (LCURL)
+      (RCURL))))
 
 ==================
 Class with methods and expressions
@@ -104,17 +103,16 @@ class Strings {
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (function_declaration
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (function_body
           (WS)
@@ -142,9 +140,8 @@ class Strings {
       (WS)
       (function_declaration
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (function_body
           (WS)
@@ -196,7 +193,8 @@ class Strings {
                                             (lineStringContent
                                               (LineStrText)))))))))))))))))))))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Class with modifiers
@@ -218,10 +216,10 @@ internal open class Test {
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (function_declaration
@@ -236,11 +234,31 @@ internal open class Test {
             (INLINE)))
         (WS)
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+        (simpleIdentifier
+          (Identifier)))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
+
+==================
+Enum class with modifiers in non-standard order
+==================
+enum public class E
+---
+
+(source_file
+  (class_declaration
+    (modifiers
+      (class_modifier
+        (ENUM))
+      (WS)
+      (visibility_modifier
+        (PUBLIC)))
+    (WS)
+    (CLASS)
+    (WS)
+    (type_identifier
+      (Identifier))))
 
 ==================
 Objects
@@ -254,19 +272,19 @@ object Singleton {
   (object_declaration
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (function_declaration
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+        (simpleIdentifier
+          (Identifier)))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Primary constructors
@@ -286,16 +304,15 @@ data class Vector2D(
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (primary_constructor
+      (LPAREN)
       (NLS)
       (WS)
       (class_parameter
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (type
           (typeReference
@@ -307,9 +324,8 @@ data class Vector2D(
       (WS)
       (class_parameter
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (type
           (typeReference
@@ -317,7 +333,8 @@ data class Vector2D(
               (simpleUserType
                 (type_identifier
                   (Identifier)))))))
-      (NLS))))
+      (NLS)
+      (RPAREN))))
 
 ==================
 Inheritance
@@ -334,90 +351,89 @@ class D : SomeInterface
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (COLON)
     (WS)
     (delegation_specifier
       (constructor_invocation
-        (constructorInvocation
-          (userType
-            (simpleUserType
-              (type_identifier
-                (Identifier))))
-          (valueArguments
-            (LPAREN)
-            (RPAREN)))))
+        (userType
+          (simpleUserType
+            (type_identifier
+              (Identifier))))
+        (valueArguments
+          (LPAREN)
+          (RPAREN))))
     (WS)
-    (class_body))
+    (class_body
+      (LCURL)
+      (RCURL)))
   (semis
     (NLS))
   (class_declaration
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (primary_constructor
+      (LPAREN)
       (class_parameter
-        (simple_identifier
-          (simpleIdentifier
-            (PARAM)))
+        (simpleIdentifier
+          (PARAM))
         (WS)
         (type
           (typeReference
             (userType
               (simpleUserType
                 (type_identifier
-                  (Identifier))))))))
+                  (Identifier)))))))
+      (RPAREN))
     (WS)
     (COLON)
     (WS)
     (delegation_specifier
       (constructor_invocation
-        (constructorInvocation
-          (userType
-            (simpleUserType
-              (type_identifier
-                (Identifier))))
-          (valueArguments
-            (LPAREN)
-            (valueArgument
-              (expression
-                (disjunction
-                  (conjunction
-                    (equality
-                      (comparison
-                        (infixOperation
-                          (elvisExpression
-                            (infixFunctionCall
-                              (rangeExpression
-                                (additiveExpression
-                                  (multiplicativeExpression
-                                    (asExpression
-                                      (prefixUnaryExpression
-                                        (postfixUnaryExpression
-                                          (primaryExpression
-                                            (simpleIdentifier
-                                              (PARAM))))))))))))))))))
-            (RPAREN))))))
+        (userType
+          (simpleUserType
+            (type_identifier
+              (Identifier))))
+        (valueArguments
+          (LPAREN)
+          (valueArgument
+            (expression
+              (disjunction
+                (conjunction
+                  (equality
+                    (comparison
+                      (infixOperation
+                        (elvisExpression
+                          (infixFunctionCall
+                            (rangeExpression
+                              (additiveExpression
+                                (multiplicativeExpression
+                                  (asExpression
+                                    (prefixUnaryExpression
+                                      (postfixUnaryExpression
+                                        (primaryExpression
+                                          (simpleIdentifier
+                                            (PARAM))))))))))))))))))
+          (RPAREN)))))
   (semis
     (NLS))
   (class_declaration
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (COLON)
     (WS)
     (delegation_specifier
-      (userType
-        (simpleUserType
-          (type_identifier
-            (Identifier)))))))
+      (user_type
+        (userType
+          (simpleUserType
+            (type_identifier
+              (Identifier))))))))
 
 ==================
 Properties
@@ -434,18 +450,17 @@ class Something {
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (property_declaration
         (WS)
         (variable_declaration
-          (simple_identifier
-            (simpleIdentifier
-              (Identifier)))
+          (simpleIdentifier
+            (Identifier))
           (WS)
           (type
             (typeReference
@@ -478,9 +493,8 @@ class Something {
       (property_declaration
         (WS)
         (variable_declaration
-          (simple_identifier
-            (simpleIdentifier
-              (Identifier)))
+          (simpleIdentifier
+            (Identifier))
           (WS)
           (type
             (nullableType
@@ -497,9 +511,8 @@ class Something {
       (property_declaration
         (WS)
         (variable_declaration
-          (simple_identifier
-            (simpleIdentifier
-              (Identifier)))
+          (simpleIdentifier
+            (Identifier))
           (WS)
           (type
             (typeReference
@@ -530,7 +543,8 @@ class Something {
                                           (simpleIdentifier
                                             (Identifier))))))))))))))))))))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Constructor delegation calls
@@ -545,13 +559,12 @@ class Test(x: Int, y: Int) {
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (primary_constructor
+      (LPAREN)
       (class_parameter
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (type
           (typeReference
@@ -561,21 +574,23 @@ class Test(x: Int, y: Int) {
                   (Identifier)))))))
       (WS)
       (class_parameter
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (type
           (typeReference
             (userType
               (simpleUserType
                 (type_identifier
-                  (Identifier))))))))
+                  (Identifier)))))))
+      (RPAREN))
     (WS)
     (class_body
+      (LCURL)
       (NLS)
       (WS)
       (secondary_constructor
+        (CONSTRUCTOR)
         (WS)
         (WS)
         (constructor_delegation_call
@@ -622,7 +637,8 @@ class Test(x: Int, y: Int) {
                                                 (IntegerLiteral))))))))))))))))))
               (RPAREN)))))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Enum classes
@@ -642,68 +658,72 @@ enum class Color(val rgb: Int) {
 
 (source_file
   (class_declaration
-    (ENUM)
+    (modifiers
+      (class_modifier
+        (ENUM)))
     (WS)
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (WS)
     (enum_class_body
+      (LCURL)
       (NLS)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+        (simpleIdentifier
+          (Identifier)))
+      (COMMA)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+        (simpleIdentifier
+          (Identifier)))
+      (COMMA)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
+        (simpleIdentifier
+          (Identifier)))
+      (COMMA)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier))))
-      (NLS)))
+        (simpleIdentifier
+          (Identifier)))
+      (NLS)
+      (RCURL)))
   (semis
     (NLS))
   (class_declaration
-    (ENUM)
+    (modifiers
+      (class_modifier
+        (ENUM)))
     (WS)
     (CLASS)
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (primary_constructor
+      (LPAREN)
       (class_parameter
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (type
           (typeReference
             (userType
               (simpleUserType
                 (type_identifier
-                  (Identifier))))))))
+                  (Identifier)))))))
+      (RPAREN))
     (WS)
     (enum_class_body
+      (LCURL)
       (NLS)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (value_arguments
           (valueArguments
             (LPAREN)
@@ -726,12 +746,12 @@ enum class Color(val rgb: Int) {
                                             (literalConstant
                                               (HexLiteral))))))))))))))))))
             (RPAREN))))
+      (COMMA)
       (NLS)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (value_arguments
           (valueArguments
             (LPAREN)
@@ -754,12 +774,12 @@ enum class Color(val rgb: Int) {
                                             (literalConstant
                                               (HexLiteral))))))))))))))))))
             (RPAREN))))
+      (COMMA)
       (NLS)
       (WS)
       (enum_entry
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (value_arguments
           (valueArguments
             (LPAREN)
@@ -790,9 +810,8 @@ enum class Color(val rgb: Int) {
             (OVERRIDE)))
         (WS)
         (WS)
-        (simple_identifier
-          (simpleIdentifier
-            (Identifier)))
+        (simpleIdentifier
+          (Identifier))
         (WS)
         (function_body
           (WS)
@@ -843,7 +862,8 @@ enum class Color(val rgb: Int) {
                                                                               (IntegerLiteral))))))))))))))))))
                                             (RPAREN))))))))))))))))))))
       (semis
-        (NLS)))))
+        (NLS))
+      (RCURL))))
 
 ==================
 Property with empty getter
@@ -856,9 +876,8 @@ val x = 1
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -893,9 +912,8 @@ val x = 1 get 2
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression

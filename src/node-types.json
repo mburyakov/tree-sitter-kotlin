@@ -35,16 +35,6 @@
     "fields": {}
   },
   {
-    "type": "COMPANION",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "CONSTRUCTOR",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "DOT",
     "named": true,
     "fields": {}
@@ -65,7 +55,7 @@
     "fields": {}
   },
   {
-    "type": "INIT",
+    "type": "LCURL",
     "named": true,
     "fields": {}
   },
@@ -124,7 +114,7 @@
     }
   },
   {
-    "type": "REIFIED",
+    "type": "RCURL",
     "named": true,
     "fields": {}
   },
@@ -375,9 +365,17 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "INIT",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "block",
           "named": true
@@ -641,10 +639,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "LCURL",
+          "named": true
+        },
+        {
           "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RCURL",
           "named": true
         },
         {
@@ -703,7 +709,11 @@
           "named": true
         },
         {
-          "type": "ENUM",
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "annotation",
           "named": true
         },
         {
@@ -758,6 +768,10 @@
           "named": true
         },
         {
+          "type": "ENUM",
+          "named": true
+        },
+        {
           "type": "INNER",
           "named": true
         },
@@ -777,6 +791,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -785,7 +803,7 @@
           "named": true
         },
         {
-          "type": "simple_identifier",
+          "type": "simpleIdentifier",
           "named": true
         },
         {
@@ -832,8 +850,24 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "COMPANION",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "class_body",
           "named": true
@@ -993,7 +1027,7 @@
     }
   },
   {
-    "type": "constructorInvocation",
+    "type": "constructor_delegation_call",
     "named": true,
     "fields": {},
     "children": {
@@ -1001,24 +1035,9 @@
       "required": true,
       "types": [
         {
-          "type": "userType",
+          "type": "NLS",
           "named": true
         },
-        {
-          "type": "valueArguments",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "constructor_delegation_call",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
         {
           "type": "value_arguments",
           "named": true
@@ -1031,11 +1050,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "constructorInvocation",
+          "type": "userType",
+          "named": true
+        },
+        {
+          "type": "valueArguments",
           "named": true
         }
       ]
@@ -1125,7 +1148,7 @@
           "named": true
         },
         {
-          "type": "userType",
+          "type": "user_type",
           "named": true
         }
       ]
@@ -1299,10 +1322,22 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "COMMA",
+          "named": true
+        },
+        {
+          "type": "LCURL",
+          "named": true
+        },
+        {
           "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RCURL",
           "named": true
         },
         {
@@ -1357,6 +1392,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "class_body",
           "named": true
         },
@@ -1365,7 +1404,7 @@
           "named": true
         },
         {
-          "type": "simple_identifier",
+          "type": "simpleIdentifier",
           "named": true
         },
         {
@@ -1488,6 +1527,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -1530,19 +1573,7 @@
       "required": true,
       "types": [
         {
-          "type": "AT_NO_WS",
-          "named": true
-        },
-        {
-          "type": "AT_PRE_WS",
-          "named": true
-        },
-        {
           "type": "COLON",
-          "named": true
-        },
-        {
-          "type": "FILE",
           "named": true
         },
         {
@@ -1558,7 +1589,7 @@
           "named": true
         },
         {
-          "type": "unescapedAnnotation",
+          "type": "unescaped_annotation",
           "named": true
         }
       ]
@@ -1587,10 +1618,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "control_structure_body",
           "named": true
@@ -1708,6 +1735,10 @@
           "named": true
         },
         {
+          "type": "COMMA",
+          "named": true
+        },
+        {
           "type": "NLS",
           "named": true
         },
@@ -1736,7 +1767,7 @@
           "named": true
         },
         {
-          "type": "simple_identifier",
+          "type": "simpleIdentifier",
           "named": true
         },
         {
@@ -2438,7 +2469,7 @@
           "named": true
         },
         {
-          "type": "unescapedAnnotation",
+          "type": "unescaped_annotation",
           "named": true
         }
       ]
@@ -2508,6 +2539,37 @@
         },
         {
           "type": "multiLineStringExpression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "multi_variable_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "COMMA",
+          "named": true
+        },
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
+          "type": "variable_declaration",
           "named": true
         }
       ]
@@ -2656,6 +2718,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
         {
           "type": "class_body",
           "named": true
@@ -3143,10 +3213,22 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "CONSTRUCTOR",
+          "named": true
+        },
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
           "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
           "named": true
         },
         {
@@ -3185,6 +3267,10 @@
           "named": true
         },
         {
+          "type": "multi_variable_declaration",
+          "named": true
+        },
+        {
           "type": "property_delegate",
           "named": true
         },
@@ -3220,9 +3306,13 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "expression",
           "named": true
@@ -3386,7 +3476,17 @@
   {
     "type": "reification_modifier",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "REIFIED",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "rightRecursiveExpression",
@@ -3428,8 +3528,20 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "COMMA",
+          "named": true
+        },
+        {
+          "type": "CONSTRUCTOR",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "block",
           "named": true
@@ -3517,11 +3629,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "shebang_line",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "simpleIdentifier",
@@ -3781,7 +3888,7 @@
           "named": true
         },
         {
-          "type": "unescapedAnnotation",
+          "type": "unescaped_annotation",
           "named": true
         }
       ]
@@ -4207,6 +4314,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "modifiers",
           "named": true
         },
@@ -4234,6 +4345,14 @@
       "required": true,
       "types": [
         {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "annotation",
           "named": true
         },
@@ -4256,6 +4375,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "COMMA",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "type_constraint",
           "named": true
@@ -4458,10 +4585,6 @@
         {
           "type": "WHERE",
           "named": true
-        },
-        {
-          "type": "simpleIdentifier",
-          "named": true
         }
       ]
     }
@@ -4474,6 +4597,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "type",
           "named": true
@@ -4522,6 +4653,10 @@
       "types": [
         {
           "type": "LANGLE",
+          "named": true
+        },
+        {
+          "type": "NLS",
           "named": true
         },
         {
@@ -4582,7 +4717,7 @@
     }
   },
   {
-    "type": "unescapedAnnotation",
+    "type": "unescaped_annotation",
     "named": true,
     "fields": {},
     "children": {
@@ -4590,7 +4725,7 @@
       "required": true,
       "types": [
         {
-          "type": "constructorInvocation",
+          "type": "constructor_invocation",
           "named": true
         },
         {
@@ -4755,7 +4890,15 @@
       "required": true,
       "types": [
         {
-          "type": "simple_identifier",
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "simpleIdentifier",
           "named": true
         },
         {
@@ -4904,10 +5047,6 @@
     "named": false
   },
   {
-    "type": "#!",
-    "named": false
-  },
-  {
     "type": "${",
     "named": false
   },
@@ -4968,6 +5107,10 @@
     "named": false
   },
   {
+    "type": "@file",
+    "named": false
+  },
+  {
     "type": "ABSTRACT",
     "named": true
   },
@@ -5024,11 +5167,19 @@
     "named": true
   },
   {
+    "type": "COMPANION",
+    "named": true
+  },
+  {
     "type": "CONJ",
     "named": true
   },
   {
     "type": "CONST",
+    "named": true
+  },
+  {
+    "type": "CONSTRUCTOR",
     "named": true
   },
   {
@@ -5145,6 +5296,10 @@
   },
   {
     "type": "INFIX",
+    "named": true
+  },
+  {
+    "type": "INIT",
     "named": true
   },
   {
@@ -5284,6 +5439,10 @@
     "named": true
   },
   {
+    "type": "REIFIED",
+    "named": true
+  },
+  {
     "type": "RETURN",
     "named": true
   },
@@ -5364,14 +5523,6 @@
     "named": false
   },
   {
-    "type": "companion",
-    "named": false
-  },
-  {
-    "type": "constructor",
-    "named": false
-  },
-  {
     "type": "do",
     "named": false
   },
@@ -5408,10 +5559,6 @@
     "named": false
   },
   {
-    "type": "init",
-    "named": false
-  },
-  {
     "type": "interface",
     "named": false
   },
@@ -5428,12 +5575,12 @@
     "named": false
   },
   {
-    "type": "reified",
+    "type": "set",
     "named": false
   },
   {
-    "type": "set",
-    "named": false
+    "type": "shebang_line",
+    "named": true
   },
   {
     "type": "super",

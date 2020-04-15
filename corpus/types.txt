@@ -757,9 +757,8 @@ val x: dynamic? = null
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier)))
+      (simpleIdentifier
+        (Identifier))
       (WS)
       (type
         (nullableType
@@ -1036,9 +1035,8 @@ val c = f as kotlin.Int?.() -> Int
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -1104,9 +1102,8 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier)))
+      (simpleIdentifier
+        (Identifier))
       (WS)
       (type
         (functionType
@@ -1184,9 +1181,8 @@ val methodRef: (Outer<Int>.Inner) -> Int? = pckg.Outer<Int>.Inner::method
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier)))
+      (simpleIdentifier
+        (Identifier))
       (WS)
       (type
         (functionType
@@ -1284,14 +1280,12 @@ typealias AliasSet<Item> = io.lacuna.bifurcan.Set<Item>
   (type_alias
     (WS)
     (type_identifier
-      (simpleIdentifier
-        (Identifier)))
+      (Identifier))
     (type_parameters
       (LANGLE)
       (type_parameter
         (type_identifier
-          (simpleIdentifier
-            (Identifier))))
+          (Identifier)))
       (RANGLE))
     (WS)
     (WS)

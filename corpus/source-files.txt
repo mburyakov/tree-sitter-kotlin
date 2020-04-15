@@ -8,11 +8,9 @@ val x = 4
 
 (source_file
   (file_annotation
-    (AT_NO_WS)
-    (FILE)
     (COLON)
-    (unescapedAnnotation
-      (constructorInvocation
+    (unescaped_annotation
+      (constructor_invocation
         (userType
           (simpleUserType
             (type_identifier
@@ -44,9 +42,8 @@ val x = 4
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression

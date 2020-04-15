@@ -9,9 +9,8 @@ val text = "a " +
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -60,9 +59,8 @@ val text = "a "
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -347,9 +345,8 @@ val cache = ConcurrentHashMap<IconDescriptor, CompletableFuture<ByteArray?>>()
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -558,9 +555,8 @@ val y = 5
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (semi
       (NLS))
     (WS)
@@ -577,9 +573,8 @@ val y = 5
   (property_declaration
     (WS)
     (variable_declaration
-      (simple_identifier
-        (simpleIdentifier
-          (Identifier))))
+      (simpleIdentifier
+        (Identifier)))
     (WS)
     (WS)
     (expression
@@ -645,4 +640,267 @@ val y = 5
             (semis
               (NLS)))
           (WS))))))
+
+==================
+Confusing statement annotation
+==================
+@A (1) + 2
+---
+
+(source_file
+  (annotation
+    (singleAnnotation
+      (AT_NO_WS)
+      (unescaped_annotation
+        (constructor_invocation
+          (userType
+            (simpleUserType
+              (type_identifier
+                (Identifier))))
+          (WS)
+          (valueArguments
+            (LPAREN)
+            (valueArgument
+              (expression
+                (disjunction
+                  (conjunction
+                    (equality
+                      (comparison
+                        (infixOperation
+                          (elvisExpression
+                            (infixFunctionCall
+                              (rangeExpression
+                                (additiveExpression
+                                  (multiplicativeExpression
+                                    (asExpression
+                                      (prefixUnaryExpression
+                                        (postfixUnaryExpression
+                                          (primaryExpression
+                                            (literalConstant
+                                              (IntegerLiteral))))))))))))))))))
+            (RPAREN))))))
+  (WS)
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (unaryPrefix
+                              (prefixUnaryOperator
+                                (ADD)))
+                            (WS)
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+Statement annotation
+==================
+@A() (1) + 2
+---
+
+(source_file
+  (annotation
+    (singleAnnotation
+      (AT_NO_WS)
+      (unescaped_annotation
+        (constructor_invocation
+          (userType
+            (simpleUserType
+              (type_identifier
+                (Identifier))))
+          (valueArguments
+            (LPAREN)
+            (RPAREN))))))
+  (WS)
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (parenthesizedExpression
+                                    (LPAREN)
+                                    (expression
+                                      (disjunction
+                                        (conjunction
+                                          (equality
+                                            (comparison
+                                              (infixOperation
+                                                (elvisExpression
+                                                  (infixFunctionCall
+                                                    (rangeExpression
+                                                      (additiveExpression
+                                                        (multiplicativeExpression
+                                                          (asExpression
+                                                            (prefixUnaryExpression
+                                                              (postfixUnaryExpression
+                                                                (primaryExpression
+                                                                  (literalConstant
+                                                                    (IntegerLiteral)))))))))))))))))
+                                    (RPAREN))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+Expression annotation
+==================
+(@A() 1) + 2
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (parenthesizedExpression
+                                    (LPAREN)
+                                    (expression
+                                      (disjunction
+                                        (conjunction
+                                          (equality
+                                            (comparison
+                                              (infixOperation
+                                                (elvisExpression
+                                                  (infixFunctionCall
+                                                    (rangeExpression
+                                                      (additiveExpression
+                                                        (multiplicativeExpression
+                                                          (asExpression
+                                                            (prefixUnaryExpression
+                                                              (unaryPrefix
+                                                                (annotation
+                                                                  (singleAnnotation
+                                                                    (AT_NO_WS)
+                                                                    (unescaped_annotation
+                                                                      (constructor_invocation
+                                                                        (userType
+                                                                          (simpleUserType
+                                                                            (type_identifier
+                                                                              (Identifier))))
+                                                                        (valueArguments
+                                                                          (LPAREN)
+                                                                          (RPAREN)))))))
+                                                              (WS)
+                                                              (postfixUnaryExpression
+                                                                (primaryExpression
+                                                                  (literalConstant
+                                                                    (IntegerLiteral)))))))))))))))))
+                                    (RPAREN))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+Expression annotation without parenthesis
+==================
+(@A 1) + 2
+---
+
+(source_file
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (parenthesizedExpression
+                                    (LPAREN)
+                                    (expression
+                                      (disjunction
+                                        (conjunction
+                                          (equality
+                                            (comparison
+                                              (infixOperation
+                                                (elvisExpression
+                                                  (infixFunctionCall
+                                                    (rangeExpression
+                                                      (additiveExpression
+                                                        (multiplicativeExpression
+                                                          (asExpression
+                                                            (prefixUnaryExpression
+                                                              (unaryPrefix
+                                                                (annotation
+                                                                  (singleAnnotation
+                                                                    (AT_NO_WS)
+                                                                    (unescaped_annotation
+                                                                      (userType
+                                                                        (simpleUserType
+                                                                          (type_identifier
+                                                                            (Identifier))))))))
+                                                              (WS)
+                                                              (postfixUnaryExpression
+                                                                (primaryExpression
+                                                                  (literalConstant
+                                                                    (IntegerLiteral)))))))))))))))))
+                                    (RPAREN))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
 

@@ -95,6 +95,12 @@ module.exports = grammar({
 
 		// '(@Annotation T)?::field
 		[$.unaryPrefix, $.typeModifier],
+
+		// 'val (@A C).x' and 'val (@A x)'
+		[$.variable_declaration, $.typeModifier],
+
+		// 'val (C).x' and 'val (x)'
+		[$.variable_declaration, $.simpleUserType],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -109,10 +115,6 @@ module.exports = grammar({
 		// General
 		// ==========
 
-		// start
-
-		//start: $ => $._statement,
-
 		source_file: $ => seq(
 			optional($.shebang_line),
 			optional($.NLS),
@@ -123,44 +125,48 @@ module.exports = grammar({
 			optional($._statement)
 		),
 
-		shebang_line: $ => seq("#!", /[^\r\n]*/),
+		// TODO:
+		// should we distinguish script and
+		// kotlinFile where only top-level objects should be allowed?
+
+		shebang_line: $ => /#![^\r\n]*/,
 
 		file_annotation: $ => seq(
-			choice(
-				$.AT_NO_WS,
-				$.AT_PRE_WS,
-			),
-			$.FILE,
+			"@file",
 			optional($.NLS),
 			$.COLON,
 			optional($.NLS),
 			choice(
-				seq($.LSQUARE, repeat1($._unescaped_annotation), $.RSQUARE),
-				$._unescaped_annotation
+				seq($.LSQUARE, repeat1($.unescaped_annotation), $.RSQUARE),
+				$.unescaped_annotation
 			),
 			optional($.NLS),
 		),
 
-		package_header: $ => seq("package", $.identifier, $._semi),
+		package_header: $ => seq("package", $.identifier, optional($.semi)),
 
 		import_header: $ => seq(
 			$.IMPORT,
 			$.identifier,
 			optional(choice(seq(".*"), $.import_alias)),
-			$._semi
+			optional($._semi),
 		),
 
-		import_alias: $ => seq("as", alias($.simple_identifier, $.type_identifier)),
-
-		top_level_object: $ => seq($._declaration, optional($._semis)),
+		// TODO: why type identifier by default?
+		import_alias: $ => seq("as", alias($.simpleIdentifier, $.type_identifier)),
 
 		type_alias: $ => seq(
 			optional($.modifiers),
 			"typealias",
-			alias($.simple_identifier, $.type_identifier),
-			optional($.type_parameters),
+			optional($.NLS),
+			alias($.simpleIdentifier, $.type_identifier),
+			optional(seq(
+				optional($.NLS),
+				$.type_parameters,
+			)),
+			optional($.NLS),
 			"=",
-			$._type
+			$.type
 		),
 
 		_declaration: $ => choice(
@@ -175,107 +181,188 @@ module.exports = grammar({
 		// Classes
 		// ==========
 
-		class_declaration: $ => prec.right(choice(
-			seq(
-				optional($.modifiers),
-				choice($.CLASS, "interface"),
-				alias($.simple_identifier, $.type_identifier),
-				optional($.type_parameters),
-				optional($.primary_constructor),
-				optional(seq($.COLON, $._delegation_specifiers)),
-				optional($.type_constraints),
-				optional($.class_body)
-			),
-			seq(
-				optional($.modifiers),
-				$.ENUM,
-				$.CLASS,
-				alias($.simple_identifier, $.type_identifier),
-				optional($.type_parameters),
-				optional($.primary_constructor),
-				optional(seq(":", $._delegation_specifiers)),
-				optional($.type_constraints),
-				optional($.enum_class_body)
-			)
-		)),
+		class_declaration: $ => seq(
+			optional($.modifiers),
+			choice($.CLASS, "interface"),
+			optional($.NLS),
+			alias($.simpleIdentifier, $.type_identifier),
+			optional(seq(
+				// TODO: all omitted NLS
+				//optional($.NLS),
+				$.type_parameters,
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.primary_constructor,
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$._delegation_specifiers
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.type_constraints,
+			)),
+			optional(choice(
+				seq(
+					//$.NLS,
+					$.class_body,
+				),
+				seq(
+					//$.NLS,
+					$.enum_class_body,
+				)
+			))
+		),
 
 		primary_constructor: $ => seq(
-			optional(seq(optional($.modifiers), "constructor")),
+			optional(seq(
+				optional($.modifiers),
+				$.CONSTRUCTOR,
+				optional($.NLS)
+			)),
 			$._class_parameters
 		),
 
 		class_body: $ => seq(
-			"{",
+			$.LCURL,
 			optional($.NLS),
 			optional($._class_member_declarations),
-			"}"
+			$.RCURL
 		),
 
 		_class_parameters: $ => seq(
-			"(",
+			$.LPAREN,
 			optional($.NLS),
 			optional(sep1(
 				seq($.class_parameter, optional($.NLS)),
 				seq(",", optional($.NLS))
 			)),
-			")"
+			$.RPAREN,
 		),
 
 		class_parameter: $ => seq(
-			optional($.modifiers),
-			optional(choice("val", "var")),
-			$.simple_identifier,
+			optional(seq(
+				optional($.modifiers),
+				choice(
+					"val",
+					"var"
+				),
+				optional($.NLS),
+			)),
+			$.simpleIdentifier,
 			":",
-			$._type,
-			optional(seq("=", $._expression))
+			optional($.NLS),
+			$.type,
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				"=",
+				optional($.NLS),
+				$._expression
+			))
 		),
 
 		_delegation_specifiers: $ => prec.left(sep1(
-			$.delegation_specifier,
-			// $._annotated_delegation_specifier, // TODO: Annotations cause ambiguities with type modifiers
-			","
+			$._annotated_delegation_specifier,
+			seq(
+				// TODO
+				//optional($.NLS),
+				",",
+				//optional($.NLS),
+			)
 		)),
 
 		delegation_specifier: $ => prec.left(choice(
 			$.constructor_invocation,
 			$.explicit_delegation,
-			prec(2, $.userType),
+			$.user_type,
 			$.function_type
 		)),
 
-		_annotated_delegation_specifier: $ => seq(repeat($.annotation), $.delegation_specifier),
+		constructor_invocation: $ => seq(
+			$.userType,
+			$.valueArguments
+		),
+
+		_annotated_delegation_specifier: $ => seq(
+			optional(seq(
+				$._annotations,
+				optional($.NLS),
+			)),
+			$.delegation_specifier,
+		),
 
 		explicit_delegation: $ => seq(
 			choice(
 				$.user_type,
 				$.function_type
 			),
+			optional($.NLS),
 			"by",
-			$._expression
+			optional($.NLS),
+			$.expression
 		),
 
-		type_parameters: $ => seq($.LANGLE, sep1($.type_parameter, ","), $.RANGLE),
+		type_parameters: $ => seq(
+			$.LANGLE,
+			optional($.NLS),
+			sep1(
+				seq($.type_parameter, optional($.NLS)),
+				seq(",", optional($.NLS))
+			),
+			$.RANGLE
+		),
 
 		type_parameter: $ => seq(
-			optional($.type_parameter_modifiers),
-			alias($.simple_identifier, $.type_identifier),
-			optional(seq(":", $._type))
+			optional(seq(
+				$.type_parameter_modifiers,
+				optional($.NLS),
+			)),
+			alias($.simpleIdentifier, $.type_identifier),
+			optional(seq(
+				//TODO:
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$.type
+			))
 		),
 
-		type_constraints: $ => prec.right(seq("where", sep1($.type_constraint, ","))),
+		type_constraints: $ => seq(
+			"where",
+			optional($.NLS),
+			sep1(
+				$.type_constraint,
+				seq(
+					// TODO:
+					//optional($.NLS),
+					$.COMMA,
+					optional($.NLS))
+			)
+		),
 
 		type_constraint: $ => seq(
-			repeat($.annotation),
-			alias($.simple_identifier, $.type_identifier),
-			":",
-			$._type
+			optional($._annotations),
+			alias($.simpleIdentifier, $.type_identifier),
+			optional($.NLS),
+			$.COLON,
+			optional($.NLS),
+			$.type
 		),
 
 		// ==========
 		// Class members
 		// ==========
 
-		_class_member_declarations: $ => repeat1(seq($._class_member_declaration, $._semis)),
+		_class_member_declarations: $ => repeat1(seq(
+			$._class_member_declaration,
+			// TODO should be optional
+			$._semis
+			//optional($._semis)
+		)),
 
 		_class_member_declaration: $ => choice(
 			$._declaration,
@@ -284,26 +371,56 @@ module.exports = grammar({
 			$.secondary_constructor
 		),
 
-		anonymous_initializer: $ => seq("init", $.block),
+		anonymous_initializer: $ => seq(
+			$.INIT,
+			optional($.NLS),
+			$.block
+		),
 
 		companion_object: $ => seq(
 			optional($.modifiers),
-			"companion",
+			$.COMPANION,
+			optional($.NLS),
 			"object",
-			optional(alias($.simple_identifier, $.type_identifier)),
-			optional(seq(":", $._delegation_specifiers)),
-			optional($.class_body)
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				alias($.simpleIdentifier, $.type_identifier)
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.COLON,
+				optional($.NLS),
+				$._delegation_specifiers
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.class_body
+			))
 		),
 
-		_function_value_parameters: $ => seq("(", optional(sep1($._function_value_parameter, ",")), ")"),
+		_function_value_parameters: $ => seq(
+			"(",
+			optional($.NLS),
+			optional(sep1(
+				seq($._function_value_parameter, optional($.NLS)),
+				seq($.COMMA, optional($.NLS)))),
+			")"
+		),
 
 		_function_value_parameter: $ => seq(
 			optional($.parameter_modifiers),
 			$.parameter,
-			optional(seq("=", $._expression))
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				"=",
+				optional($.NLS),
+				$._expression
+			))
 		),
 
-		function_declaration: $ => prec.right(seq(
+		function_declaration: $ => seq(
 			optional($.modifiers),
 			"fun",
 			optional(seq(
@@ -314,10 +431,11 @@ module.exports = grammar({
 				optional($.NLS),
 				$.receiverTypeWithDot,
 			)),
-			$.simple_identifier,
+			$.simpleIdentifier,
 			optional($.NLS),
 			$._function_value_parameters,
 			optional(seq(
+				// TODO
 				//optional($.NLS),
 				$.COLON,
 				optional($.NLS),
@@ -331,7 +449,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.function_body,
 			)),
-		)),
+		),
 
 		function_body: $ => choice(
 			$.block,
@@ -343,9 +461,26 @@ module.exports = grammar({
 		),
 
 		variable_declaration: $ => seq(
-			// repeat($.annotation), TODO
-			$.simple_identifier,
-			optional(seq(":", $._type))
+			optional($._annotations),
+			// TODO
+			//optional($.NLS),
+			$.simpleIdentifier,
+			optional(seq(
+				//optional($.NLS),
+				":",
+				optional($.NLS),
+				$._type
+			))
+		),
+
+		multi_variable_declaration: $ => seq(
+		    $.LPAREN,
+		    optional($.NLS),
+		    sep1(
+		    	seq($.variable_declaration, optional($.NLS)),
+				seq($.COMMA, optional($.NLS)),
+			),
+			$.RPAREN
 		),
 
 		property_declaration: $ => seq(
@@ -359,20 +494,36 @@ module.exports = grammar({
 				optional($.NLS),
 				$.receiverTypeWithDot,
 			)),
-			$.variable_declaration, // TODO: Multi-variable-declaration
-			optional($.type_constraints),
+			choice(
+				$.variable_declaration,
+				$.multi_variable_declaration
+			),
+			optional(seq(
+				optional($.NLS),
+				$.type_constraints
+			)),
 			optional(choice(
-				seq("=", $._expression),
-				$.property_delegate
+				seq(
+					optional($.NLS),
+					"=",
+					optional($.NLS),
+					$._expression
+				),
+				seq(
+					optional($.NLS),
+					$.property_delegate
+				)
 			)),
 			choice(
 				seq(
 					optional(seq(
+						// TODO
 						//$.NLS,
 						$.semi,
 					)),
 					optional($.getter),
 					optional(seq(
+						// TODO
 						//optional($.NLS),
 						optional($.semi),
 						$.setter,
@@ -393,12 +544,17 @@ module.exports = grammar({
 			)
 		),
 
-		property_delegate: $ => seq("by", $._expression),
+		property_delegate: $ => seq(
+			"by",
+			optional($.NLS),
+			$._expression
+		),
 
 		getter: $ => seq(
 			optional($.modifiers),
 			"get",
 			optional(seq(
+				// TODO
 				//optional($.NLS),
 				"(",
 				optional($.NLS),
@@ -418,6 +574,7 @@ module.exports = grammar({
 			optional($.modifiers),
 			"set",
 			optional(seq(
+				// TODO
 				//optional($.NLS),
 				"(",
 				optional($.NLS),
@@ -455,6 +612,7 @@ module.exports = grammar({
 			optional($.parameter_modifiers),
 			$.simpleIdentifier,
 			optional(seq(
+				// TODO
 				//optional($.NLS),
 				$.COLON,
 				optional($.NLS),
@@ -462,47 +620,102 @@ module.exports = grammar({
 			))
 		),
 
-		object_declaration: $ => prec.right(seq(
+		parameter: $ => seq(
+			$.simpleIdentifier,
+			optional($.NLS),
+			$.COLON,
+			optional($.NLS),
+			$.type
+		),
+
+		object_declaration: $ => seq(
 			optional($.modifiers),
 			"object",
-			alias($.simple_identifier, $.type_identifier),
-			optional(seq(":", $._delegation_specifiers)),
-			optional($.class_body)
-		)),
+			optional($.NLS),
+			alias($.simpleIdentifier, $.type_identifier),
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				":",
+				optional($.NLS),
+				$._delegation_specifiers
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.class_body
+			))
+		),
 
 		secondary_constructor: $ => seq(
 			optional($.modifiers),
-			"constructor",
+			$.CONSTRUCTOR,
+			optional($.NLS),
 			$._function_value_parameters,
-			optional(seq(":", $.constructor_delegation_call)),
-			optional($.block)
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				":",
+				optional($.NLS),
+				$.constructor_delegation_call)),
+			optional(seq(
+				//optional($.NLS),
+				$.block
+			))
 		),
 
-		constructor_delegation_call: $ => seq(choice("this", "super"), $.value_arguments),
+		constructor_delegation_call: $ => seq(
+			choice("this", "super"),
+			optional($.NLS),
+			$.value_arguments
+		),
 
 		// ==========
 		// Enum classes
 		// ==========
 
 		enum_class_body: $ => seq(
-			"{",
+			$.LCURL,
 			optional($.NLS),
-			optional($._enum_entries),
+			$._enum_entries,
 			optional(seq(
 				";",
 				optional($.NLS),
 				optional($._class_member_declarations),
 			)),
-			"}"
+			$.RCURL
 		),
 
-		_enum_entries: $ => seq(sep1(seq($.enum_entry, optional($.NLS)), seq(",", optional($.NLS))), optional(","), optional($.NLS)),
+		_enum_entries: $ => seq(
+			sep1(
+				seq($.enum_entry),
+				seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS)
+				)
+			),
+			optional(seq(
+				optional($.NLS),
+				$.COMMA
+			)),
+			optional($.NLS),
+		),
 
 		enum_entry: $ => seq(
-			optional($.modifiers),
-			$.simple_identifier,
-			optional($.value_arguments),
-			optional($.class_body)
+			optional(seq(
+				$.modifiers,
+				optional($.NLS),
+			)),
+			$.simpleIdentifier,
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				$.value_arguments
+			)),
+			optional(seq(
+				//optional($.NLS),
+				$.class_body
+			))
 		),
 
 		// ==========
@@ -547,7 +760,7 @@ module.exports = grammar({
 		for_statement: $ => prec.right(seq(
 			"for",
 			"(",
-			repeat($.annotation),
+			//repeat($.annotation),
 			choice($.variable_declaration), // TODO: Multi-variable declaration
 			"in",
 			$._expression,
@@ -756,6 +969,7 @@ module.exports = grammar({
 		_type_modifier: $ => choice($.annotation, $.SUSPEND),
 
 		class_modifier: $ => choice(
+			$.ENUM,
 			$.SEALED,
 			$.ANNOTATION,
 			$.DATA,
@@ -805,7 +1019,7 @@ module.exports = grammar({
 			$.CROSSINLINE
 		),
 
-		reification_modifier: $ => "reified",
+		reification_modifier: $ => $.REIFIED,
 
 		platform_modifier: $ => choice(
 			$.EXPECT,
@@ -823,9 +1037,7 @@ module.exports = grammar({
 		// ==========
 
 		_expression: $ => $.expression,
-		constructor_invocation: $ => $.constructorInvocation,
 		value_arguments: $ => $.valueArguments,
-		_unescaped_annotation: $ => $.unescapedAnnotation,
 		simple_identifier: $ => $.simpleIdentifier,
 		_type: $ => $.type,
 		user_type: $ => $.userType,
@@ -851,21 +1063,6 @@ module.exports = grammar({
 		//=================converted from antlr (expressions with some restrictions)==========================
 
 
-
-
-
-		constructorInvocation: $ => prec(1, seq(
-			$.userType,
-			$.valueArguments
-		)),
-
-		parameter: $ => seq(
-			$.simpleIdentifier,
-			optional($.NLS),
-			$.COLON,
-			optional($.NLS),
-			$.type
-		),
 
 		type: $ => seq(
 			optional($.typeModifiers),
@@ -1684,6 +1881,8 @@ module.exports = grammar({
 			$.OUT
 		),
 
+		_annotations: $ => repeat1($.annotation),
+
 		annotation: $ => prec.right(seq(
 			choice(
 				$.singleAnnotation,
@@ -1696,14 +1895,14 @@ module.exports = grammar({
 			seq(
 				$.annotationUseSiteTarget,
 				optional($.NLS),
-				$.unescapedAnnotation
+				$.unescaped_annotation
 			),
 			seq(
 				choice(
 					$.AT_NO_WS,
 					$.AT_PRE_WS
 				),
-				$.unescapedAnnotation
+				$.unescaped_annotation
 			)
 		),
 
@@ -1712,7 +1911,7 @@ module.exports = grammar({
 				$.annotationUseSiteTarget,
 				optional($.NLS),
 				$.LSQUARE,
-				repeat1($.unescapedAnnotation),
+				repeat1($.unescaped_annotation),
 				$.RSQUARE
 			),
 			seq(
@@ -1721,7 +1920,7 @@ module.exports = grammar({
 					$.AT_PRE_WS
 				),
 				$.LSQUARE,
-				repeat1($.unescapedAnnotation),
+				repeat1($.unescaped_annotation),
 				$.RSQUARE
 			)
 		),
@@ -1745,10 +1944,12 @@ module.exports = grammar({
 			$.COLON
 		),
 
-		unescapedAnnotation: $ => choice(
-			$.constructorInvocation,
+		// right associativity is here to make annotations
+		// starting with '@Ann(...' always be resolved as constructor call
+		unescaped_annotation: $ => prec.right(choice(
+			$.constructor_invocation,
 			$.userType
-		),
+		)),
 
 		simpleIdentifier: $ => prec(PREC.SIMPLE_IDENTIDIER, choice(
 			$.Identifier,
@@ -1843,6 +2044,8 @@ module.exports = grammar({
 		LSQUARE: $ => token("["),
 
 		RSQUARE: $ => token("]"),
+
+		LCURL: $ => token("{"),
 
 		RCURL: $ => token("}"),
 

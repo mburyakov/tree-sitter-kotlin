@@ -303,7 +303,7 @@ module.exports = grammar({
 			optional(seq("=", $._expression))
 		),
 
-		function_declaration: $ => seq(
+		function_declaration: $ => prec.right(seq(
 			optional($.modifiers),
 			"fun",
 			optional(seq(
@@ -331,7 +331,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.function_body,
 			)),
-		),
+		)),
 
 		function_body: $ => choice(
 			$.block,
@@ -1003,7 +1003,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.DISJ,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1025,7 +1025,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.CONJ,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1046,7 +1046,7 @@ module.exports = grammar({
 				$.equality,
 				$.equalityOperator,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1066,7 +1066,7 @@ module.exports = grammar({
 				$.infixOperation,
 				$.comparisonOperator,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1086,7 +1086,7 @@ module.exports = grammar({
 				$.infixOperation,
 				$.inOperator,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			),
 		),
 
@@ -1113,7 +1113,7 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.elvis,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1137,7 +1137,7 @@ module.exports = grammar({
 				$.infixFunctionCall,
 				$.simpleIdentifier,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		)),
 
@@ -1157,7 +1157,7 @@ module.exports = grammar({
 				$.rangeExpression,
 				$.RANGE,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			),
 		),
 
@@ -1177,7 +1177,7 @@ module.exports = grammar({
 				$.additiveExpression,
 				$.additiveOperator,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			),
 		),
 
@@ -1197,7 +1197,7 @@ module.exports = grammar({
 				$.multiplicativeExpression,
 				$.multiplicativeOperator,
 				optional($.NLS),
-				$.jumpExpression,
+				$.rightRecursiveExpression,
 			)
 		),
 
@@ -1227,7 +1227,7 @@ module.exports = grammar({
 
 		prefixUnaryExpressionWithReturn: $ => seq(
 			repeat($.unaryPrefix),
-			$.jumpExpression,
+			$.rightRecursiveExpression,
 		),
 
 		prefixUnaryExpression: $ => seq(
@@ -1390,10 +1390,10 @@ module.exports = grammar({
 			$.collectionLiteral,
 			$.thisExpression,
 			$.superExpression,
-			//$.if_expression,
 			//$.when_expression,
-			//$.try_expression,
-			// jumpExpression was moved to the top, see expression rule
+			// $.try_expression,
+			//$.jumpExpression was moved to the top, see rightRecursiveExpression rule
+			//$.if_expression,
 		),
 
 		parenthesizedExpression: $ => seq(
@@ -1551,6 +1551,11 @@ module.exports = grammar({
 			),
 			$.SUPER_AT
 		)),
+
+		rightRecursiveExpression: $ => choice(
+			$.jumpExpression,
+			//$.if_expression,
+		),
 
 		jumpExpression: $ => prec.right(choice(
 			seq(

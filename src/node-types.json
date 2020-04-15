@@ -201,11 +201,11 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "multiplicativeExpressionWithReturn",
           "named": true
         },
         {
-          "type": "multiplicativeExpressionWithReturn",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -928,7 +928,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -986,7 +986,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -1210,7 +1210,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -1287,7 +1287,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -1454,7 +1454,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -1978,11 +1978,11 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rangeExpressionWithReturn",
           "named": true
         },
         {
-          "type": "rangeExpressionWithReturn",
+          "type": "rightRecursiveExpression",
           "named": true
         },
         {
@@ -2052,7 +2052,7 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -2557,15 +2557,15 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
-          "named": true
-        },
-        {
           "type": "multiplicativeExpression",
           "named": true
         },
         {
           "type": "multiplicativeOperator",
+          "named": true
+        },
+        {
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -3053,7 +3053,7 @@
       "required": true,
       "types": [
         {
-          "type": "jumpExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         },
         {
@@ -3308,11 +3308,11 @@
           "named": true
         },
         {
-          "type": "jumpExpression",
+          "type": "rangeExpression",
           "named": true
         },
         {
-          "type": "rangeExpression",
+          "type": "rightRecursiveExpression",
           "named": true
         }
       ]
@@ -3387,6 +3387,21 @@
     "type": "reification_modifier",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "rightRecursiveExpression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "jumpExpression",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "safeNav",

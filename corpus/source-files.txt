@@ -198,10 +198,11 @@ val y = null
                               (postfixUnaryExpression
                                 (primaryExpression
                                   (literalConstant
-                                    (IntegerLiteral))))))))))))))))))
+                                    (IntegerLiteral)))))))))))))))))
+    (semi
+      (NLS)))
+  (Hidden)
   (semis
-    (NLS)
-    (Hidden)
     (NLS))
   (property_declaration
     (WS)
@@ -227,3 +228,4 @@ val y = null
                                 (primaryExpression
                                   (literalConstant
                                     (NullLiteral)))))))))))))))))))
+

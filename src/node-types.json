@@ -523,10 +523,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "LCURL",
+          "named": true
+        },
+        {
           "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RCURL",
           "named": true
         },
         {
@@ -1248,6 +1256,18 @@
       "required": true,
       "types": [
         {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
           "type": "control_structure_body",
           "named": true
         },
@@ -1619,11 +1639,31 @@
       "required": true,
       "types": [
         {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
           "type": "control_structure_body",
           "named": true
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "multi_variable_declaration",
           "named": true
         },
         {
@@ -2192,10 +2232,6 @@
         },
         {
           "type": "AT_POST_WS",
-          "named": true
-        },
-        {
-          "type": "NLS",
           "named": true
         },
         {
@@ -5031,6 +5067,18 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
         {
           "type": "control_structure_body",
           "named": true

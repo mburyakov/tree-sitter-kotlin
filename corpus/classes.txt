@@ -50,7 +50,9 @@ class HelloWorld {
           (Identifier))
         (WS)
         (function_body
-          (block)))
+          (block
+            (LCURL)
+            (RCURL))))
       (semis
         (NLS))
       (WS)
@@ -60,7 +62,9 @@ class HelloWorld {
           (Identifier))
         (WS)
         (function_body
-          (block)))
+          (block
+            (LCURL)
+            (RCURL))))
       (semis
         (NLS))
       (RCURL))))
@@ -1005,6 +1009,7 @@ fun f(T: I) {
     (WS)
     (function_body
       (block
+        (LCURL)
         (NLS)
         (WS)
         (statements
@@ -1043,7 +1048,8 @@ fun f(T: I) {
                                                                       (simpleIdentifier
                                                                         (Identifier))))))))))))))))))))))))))))))))
           (semis
-            (NLS))))))
+            (NLS)))
+        (RCURL))))
   (semis
     (NLS))
   (function_declaration
@@ -1064,6 +1070,7 @@ fun f(T: I) {
     (WS)
     (function_body
       (block
+        (LCURL)
         (NLS)
         (WS)
         (statements
@@ -1137,7 +1144,8 @@ fun f(T: I) {
                                               (simpleIdentifier
                                                 (Identifier))))))))))))))))))))
           (semis
-            (NLS)))))))
+            (NLS)))
+        (RCURL)))))
 
 ==================
 Type constraints
@@ -1166,6 +1174,7 @@ fun f(T: I) {
     (WS)
     (function_body
       (block
+        (LCURL)
         (NLS)
         (WS)
         (statements
@@ -1220,4 +1229,6 @@ fun f(T: I) {
                         (type_identifier
                           (Identifier)))))))))
           (semis
-            (NLS)))))))
+            (NLS)))
+        (RCURL)))))
+

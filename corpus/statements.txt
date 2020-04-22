@@ -7,6 +7,7 @@ for (value in values) {}
 (source_file
   (for_statement
     (WS)
+    (LPAREN)
     (variable_declaration
       (simpleIdentifier
         (Identifier)))
@@ -29,9 +30,12 @@ for (value in values) {}
                                 (primaryExpression
                                   (simpleIdentifier
                                     (Identifier)))))))))))))))))
+    (RPAREN)
     (WS)
     (control_structure_body
-      (block))))
+      (block
+        (LCURL)
+        (RCURL)))))
 
 ==================
 Assignment
@@ -289,9 +293,12 @@ do { } while (true)
     (WS)
     (control_structure_body
       (block
-        (WS)))
+        (LCURL)
+        (WS)
+        (RCURL)))
     (WS)
     (WS)
+    (LPAREN)
     (expression
       (disjunction
         (conjunction
@@ -308,4 +315,176 @@ do { } while (true)
                               (postfixUnaryExpression
                                 (primaryExpression
                                   (literalConstant
-                                    (BooleanLiteral)))))))))))))))))))
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN)))
+
+==================
+Dangling while 1
+==================
+do while (true); ;
+while (true);
+---
+
+(source_file
+  (do_while_statement
+    (WS)
+    (WS)
+    (LPAREN)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN))
+  (semis
+    (WS)
+    (NLS))
+  (while_statement
+    (WS)
+    (LPAREN)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN)))
+
+==================
+Dangling while 2
+==================
+do while (true);
+while (true);
+---
+
+(source_file
+  (do_while_statement
+    (WS)
+    (WS)
+    (LPAREN)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN))
+  (semis
+    (NLS))
+  (while_statement
+    (WS)
+    (LPAREN)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN)))
+
+==================
+Dangling while 3
+==================
+do { while (true); }
+while (true);
+---
+
+(source_file
+  (do_while_statement
+    (WS)
+    (control_structure_body
+      (block
+        (LCURL)
+        (WS)
+        (statements
+          (while_statement
+            (WS)
+            (LPAREN)
+            (expression
+              (disjunction
+                (conjunction
+                  (equality
+                    (comparison
+                      (infixOperation
+                        (elvisExpression
+                          (infixFunctionCall
+                            (rangeExpression
+                              (additiveExpression
+                                (multiplicativeExpression
+                                  (asExpression
+                                    (prefixUnaryExpression
+                                      (postfixUnaryExpression
+                                        (primaryExpression
+                                          (literalConstant
+                                            (BooleanLiteral)))))))))))))))))
+            (RPAREN)))
+        (WS)
+        (RCURL)))
+    (NLS)
+    (WS)
+    (LPAREN)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (BooleanLiteral)))))))))))))))))
+    (RPAREN))
+  (semis))
+

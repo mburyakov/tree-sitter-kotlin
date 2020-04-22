@@ -11,7 +11,9 @@ fun main() {}
       (Identifier))
     (WS)
     (function_body
-      (block))))
+      (block
+        (LCURL)
+        (RCURL)))))
 
 ==================
 Empty multiline function body
@@ -29,8 +31,10 @@ fun main() {
     (WS)
     (function_body
       (block
+        (LCURL)
         (semis
-          (NLS))))))
+          (NLS))
+        (RCURL)))))
 
 ==================
 Empty semicolon function body
@@ -48,10 +52,12 @@ fun main() {
     (WS)
     (function_body
       (block
+        (LCURL)
         (semis
           (NLS)
           (WS)
-          (NLS))))))
+          (NLS))
+        (RCURL)))))
 
 ==================
 Generic functions
@@ -73,7 +79,9 @@ fun <T> test() {}
       (Identifier))
     (WS)
     (function_body
-      (block))))
+      (block
+        (LCURL)
+        (RCURL)))))
 
 ==================
 Functions with parameters
@@ -111,7 +119,9 @@ fun sum(a: Int, b: Int) = a + b
                 (RANGLE)))))))
     (WS)
     (function_body
-      (block)))
+      (block
+        (LCURL)
+        (RCURL))))
   (semis
     (NLS))
   (function_declaration

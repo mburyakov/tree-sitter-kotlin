@@ -610,6 +610,7 @@ val y = 5
       (WS)
       (function_body
         (block
+          (LCURL)
           (NLS)
           (WS)
           (statements
@@ -639,7 +640,8 @@ val y = 5
                                               (Identifier))))))))))))))))))
             (semis
               (NLS)))
-          (WS))))))
+          (WS)
+          (RCURL))))))
 
 ==================
 Confusing statement annotation

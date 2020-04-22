@@ -1573,7 +1573,6 @@ if (x is C<T> > false) {}
                                   (annotated_lambda
                                     (lambda_literal)))))))))))))))))))
 
-
 ==================
 Confusing lambda parameter type
 ==================
@@ -1710,3 +1709,4 @@ l { a : Int -> a }
                                                                       (simpleIdentifier
                                                                         (Identifier))))))))))))))))))
                                       (WS))))))))))))))))))))
+

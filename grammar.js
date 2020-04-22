@@ -121,7 +121,7 @@ module.exports = grammar({
 			optional(seq(repeat1($.file_annotation))),
 			optional($.package_header),
 			repeat($.import_header),
-			repeat(seq($._statement, $._semis)),
+			repeat(seq($._statement, $.semis)),
 			optional($._statement)
 		),
 
@@ -149,7 +149,7 @@ module.exports = grammar({
 			$.IMPORT,
 			$.identifier,
 			optional(choice(seq(".*"), $.import_alias)),
-			optional($._semi),
+			optional($.semi),
 		),
 
 		// TODO: why type identifier by default?
@@ -360,7 +360,7 @@ module.exports = grammar({
 		_class_member_declarations: $ => repeat1(seq(
 			$._class_member_declaration,
 			// TODO should be optional
-			$._semis
+			$.semis
 			//optional($._semis)
 		)),
 
@@ -865,8 +865,8 @@ module.exports = grammar({
 
 		statements: $ => seq(
 			$._statement,
-			repeat(seq($._semis, $._statement)),
-			optional($._semis),
+			repeat(seq($.semis, $._statement)),
+			optional($.semis),
 		),
 
 		_statement: $ => choice(
@@ -881,15 +881,30 @@ module.exports = grammar({
 			)
 		),
 
-		control_structure_body: $ => choice($.block, $._statement),
+		label: $ => seq(
+			$.simpleIdentifier,
+			choice(
+				$.AT_NO_WS,
+				$.AT_POST_WS
+			),
+			// TODO
+			//optional($.NLS)
+		),
 
+		control_structure_body: $ => choice(
+			$.block,
+			$._statement
+		),
+
+		// Here the rule differs from specification since specification
+		// does not support blocks like '{ ; }'
 		block: $ => prec(PREC.BLOCK, seq(
-			"{",
+			$.LCURL,
 			optional(choice(
 				seq(optional($.NLS), $.statements),
 				$.semis
 			)),
-			"}",
+			$.RCURL,
 		)),
 
 		_loop_statement: $ => choice(
@@ -900,30 +915,50 @@ module.exports = grammar({
 
 		for_statement: $ => prec.right(seq(
 			"for",
-			"(",
-			//repeat($.annotation),
-			choice($.variable_declaration), // TODO: Multi-variable declaration
+			optional($.NLS),
+			$.LPAREN,
+			choice(
+				$.variable_declaration,
+				seq(
+					$._annotations,
+					$.multi_variable_declaration,
+				),
+			),
 			"in",
 			$._expression,
-			")",
-			optional($.control_structure_body)
+			$.RPAREN,
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				$.control_structure_body
+			))
 		)),
 
 		while_statement: $ => seq(
 			"while",
-			"(",
+			optional($.NLS),
+			$.LPAREN,
 			$._expression,
-			")",
+			$.RPAREN,
+			optional($.NLS),
 			choice(";", $.control_structure_body)
 		),
 
-		do_while_statement: $ => prec.right(seq(
+		// Precedence here is more that in while_statement to recognize such construction as
+		// 'do while (true); while (true);' as two statements instead of single one.
+		// Note: specification grammar fails for this example
+		do_while_statement: $ => prec(1, seq(
 			"do",
-			optional($.control_structure_body),
+			optional($.NLS),
+			optional(seq(
+				$.control_structure_body,
+				optional($.NLS),
+			)),
 			"while",
-			"(",
+			optional($.NLS),
+			$.LPAREN,
 			$._expression,
-			")",
+			$.RPAREN,
 		)),
 
 		assignment: $ => choice(
@@ -940,6 +975,28 @@ module.exports = grammar({
 				$.expression
 			),
 		),
+
+		// associativity here should not affect grammar semantics
+		semi: $ => prec.right(choice(
+			seq(";", optional($.NLS)),
+			$.NLS
+		)),
+
+		semis: $ => choice(
+			$.NLS,
+			seq(
+				optional($.NLS),
+				";",
+				sep1(
+					optional($.NLS),
+					";"
+			    )
+			)
+		),
+
+		// ==========
+		// Expressions
+		// ==========
 
 		annotated_lambda: $ => seq(
 			repeat($.annotation),
@@ -1045,7 +1102,7 @@ module.exports = grammar({
 			),
 			"->",
 			$.control_structure_body,
-			optional($._semi)
+			optional($.semi)
 		),
 
 		when_condition: $ => seq(
@@ -1184,20 +1241,6 @@ module.exports = grammar({
 		user_type: $ => $.userType,
 		function_type: $ => $.functionType,
 		_simple_user_type: $ => $.simpleUserType,
-		_semi: $ => $.semi,
-		_semis: $ => $.semis,
-		semi: $ => prec.right(choice(seq(";", optional($.NLS)), $.NLS)),
-		semis: $ => choice(
-			seq(
-				repeat($.NLS),
-				repeat1(seq(";", repeat($.NLS))),
-			),
-			repeat1($.NLS)
-		),
-		//_semis: $ => seq(optional($.NLS), repeat(seq(";", optional($.NLS)))),
-		//parameter: $ => "parameter",
-
-
 
 
 
@@ -1205,15 +1248,6 @@ module.exports = grammar({
 
 
 
-
-		label: $ => prec.right(seq(
-			$.simpleIdentifier,
-			choice(
-				$.AT_NO_WS,
-				$.AT_POST_WS
-			),
-			optional($.NLS)
-		)),
 
 		expression: $ => choice(
 			$.disjunction,

@@ -622,7 +622,8 @@ module.exports = grammar({
 
 		parameter: $ => seq(
 			$.simpleIdentifier,
-			optional($.NLS),
+			// TODO
+			//optional($.NLS),
 			$.COLON,
 			optional($.NLS),
 			$.type
@@ -716,6 +717,146 @@ module.exports = grammar({
 				//optional($.NLS),
 				$.class_body
 			))
+		),
+
+		// ==========
+		// Types
+		// ==========
+
+		type: $ => seq(
+			optional($.typeModifiers),
+			choice(
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference,
+				$.functionType
+			)
+		),
+
+		typeReference: $ => choice(
+			$.userType,
+			$.DYNAMIC
+		),
+
+		nullableType: $ => seq(
+			choice(
+				$.typeReference,
+				$.parenthesizedType
+			),
+			//optional($.NLS),
+			repeat1($.quest)
+		),
+
+		// TODO spaces, comments and newlines around question marks
+		quest: $ => $.NLSQUEST,
+
+		// here qualified type is left-associative,
+		// in the specification it is simply list
+		userType: $ => seq(
+			optional(seq(
+				$.userType,
+				alias($.NLSDOT, $.DOT),
+				optional($.NLS)
+			)),
+			$.simpleUserType,
+		),
+
+		// Precedence here resolves conflicts like 'if (x is C<false) {}'.
+		// This ambiguous (not valid) expression is parsed differently by kotlin parser and specification.
+		// Right precedence behaves more like the kotlin parser.
+		simpleUserType: $ => prec.right(seq(
+			alias($.simpleIdentifier, $.type_identifier),
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				$.typeArguments
+			)
+		))),
+
+		typeProjection: $ => choice(
+			seq(
+				optional($.typeProjectionModifiers),
+				$.type
+			),
+			$.MULT
+		),
+
+		// Precedence here resolves conflicts like 'L<out @A T>'.
+		// This ambiguous type is parsed differently by kotlin parser and specification.
+		// Right precedence behaves more like the specification.
+		typeProjectionModifiers: $ => prec.right(repeat1($.typeProjectionModifier)),
+
+		// Precedence here is more than in typeModifier
+		// to recognize annotation as projection modifier where possible
+		// instead of type modifier
+		// see typeProjectionModifiers
+		typeProjectionModifier: $ => prec(1, choice(
+			seq(
+				$.varianceModifier,
+				optional($.NLS),
+			),
+			$.annotation
+		)),
+
+		functionType: $ => seq(
+			optional(seq(
+				$.receiverTypeWithDot,
+			)),
+			$.functionTypeParameters,
+			// TODO
+			//optional($.NLS),
+			$.ARROW,
+			optional($.NLS),
+			$.type
+		),
+
+		// Precedence here is to parse ambiguous expression 'l { a : (Int) -> b }'
+		// as function type instead of expression body
+		functionTypeParameters: $ => prec(1, seq(
+			$.LPAREN,
+			optional(seq(optional($.NLS), choice(
+				$.parameter,
+				$.type
+			))),
+			repeat(seq(
+				// TODO
+				//optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				choice(
+					$.parameter,
+					$.type
+				)
+			)),
+			// TODO
+			//optional($.NLS),
+			$.RPAREN
+		)),
+
+		parenthesizedType: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.type,
+			// TODO
+			//optional($.NLS),
+			$.RPAREN
+		),
+
+		receiverType: $ => seq(
+			// it seems there are no places where type modifiers should
+			// be applied to receiver type, not for expression/function/property/function type
+			//optional($.typeModifiers),
+			choice(
+				$.parenthesizedType,
+				$.nullableType,
+				$.typeReference
+			)
+		),
+
+		receiverTypeWithDot: $ => seq(
+			$.receiverType,
+			alias($.NLSDOT, $.DOT),
+			optional($.NLS),
 		),
 
 		// ==========
@@ -1064,120 +1205,6 @@ module.exports = grammar({
 
 
 
-		type: $ => seq(
-			optional($.typeModifiers),
-			choice(
-				$.parenthesizedType,
-				$.nullableType,
-				$.typeReference,
-				$.functionType
-			)
-		),
-
-		typeReference: $ => choice(
-			$.userType,
-			$.DYNAMIC
-		),
-
-		nullableType: $ => prec.right(seq(
-			choice(
-				$.typeReference,
-				$.parenthesizedType
-			),
-			//optional($.NLS),
-			repeat1($.quest)
-		)),
-
-		quest: $ => $.NLSQUEST,
-
-		userType: $ => seq(
-			optional(seq(
-				$.userType,
-				alias($.NLSDOT, $.DOT),
-				optional($.NLS)
-			)),
-			$.simpleUserType,
-		),
-
-		simpleUserType: $ => prec.right(seq(
-			alias($.simpleIdentifier, $.type_identifier),
-			optional(seq(
-				//optional($.NLS),
-				$.typeArguments
-			))
-		)),
-
-		typeProjection: $ => choice(
-			seq(
-				optional($.typeProjectionModifiers),
-				$.type
-			),
-			$.MULT
-		),
-
-		typeProjectionModifiers: $ => prec.right(repeat1($.typeProjectionModifier)),
-
-		typeProjectionModifier: $ => prec(1, choice(
-			seq(
-				$.varianceModifier,
-				optional($.NLS),
-			),
-			$.annotation
-		)),
-
-		functionType: $ => seq(
-			optional(seq(
-				$.receiverTypeWithDot,
-			)),
-			$.functionTypeParameters,
-			optional($.NLS),
-			$.ARROW,
-			optional($.NLS),
-			$.type
-		),
-
-		functionTypeParameters: $ => seq(
-			$.LPAREN,
-			optional(seq(optional($.NLS), choice(
-				$.parameter,
-				$.type
-			))),
-			repeat(seq(
-				optional($.NLS),
-				$.COMMA,
-				optional($.NLS),
-				choice(
-					$.parameter,
-					$.type
-				)
-			)),
-			optional($.NLS),
-			$.RPAREN
-		),
-
-		parenthesizedType: $ => prec(1, seq(
-			$.LPAREN,
-			optional($.NLS),
-			$.type,
-			optional($.NLS),
-			$.RPAREN
-		)),
-
-		receiverType: $ => seq(
-			choice(
-				$.parenthesizedType,
-				$.nullableType,
-				$.typeReference
-			)
-		),
-
-		receiverTypeWithDot: $ => choice(
-			seq(
-				$.receiverType,
-				alias($.NLSDOT, $.DOT),
-				optional($.NLS),
-			)
-		),
 
 		label: $ => prec.right(seq(
 			$.simpleIdentifier,
@@ -1469,7 +1496,8 @@ module.exports = grammar({
 			$.LPAREN,
 			optional($.NLS),
 			$.directlyAssignableExpression,
-			optional($.NLS),
+			// TODO
+			//optional($.NLS),
 			$.RPAREN,
 		),
 
@@ -1597,7 +1625,8 @@ module.exports = grammar({
 			$.LPAREN,
 			optional($.NLS),
 			$.expression,
-			optional($.NLS),
+			// TODO
+			//optional($.NLS),
 			$.RPAREN
 		),
 
@@ -2012,28 +2041,27 @@ module.exports = grammar({
 			repeat(/[^\r\n]/)
 		)),
 
-		WS: $ => token(prec.right(repeat1(/[\u0020\u0009\u000C]+/))),
+		WS: $ => /[\u0020\u0009\u000C]+/,
 
-		NLS: $ => token(prec.right(repeat1(/(\n|\r\n)/))),
+		// TODO combining multiple newlines into single token
+		// misses comments inside newline characters
+		NLS: $ => /(\n|\r\n?)+/,
 
+		// TODO nested block comments
+		// TODO comments should not eat any newline symbols
 		Hidden: $ => token(choice(
 			seq(
-				repeat("\r\n"),
-				"/*",
-				repeat(/.|\n/),
-				"*/"
+				/\/\*([^*]|\*[^/])*\*\//
 			),
 			token(seq(
-				repeat("\r\n"),
-				"//",
-				repeat(/[^\r\n]/)
+				/\/\/[^\n]*(\n|\r\n?)/,
 			)),
-			token(/[\u0020\u0009\u000C]/)
+			//token(/[\u0020\u0009\u000C]+/)
 		)),
 
 		DOT: $ => token("."),
 
-		NLSDOT: $ => seq(prec.right(repeat(/(\n|\r\n)/)), "."),
+		NLSDOT: $ => seq(prec.right(repeat(/(\n|\r\n?)/)), "."),
 
 		COMMA: $ => token(","),
 

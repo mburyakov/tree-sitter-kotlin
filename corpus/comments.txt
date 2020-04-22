@@ -38,8 +38,7 @@ Comments
                                 (literalConstant
                                   (IntegerLiteral)))))))))))))))))
   (semis
-    (NLS)
-    (Hidden)
     (NLS))
+  (Hidden)
   (Hidden))
 

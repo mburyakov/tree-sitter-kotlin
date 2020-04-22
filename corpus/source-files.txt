@@ -64,3 +64,166 @@ val x = 4
                                   (literalConstant
                                     (IntegerLiteral)))))))))))))))))))
 
+==================
+File starting with comments
+==================
+// comment line 1
+// comment line 2
+// comment line 3
+// comment line 4
+1 + 2
+---
+
+(source_file
+  (Hidden)
+  (Hidden)
+  (Hidden)
+  (Hidden)
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+File starting with block comment
+==================
+/*
+asd
+*/
+1 + 2
+---
+
+(source_file
+  (Hidden)
+  (NLS)
+  (expression
+    (disjunction
+      (conjunction
+        (equality
+          (comparison
+            (infixOperation
+              (elvisExpression
+                (infixFunctionCall
+                  (rangeExpression
+                    (additiveExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))
+                      (WS)
+                      (additiveOperator
+                        (ADD))
+                      (WS)
+                      (multiplicativeExpression
+                        (asExpression
+                          (prefixUnaryExpression
+                            (postfixUnaryExpression
+                              (primaryExpression
+                                (literalConstant
+                                  (IntegerLiteral))))))))))))))))))
+
+==================
+Multiple block comments
+==================
+/* comment1 */
+val x = 1 + 2
+/* comment2 */
+val y = null
+---
+
+(source_file
+  (Hidden)
+  (NLS)
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (additiveExpression
+                          (multiplicativeExpression
+                            (asExpression
+                              (prefixUnaryExpression
+                                (postfixUnaryExpression
+                                  (primaryExpression
+                                    (literalConstant
+                                      (IntegerLiteral))))))))
+                        (WS)
+                        (additiveOperator
+                          (ADD))
+                        (WS)
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (IntegerLiteral))))))))))))))))))
+  (semis
+    (NLS)
+    (Hidden)
+    (NLS))
+  (property_declaration
+    (WS)
+    (variable_declaration
+      (simpleIdentifier
+        (Identifier)))
+    (WS)
+    (WS)
+    (expression
+      (disjunction
+        (conjunction
+          (equality
+            (comparison
+              (infixOperation
+                (elvisExpression
+                  (infixFunctionCall
+                    (rangeExpression
+                      (additiveExpression
+                        (multiplicativeExpression
+                          (asExpression
+                            (prefixUnaryExpression
+                              (postfixUnaryExpression
+                                (primaryExpression
+                                  (literalConstant
+                                    (NullLiteral)))))))))))))))))))

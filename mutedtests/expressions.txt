@@ -1,0 +1,8 @@
+==========
+If expression
+==========
+1 + if (true) 0 else {1} + 4
+! if (true) false else true || false
+var x: Int
+if (true) x=1 else x=2
+---

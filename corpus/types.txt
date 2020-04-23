@@ -1010,17 +1010,18 @@ meth<Int>()
                                 (simpleIdentifier
                                   (Identifier)))
                               (postfixUnarySuffix
+                                (typeArguments
+                                  (LANGLE)
+                                  (typeProjection
+                                    (type
+                                      (typeReference
+                                        (userType
+                                          (simpleUserType
+                                            (type_identifier
+                                              (Identifier)))))))
+                                  (RANGLE)))
+                              (postfixUnarySuffix
                                 (callSuffix
-                                  (typeArguments
-                                    (LANGLE)
-                                    (typeProjection
-                                      (type
-                                        (typeReference
-                                          (userType
-                                            (simpleUserType
-                                              (type_identifier
-                                                (Identifier)))))))
-                                    (RANGLE))
                                   (valueArguments
                                     (LPAREN)
                                     (RPAREN)))))))))))))))))))

@@ -229,6 +229,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "annotation",
           "named": true
         },
@@ -561,10 +565,6 @@
           "named": true
         },
         {
-          "type": "typeArguments",
-          "named": true
-        },
-        {
           "type": "valueArguments",
           "named": true
         }
@@ -622,6 +622,22 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
         {
           "type": "annotation",
           "named": true
@@ -1620,9 +1636,13 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "block",
           "named": true
@@ -2273,6 +2293,22 @@
       "required": true,
       "types": [
         {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "multi_variable_declaration",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        },
+        {
           "type": "variable_declaration",
           "named": true
         }
@@ -2782,6 +2818,37 @@
     }
   },
   {
+    "type": "object_literal",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "COLON",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "class_body",
+          "named": true
+        },
+        {
+          "type": "delegation_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "package_header",
     "named": true,
     "fields": {},
@@ -3127,6 +3194,10 @@
         {
           "type": "postfixUnaryOperator",
           "named": true
+        },
+        {
+          "type": "typeArguments",
+          "named": true
         }
       ]
     }
@@ -3221,6 +3292,10 @@
           "named": true
         },
         {
+          "type": "object_literal",
+          "named": true
+        },
+        {
           "type": "parenthesizedExpression",
           "named": true
         },
@@ -3238,6 +3313,14 @@
         },
         {
           "type": "thisExpression",
+          "named": true
+        },
+        {
+          "type": "try_expression",
+          "named": true
+        },
+        {
+          "type": "when_expression",
           "named": true
         }
       ]
@@ -3452,6 +3535,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
         {
           "type": "expression",
           "named": true
@@ -4162,6 +4249,33 @@
     }
   },
   {
+    "type": "try_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "catch_block",
+          "named": true
+        },
+        {
+          "type": "finally_block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type",
     "named": true,
     "fields": {},
@@ -4715,6 +4829,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -4995,7 +5113,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
@@ -5022,6 +5140,10 @@
       "required": true,
       "types": [
         {
+          "type": "NLS",
+          "named": true
+        },
+        {
           "type": "control_structure_body",
           "named": true
         },
@@ -5037,6 +5159,37 @@
     }
   },
   {
+    "type": "when_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "LCURL",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RCURL",
+          "named": true
+        },
+        {
+          "type": "when_entry",
+          "named": true
+        },
+        {
+          "type": "when_subject",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "when_subject",
     "named": true,
     "fields": {},
@@ -5044,6 +5197,18 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "LPAREN",
+          "named": true
+        },
+        {
+          "type": "NLS",
+          "named": true
+        },
+        {
+          "type": "RPAREN",
+          "named": true
+        },
         {
           "type": "annotation",
           "named": true

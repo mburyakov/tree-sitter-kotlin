@@ -6,3 +6,10 @@ If expression
 var x: Int
 if (true) x=1 else x=2
 ---
+
+==========
+Call suffix followed by identifier
+==========
+g(x) i + 2
+g(x) i@{ }
+---

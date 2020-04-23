@@ -72,6 +72,7 @@ module.exports = grammar({
 		[$.primaryExpression, $.simpleUserType, $.parameter, $.directlyAssignableExpression],
 		// '(Type)::something()' starts similar with '(x) + 1'
 		[$.primaryExpression, $.simpleUserType, $.directlyAssignableExpression],
+		[$.primaryExpression, $.simpleUserType, $.directlyAssignableExpression, $.variable_declaration],
 
 		// type arguments conflict with comparison operator
 		[$.postfixUnaryExpression],
@@ -99,8 +100,14 @@ module.exports = grammar({
 		// 'val (@A C).x' and 'val (@A x)'
 		[$.variable_declaration, $.typeModifier],
 
+		// '{ (@A T?)::x }', '{ (@a x) -> x }', '{ (@a x) }'
+		[$.variable_declaration, $.typeModifier, $.unaryPrefix],
+
 		// 'val (C).x' and 'val (x)'
 		[$.variable_declaration, $.simpleUserType],
+
+		// 'when (@A @A x) {}' and 'when (@A @A val x = 1) {}'
+		[$.unaryPrefix, $.when_subject],
 	],
 
 	extras: $ => [$.WS, $.Hidden],
@@ -477,8 +484,15 @@ module.exports = grammar({
 		    $.LPAREN,
 		    optional($.NLS),
 		    sep1(
-		    	seq($.variable_declaration, optional($.NLS)),
-				seq($.COMMA, optional($.NLS)),
+		    	seq(
+		    		$.variable_declaration,
+					// TODO
+					//optional($.NLS)
+				),
+				seq(
+					$.COMMA,
+					optional($.NLS)
+				),
 			),
 			$.RPAREN
 		),
@@ -977,6 +991,7 @@ module.exports = grammar({
 		),
 
 		// associativity here should not affect grammar semantics
+		// TODO: double semicolon (without whitespace) should be prohibited
 		semi: $ => prec.right(choice(
 			seq(";", optional($.NLS)),
 			$.NLS
@@ -998,18 +1013,574 @@ module.exports = grammar({
 		// Expressions
 		// ==========
 
+		expression: $ => choice(
+			$.disjunction,
+			// return and similar (let call them right recursive) expressions break obvious precedence model
+			// with such expressions as
+			// '1 + return 2 + 3'
+			// 'true && if (false) true else false || true'
+			// To resolve this grammar conflict we create additional
+			// hierarchy of expression nonterminals to explicitly
+			// express those language constructions which end
+			// with end with right recursive expressions
+			$.disjunctionWithReturn,
+		),
+
+		disjunctionWithReturn: $ => choice(
+			$.conjunctionWithReturn,
+			seq(
+				$.disjunction,
+				// TODO
+				//optional($.NLS),
+				$.DISJ,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		disjunction: $ => choice(
+			$.conjunction,
+			seq(
+				$.disjunction,
+				// TODO
+				//optional($.NLS),
+				$.DISJ,
+				optional($.NLS),
+				$.conjunction,
+			)
+		),
+
+		conjunctionWithReturn: $ => choice(
+			$.equalityWithReturn,
+			seq(
+				$.conjunction,
+				// TODO
+				//optional($.NLS),
+				$.CONJ,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		conjunction: $ => choice(
+			$.equality,
+			seq(
+				$.conjunction,
+				// TODO
+				//optional($.NLS),
+				$.CONJ,
+				optional($.NLS),
+				$.equality,
+			)
+		),
+
+		equalityWithReturn: $ => choice(
+			$.comparisonWithReturn,
+			seq(
+				$.equality,
+				$.equalityOperator,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		equality: $ => choice(
+			$.comparison,
+			seq(
+				$.equality,
+				$.equalityOperator,
+				optional($.NLS),
+				$.comparison
+			)
+		),
+
+		comparisonWithReturn: $ => choice(
+			$.infixOperationWithReturn,
+			seq(
+				$.infixOperation,
+				$.comparisonOperator,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		comparison: $ => choice(
+			$.infixOperation,
+			seq(
+				$.infixOperation,
+				$.comparisonOperator,
+				optional($.NLS),
+				$.infixOperation
+			)
+		),
+
+		infixOperationWithReturn: $ => choice(
+			$.elvisExpressionWithReturn,
+			seq(
+				$.infixOperation,
+				$.inOperator,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			),
+		),
+
+		infixOperation: $ => choice(
+			$.elvisExpression,
+			seq(
+				$.infixOperation,
+				$.inOperator,
+				optional($.NLS),
+				$.elvisExpression
+			),
+			seq(
+				$.infixOperation,
+				$.isOperator,
+				optional($.NLS),
+				$.type
+			),
+		),
+
+		elvisExpressionWithReturn: $ => choice(
+			$.infixFunctionCallWithReturn,
+			seq(
+				$.elvisExpression,
+				// TODO
+				//optional($.NLS),
+				$.elvis,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		// precedence here should be less than in infixCall
+		elvisExpression: $ => prec(PREC.ELVIS, choice(
+			$.infixFunctionCall,
+			seq(
+				$.elvisExpression,
+				// TODO
+				//optional($.NLS),
+				$.elvis,
+				optional($.NLS),
+				$.infixFunctionCall,
+			)
+		)),
+
+		// TODO: specification grammar do the trick with lexing elvis
+		// using QUEST_NO_WS token which do not allow spaces after it
+		// Here we use another trick with additional nullableCallable token
+		// See also: '?.' and '@' tokens which also have some
+		// nontrivial relationship with spaces
+		elvis: $ => "?:",
+		nullableCallable: $ => "?::",
+
+		// precedence here should be more than in elvisExpression
+		infixFunctionCallWithReturn: $ => prec(PREC.INFIX_CALL, choice(
+			$.rangeExpressionWithReturn,
+			seq(
+				$.infixFunctionCall,
+				$.simpleIdentifier,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		)),
+
+		// precedence here should be less than in elvisExpression
+		infixFunctionCall: $ => prec(PREC.INFIX_CALL, choice(
+			$.rangeExpression,
+			seq(
+				$.infixFunctionCall,
+				$.simpleIdentifier,
+				optional($.NLS),
+				$.rangeExpression
+			)
+		)),
+
+		rangeExpressionWithReturn: $ => choice(
+			$.additiveExpressionWithReturn,
+			seq(
+				$.rangeExpression,
+				$.RANGE,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			),
+		),
+
+		rangeExpression: $ => choice(
+			$.additiveExpression,
+			seq(
+				$.rangeExpression,
+				$.RANGE,
+				optional($.NLS),
+				$.additiveExpression
+			),
+		),
+
+		additiveExpressionWithReturn: $ => choice(
+			$.multiplicativeExpressionWithReturn,
+			seq(
+				$.additiveExpression,
+				$.additiveOperator,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			),
+		),
+
+		additiveExpression: $ => choice(
+			$.multiplicativeExpression,
+			seq(
+				$.additiveExpression,
+				$.additiveOperator,
+				optional($.NLS),
+				$.multiplicativeExpression
+			),
+		),
+
+		multiplicativeExpressionWithReturn: $ => choice(
+			$.asExpressionWithReturn,
+			seq(
+				$.multiplicativeExpression,
+				$.multiplicativeOperator,
+				optional($.NLS),
+				$.rightRecursiveExpression,
+			)
+		),
+
+		multiplicativeExpression: $ => choice(
+			$.asExpression,
+			seq(
+				$.multiplicativeExpression,
+				$.multiplicativeOperator,
+				optional($.NLS),
+				$.asExpression
+			)
+		),
+
+		asExpressionWithReturn: $ => choice(
+			$.prefixUnaryExpressionWithReturn,
+		),
+
+		asExpression: $ => seq(
+			$.prefixUnaryExpression,
+			optional(seq(
+				// TODO
+				//optional($.NLS),
+				$.asOperator,
+				optional($.NLS),
+				$.type
+			))
+		),
+
+		prefixUnaryExpressionWithReturn: $ => seq(
+			repeat($.unaryPrefix),
+			$.rightRecursiveExpression,
+		),
+
+		prefixUnaryExpression: $ => seq(
+			repeat($.unaryPrefix),
+			$.postfixUnaryExpression
+		),
+
+		// precedence should be less that for valueArgument
+		unaryPrefix: $ => prec(PREC.UNARY_PREFIX, choice(
+			$.annotation,
+			$.label,
+			seq(
+				$.prefixUnaryOperator,
+				optional($.NLS)
+			)
+		)),
+
+		postfixUnaryExpression: $ => seq(
+			$.primaryExpression,
+			repeat(seq(
+				$.postfixUnarySuffix,
+			))
+		),
+
+		postfixUnarySuffix: $ => choice(
+			$.postfixUnaryOperator,
+			$.typeArguments,
+			$.callSuffix,
+			$.indexingSuffix,
+			$.navigationSuffix,
+		),
+
+		directlyAssignableExpression: $ => choice(
+			seq(
+				$.postfixUnaryExpression,
+				$.assignableSuffix,
+			),
+			$.simpleIdentifier,
+			$.parenthesizedDirectlyAssignableExpression,
+		),
+
+		parenthesizedDirectlyAssignableExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.directlyAssignableExpression,
+			// TODO
+			//optional($.NLS),
+			$.RPAREN,
+		),
+
+		assignableExpression: $ => choice(
+			$.prefixUnaryExpression,
+			$.parenthesizedAssignableExpression,
+		),
+
+		parenthesizedAssignableExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.assignableExpression,
+			// TODO
+			//optional($.NLS),
+			$.RPAREN,
+		),
+
+		assignableSuffix: $ => choice(
+			$.typeArguments,
+			$.indexingSuffix,
+			$.navigationSuffix,
+		),
+
+		indexingSuffix: $ => seq(
+			$.LSQUARE,
+			optional($.NLS),
+			$.expression,
+			repeat(seq(
+				optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				$.expression
+			)),
+			optional($.NLS),
+			$.RSQUARE
+		),
+
+		navigationSuffix: $ => seq(
+			// TODO
+			//optional($.NLS),
+			$.memberAccessOperator,
+			optional($.NLS),
+			choice(
+				$.simpleIdentifier,
+				$.parenthesizedExpression,
+				$.CLASS
+			)
+		),
+
+		// TODO right precedence here leads to confusing
+		//  such constructions as 'g(x) i + 2' with labeled lambda like 'g(x) i@{ }'
+		callSuffix: $ => prec.right(choice(
+			seq(
+				// typeArguments here are always consumed by the
+				// rule for postfixUnarySuffix
+				//optional($.typeArguments),
+				optional($.valueArguments),
+				$.annotated_lambda,
+			),
+			seq(
+				//optional($.typeArguments),
+				$.valueArguments
+			)
+		)),
+
 		annotated_lambda: $ => seq(
-			repeat($.annotation),
-			optional($.label),
+			optional(seq(
+				choice(
+					$._annotations,
+					$.label,
+				),
+				optional($.NLS),
+			)),
 			$.lambda_literal
 		),
 
+		typeArguments: $ => seq(
+			$.LANGLE,
+			optional($.NLS),
+			$.typeProjection,
+			repeat(seq(
+				optional($.NLS),
+				$.COMMA,
+				optional($.NLS),
+				$.typeProjection
+			)),
+			optional($.NLS),
+			$.RANGLE
+		),
+
+		valueArguments: $ => choice(
+			seq(
+				$.LPAREN,
+				optional($.NLS),
+				$.RPAREN
+			),
+			seq(
+				$.LPAREN,
+				optional($.NLS),
+				$.valueArgument,
+				repeat(seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS),
+					$.valueArgument
+				)),
+				optional($.NLS),
+				$.RPAREN
+			)
+		),
+
+		// precedence should be more that for unaryPrefix
+		valueArgument: $ => prec(PREC.VALUE_ARGUMENT, seq(
+			optional(seq(
+				$.annotation,
+				optional($.NLS)
+			)),
+			optional(seq(
+				$.simpleIdentifier,
+				//optional($.NLS),
+				$.ASSIGNMENT,
+				optional($.NLS)
+			)),
+			optional(seq(
+				$.MULT,
+				optional($.NLS)
+			)),
+			$.expression
+		)),
+
+		primaryExpression: $ => choice(
+			$.parenthesizedExpression,
+			$.simpleIdentifier,
+			$.literalConstant,
+			$.stringLiteral,
+			$.callableReference,
+			// TODO enable function literal
+			//$._function_literal,
+			$.object_literal,
+			$.collectionLiteral,
+			$.thisExpression,
+			$.superExpression,
+			// TODO enable if_expression
+			//$.if_expression,
+			$.when_expression,
+			$.try_expression,
+			//$.jumpExpression was moved to the top, see rightRecursiveExpression rule
+		),
+
+		parenthesizedExpression: $ => seq(
+			$.LPAREN,
+			optional($.NLS),
+			$.expression,
+			// TODO
+			//optional($.NLS),
+			$.RPAREN
+		),
+
+		collectionLiteral: $ => choice(
+			seq(
+				$.LSQUARE,
+				optional($.NLS),
+				$.expression,
+				repeat(seq(
+					optional($.NLS),
+					$.COMMA,
+					optional($.NLS),
+					$.expression
+				)),
+				optional($.NLS),
+				$.RSQUARE
+			),
+			seq(
+				$.LSQUARE,
+				optional($.NLS),
+				$.RSQUARE
+			)
+		),
+
+		literalConstant: $ => choice(
+			$.BooleanLiteral,
+			$.IntegerLiteral,
+			$.HexLiteral,
+			$.BinLiteral,
+			$.CharacterLiteral,
+			$.RealLiteral,
+			$.NullLiteral,
+			$.LongLiteral,
+			$.UnsignedLiteral
+		),
+
+		stringLiteral: $ => choice(
+			$.lineStringLiteral,
+			$.multiLineStringLiteral,
+			// for not to break all following lines when closing quote is missing
+			$.unfinishedLineStringLiteral,
+		),
+
+		lineStringLiteral: $ => seq(
+			"\"",
+			repeat(choice(
+				$.lineStringContent,
+				$.lineStringExpression,
+			)),
+			"\"",
+		),
+
+		unfinishedLineStringLiteral: $ => seq(
+			"\"",
+			repeat(choice(
+				$.lineStringContent,
+				$.lineStringExpression,
+			)),
+			$.NLS,
+		),
+
+		multiLineStringLiteral: $ => seq(
+			$.TRIPLE_QUOTE_OPEN,
+			repeat(choice(
+				$.multiLineStringContent,
+				$.multiLineStringExpression,
+			)),
+			$.TRIPLE_QUOTE_CLOSE,
+		),
+
+		lineStringContent: $ => choice(
+			$.LineStrText,
+			$.LineStrEscapedChar,
+			$.LineStrRef,
+		),
+
+		lineStringExpression: $ => seq(
+			"${",
+			$.expression,
+			"}",
+		),
+
+		multiLineStringContent: $ => choice(
+			$.MultiLineStrText,
+			$.MultiLineStrQuote,
+			$.MultiLineStrRef,
+		),
+
+		multiLineStringExpression: $ => seq(
+			"${",
+			optional($.NLS ),
+			$.expression,
+			optional($.NLS),
+			"}",
+		),
+
+		// precedence should be less that for block
 		lambda_literal: $ => prec(PREC.LAMBDA_LITERAL, seq(
 			"{",
 			optional(seq(
 				optional($.NLS),
 				optional($.lambda_parameters),
+				// TODO
+				//optional($.NLS),
 				"->",
+				optional($.NLS),
 			)),
 			optional(seq(
 				optional($.NLS),
@@ -1018,34 +1589,50 @@ module.exports = grammar({
 			"}",
 		)),
 
-		lambda_parameters: $ => sep1($._lambda_parameter, ","),
+		lambda_parameters: $ => sep1(
+			$._lambda_parameter,
+			seq(
+				// TODO
+				//optional($.NLS),
+				",",
+				optional($.NLS),
+			)
+		),
 
 		_lambda_parameter: $ => choice(
-			$.variable_declaration, // TODO
+			$.variable_declaration,
+			seq(
+				$.multi_variable_declaration,
+				optional(seq(
+					// TODO
+					//optional($.NLS),
+					$.COLON,
+					optional($.NLS),
+					$.type
+				))
+			)
 		),
 
 		anonymous_function: $ => seq(
 			"fun",
 			optional(seq(
 				optional($.NLS),
+				// in specification here is
+				// type instead of receiverType
 				$.receiverTypeWithDot,
 			)),
 			$.parametersWithOptionalType,
 			optional(seq(
+				// TODO
 				//optional($.NLS),
 				$.COLON,
 				optional($.NLS),
 				$._type,
 			)),
-			// Do really type constraints and empty body make sense?
-			// optional(seq(
-			// 	optional($.NLS),
-			// 	$.type_constraints,
-			// )),
-			// optional(seq(
-			// 	//optional($.NLS),
-			// 	$.function_body,
-			// )),
+			// In specification there are typeConstraints
+			// and optional functionBody which do not make sense
+			// TODO
+			//optional($.NLS),
 			$.function_body
 		),
 
@@ -1056,86 +1643,181 @@ module.exports = grammar({
 
 		object_literal: $ => seq(
 			"object",
-			optional(seq(":", $._delegation_specifiers)),
+			// TODO
+			//optional($.NLS),
+			optional(seq(
+				$.COLON,
+				optional($.NLS),
+				$._delegation_specifiers,
+				optional($.NLS),
+			)),
 			$.class_body
 		),
 
+		thisExpression: $ => choice(
+			$.THIS,
+			$.THIS_AT
+		),
+
+		// TODO should use lexer to disable whitespaces and extract '@ident' in 'super<C>@ident' as a token
+		superExpression: $ => prec.right(choice(
+			seq(
+				$.SUPER,
+				optional(seq(
+					$.LANGLE,
+					optional($.NLS),
+					$.type,
+					optional($.NLS),
+					$.RANGLE
+				)),
+				optional(seq(
+					$.AT_NO_WS,
+					$.simpleIdentifier
+				))
+			),
+			$.SUPER_AT
+		)),
+
 		if_expression: $ => prec.right(seq(
 			"if",
-			"(", $._expression, ")",
+			optional($.NLS),
+			$.LPAREN,
+			optional($.NLS),
+			$._expression,
+			optional($.NLS),
+			$.RPAREN,
+			optional($.NLS),
 			choice(
 				$.control_structure_body,
 				";",
 				seq(
 					optional($.control_structure_body),
+					optional($.NLS),
 					optional(";"),
+					optional($.NLS),
 					"else",
+					optional($.NLS),
 					choice($.control_structure_body, ";")
 				)
 			)
 		)),
 
 		when_subject: $ => seq(
-			"(",
+			$.LPAREN,
 			optional(seq(
-				repeat($.annotation),
+				optional($._annotations),
+				optional($.NLS),
 				"val",
+				optional($.NLS),
 				$.variable_declaration,
-				"="
+				optional($.NLS),
+				"=",
+				optional($.NLS),
 			)),
 			$._expression,
-			")",
+			$.RPAREN,
 		),
 
 		when_expression: $ => seq(
 			"when",
+			optional($.NLS),
 			optional($.when_subject),
-			"{",
-			repeat($.when_entry),
-			"}"
+			optional($.NLS),
+			$.LCURL,
+			optional($.NLS),
+			repeat(seq(
+				$.when_entry,
+				// newlines here are already consumed by when_entry
+				//optional($.NLS),
+			)),
+			$.RCURL
 		),
 
 		when_entry: $ => seq(
 			choice(
-				seq($.when_condition, repeat(seq(",", $.when_condition))),
+				seq(
+					$.when_condition,
+					repeat(seq(
+						optional($.NLS),
+						",",
+						optional($.NLS),
+						$.when_condition
+					))),
 				"else"
 			),
+			optional($.NLS),
 			"->",
+			optional($.NLS),
 			$.control_structure_body,
-			optional($.semi)
+			// TODO semi should be optional
+			$.semi,
+			//optional($.semi)
 		),
 
-		when_condition: $ => seq(
+		when_condition: $ => choice(
 			$._expression,
 			$.range_test,
 			$.type_test
 		),
 
-		range_test: $ => seq($._in_operator, $._expression),
+		range_test: $ => seq(
+			$._in_operator,
+			optional($.NLS),
+			$._expression
+		),
 
-		type_test: $ => seq($._is_operator, $._expression),
+		type_test: $ => seq(
+			$._is_operator,
+			optional($.NLS),
+			$._expression
+		),
 
-		try_expression: $ => seq(
+		// right associativity is here to avoid parsing consequent 'catch' as infix call
+		// Specification parser here differs from compiler
+		try_expression: $ => prec.right(seq(
 			"try",
+			optional($.NLS),
 			$.block,
 			choice(
-				seq(repeat1($.catch_block), optional($.finally_block)),
-				$.finally_block
+				seq(
+					repeat1(seq(
+						// TODO
+						//optional($.NLS),
+						$.catch_block
+					)),
+					optional(seq(
+						//optional($.NLS),
+						$.finally_block
+					))
+				),
+				seq(
+					//optional($.NLS),
+					$.finally_block
+				)
 			)
-		),
+		)),
 
 		catch_block: $ => seq(
 			"catch",
-			"(",
+			optional($.NLS),
+			$.LPAREN,
 			repeat($.annotation),
 			$.simple_identifier,
-			":",
+			$.COLON,
 			$._type,
-			")",
+			$.RPAREN,
+			optional($.NLS),
 			$.block,
 		),
 
-		finally_block: $ => seq("finally", $.block),
+		finally_block: $ => seq(
+			"finally",
+			optional($.NLS),
+			$.block
+		),
+
+		// End of reviewed part
+		//-------------------------
 
 		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
 		
@@ -1248,515 +1930,6 @@ module.exports = grammar({
 
 
 
-
-		expression: $ => choice(
-			$.disjunction,
-			$.disjunctionWithReturn,
-		),
-
-		disjunctionWithReturn: $ => choice(
-			$.conjunctionWithReturn,
-			seq(
-				$.disjunction,
-				//optional($.NLS),
-				$.DISJ,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		disjunction: $ => choice(
-			$.conjunction,
-			seq(
-				$.disjunction,
-				//optional($.NLS),
-				$.DISJ,
-				optional($.NLS),
-				$.conjunction,
-			)
-		),
-
-		conjunctionWithReturn: $ => choice(
-			$.equalityWithReturn,
-			seq(
-				$.conjunction,
-				//optional($.NLS),
-				$.CONJ,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		conjunction: $ => choice(
-			$.equality,
-			seq(
-				$.conjunction,
-				//optional($.NLS),
-				$.CONJ,
-				optional($.NLS),
-				$.equality,
-			)
-		),
-
-		equalityWithReturn: $ => choice(
-			$.comparisonWithReturn,
-			seq(
-				$.equality,
-				$.equalityOperator,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		equality: $ => choice(
-			$.comparison,
-			seq(
-				$.equality,
-				$.equalityOperator,
-				optional($.NLS),
-				$.comparison
-			)
-		),
-
-		comparisonWithReturn: $ => choice(
-			$.infixOperationWithReturn,
-			seq(
-				$.infixOperation,
-				$.comparisonOperator,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		comparison: $ => choice(
-			$.infixOperation,
-			seq(
-				$.infixOperation,
-				$.comparisonOperator,
-				optional($.NLS),
-				$.infixOperation
-			)
-		),
-
-		infixOperationWithReturn: $ => choice(
-			$.elvisExpressionWithReturn,
-			seq(
-				$.infixOperation,
-				$.inOperator,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			),
-		),
-
-		infixOperation: $ => choice(
-			$.elvisExpression,
-			seq(
-				$.infixOperation,
-				$.inOperator,
-				optional($.NLS),
-				$.elvisExpression
-			),
-			seq(
-				$.infixOperation,
-				$.isOperator,
-				optional($.NLS),
-				$.type
-			),
-		),
-
-		elvisExpressionWithReturn: $ => choice(
-			$.infixFunctionCallWithReturn,
-			seq(
-				$.elvisExpression,
-				//optional($.NLS),
-				$.elvis,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		elvisExpression: $ => prec(PREC.ELVIS, choice(
-			$.infixFunctionCall,
-			seq(
-				$.elvisExpression,
-				//optional($.NLS),
-				$.elvis,
-				optional($.NLS),
-				$.infixFunctionCall,
-			)
-		)),
-
-		elvis: $ => "?:",
-		nullableCallable: $ => "?::",
-
-		infixFunctionCallWithReturn: $ => prec(PREC.INFIX_CALL, choice(
-			$.rangeExpressionWithReturn,
-			seq(
-				$.infixFunctionCall,
-				$.simpleIdentifier,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		)),
-
-		infixFunctionCall: $ => prec(PREC.INFIX_CALL, choice(
-			$.rangeExpression,
-			seq(
-				$.infixFunctionCall,
-				$.simpleIdentifier,
-				optional($.NLS),
-				$.rangeExpression
-			)
-		)),
-
-		rangeExpressionWithReturn: $ => choice(
-			$.additiveExpressionWithReturn,
-			seq(
-				$.rangeExpression,
-				$.RANGE,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			),
-		),
-
-		rangeExpression: $ => choice(
-			$.additiveExpression,
-			seq(
-				$.rangeExpression,
-				$.RANGE,
-				optional($.NLS),
-				$.additiveExpression
-			),
-		),
-
-		additiveExpressionWithReturn: $ => choice(
-			$.multiplicativeExpressionWithReturn,
-			seq(
-				$.additiveExpression,
-				$.additiveOperator,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			),
-		),
-
-		additiveExpression: $ => choice(
-			$.multiplicativeExpression,
-			seq(
-				$.additiveExpression,
-				$.additiveOperator,
-				optional($.NLS),
-				$.multiplicativeExpression
-			),
-		),
-
-		multiplicativeExpressionWithReturn: $ => choice(
-			$.asExpressionWithReturn,
-			seq(
-				$.multiplicativeExpression,
-				$.multiplicativeOperator,
-				optional($.NLS),
-				$.rightRecursiveExpression,
-			)
-		),
-
-		multiplicativeExpression: $ => choice(
-			$.asExpression,
-			seq(
-				$.multiplicativeExpression,
-				$.multiplicativeOperator,
-				optional($.NLS),
-				$.asExpression
-			)
-		),
-
-		asExpressionWithReturn: $ => choice(
-			$.prefixUnaryExpressionWithReturn,
-		),
-
-		asExpression: $ => seq(
-			$.prefixUnaryExpression,
-			optional(seq(
-				//optional($.NLS),
-				$.asOperator,
-				optional($.NLS),
-				$.type
-			))
-		),
-
-		prefixUnaryExpressionWithReturn: $ => seq(
-			repeat($.unaryPrefix),
-			$.rightRecursiveExpression,
-		),
-
-		prefixUnaryExpression: $ => seq(
-			repeat($.unaryPrefix),
-			$.postfixUnaryExpression
-		),
-
-		unaryPrefix: $ => prec(PREC.UNARY_PREFIX, choice(
-			$.annotation,
-			$.label,
-			seq(
-				$.prefixUnaryOperator,
-				optional($.NLS)
-			)
-		)),
-
-		postfixUnaryExpression: $ => seq(
-			$.primaryExpression,
-			repeat(seq(
-				$.postfixUnarySuffix,
-			))
-		),
-
-		postfixUnarySuffix: $ => choice(
-			$.postfixUnaryOperator,
-			//$.typeArguments,
-			$.callSuffix,
-			$.indexingSuffix,
-			$.navigationSuffix,
-		),
-
-		directlyAssignableExpression: $ => choice(
-			seq(
-				$.postfixUnaryExpression,
-				$.assignableSuffix,
-			),
-			$.simpleIdentifier,
-			$.parenthesizedDirectlyAssignableExpression,
-		),
-
-		parenthesizedDirectlyAssignableExpression: $ => seq(
-			$.LPAREN,
-			optional($.NLS),
-			$.directlyAssignableExpression,
-			// TODO
-			//optional($.NLS),
-			$.RPAREN,
-		),
-
-		assignableExpression: $ => choice(
-			$.prefixUnaryExpression,
-			$.parenthesizedAssignableExpression,
-		),
-
-		parenthesizedAssignableExpression: $ => seq(
-			$.LPAREN,
-			optional($.NLS),
-			$.assignableExpression,
-			optional($.NLS),
-			$.RPAREN,
-		),
-
-		assignableSuffix: $ => choice(
-			$.typeArguments,
-			$.indexingSuffix,
-			$.navigationSuffix,
-		),
-
-		indexingSuffix: $ => seq(
-			$.LSQUARE,
-			optional($.NLS),
-			$.expression,
-			repeat(seq(
-				optional($.NLS),
-				$.COMMA,
-				optional($.NLS),
-				$.expression
-			)),
-			optional($.NLS),
-			$.RSQUARE
-		),
-
-		navigationSuffix: $ => seq(
-			//optional($.NLS),
-			$.memberAccessOperator,
-			optional($.NLS),
-			choice(
-				$.simpleIdentifier,
-				$.parenthesizedExpression,
-				$.CLASS
-			)
-		),
-
-		callSuffix: $ => prec.right(choice(
-			seq(
-				optional($.typeArguments),
-				optional($.valueArguments),
-				$.annotated_lambda,
-			),
-			seq(
-				optional($.typeArguments),
-				$.valueArguments
-			)
-		)),
-
-		typeArguments: $ => seq(
-			$.LANGLE,
-			optional($.NLS),
-			$.typeProjection,
-			repeat(seq(
-				optional($.NLS),
-				$.COMMA,
-				optional($.NLS),
-				$.typeProjection
-			)),
-			optional($.NLS),
-			$.RANGLE
-		),
-
-		valueArguments: $ => choice(
-			seq(
-				$.LPAREN,
-				optional($.NLS),
-				$.RPAREN
-			),
-			seq(
-				$.LPAREN,
-				optional($.NLS),
-				$.valueArgument,
-				repeat(seq(
-					optional($.NLS),
-					$.COMMA,
-					optional($.NLS),
-					$.valueArgument
-				)),
-				optional($.NLS),
-				$.RPAREN
-			)
-		),
-
-		valueArgument: $ => prec(PREC.VALUE_ARGUMENT, seq(
-			optional(seq($.annotation, optional($.NLS))),
-			optional(seq(
-				$.simpleIdentifier,
-				//optional($.NLS),
-				$.ASSIGNMENT,
-				optional($.NLS)
-			)),
-			optional(seq($.MULT, optional($.NLS))),
-			$.expression
-		)),
-
-		primaryExpression: $ => choice(
-			$.parenthesizedExpression,
-			$.simpleIdentifier,
-			$.literalConstant,
-			$.stringLiteral,
-			$.callableReference,
-			//$._function_literal,
-			//$.object_literal,
-			$.collectionLiteral,
-			$.thisExpression,
-			$.superExpression,
-			//$.when_expression,
-			// $.try_expression,
-			//$.jumpExpression was moved to the top, see rightRecursiveExpression rule
-			//$.if_expression,
-		),
-
-		parenthesizedExpression: $ => seq(
-			$.LPAREN,
-			optional($.NLS),
-			$.expression,
-			// TODO
-			//optional($.NLS),
-			$.RPAREN
-		),
-
-		collectionLiteral: $ => choice(
-			seq(
-				$.LSQUARE,
-				optional($.NLS),
-				$.expression,
-				repeat(seq(
-					optional($.NLS),
-					$.COMMA,
-					optional($.NLS),
-					$.expression
-				)),
-				optional($.NLS),
-				$.RSQUARE
-			),
-			seq(
-				$.LSQUARE,
-				optional($.NLS),
-				$.RSQUARE
-			)
-		),
-
-		literalConstant: $ => choice(
-			$.BooleanLiteral,
-			$.IntegerLiteral,
-			$.HexLiteral,
-			$.BinLiteral,
-			$.CharacterLiteral,
-			$.RealLiteral,
-			$.NullLiteral,
-			$.LongLiteral,
-			$.UnsignedLiteral
-		),
-
-		stringLiteral: $ => choice(
-			$.lineStringLiteral,
-			$.multiLineStringLiteral,
-			// for not to break all following lines when closing quote is missing
-			$.unfinishedLineStringLiteral,
-		),
-
-		lineStringLiteral: $ => seq(
-			"\"",
-			repeat(choice(
-				$.lineStringContent,
-				$.lineStringExpression,
-			)),
-			"\"",
-		),
-
-		unfinishedLineStringLiteral: $ => seq(
-			"\"",
-			repeat(choice(
-				$.lineStringContent,
-				$.lineStringExpression,
-			)),
-			$.NLS,
-		),
-
-		multiLineStringLiteral: $ => seq(
-			$.TRIPLE_QUOTE_OPEN,
-			repeat(choice(
-				$.multiLineStringContent,
-				$.multiLineStringExpression,
-			)),
-			$.TRIPLE_QUOTE_CLOSE,
-		),
-
-		lineStringContent: $ => choice(
-			$.LineStrText,
-			$.LineStrEscapedChar,
-			$.LineStrRef,
-		),
-
-		lineStringExpression: $ => seq(
-			"${",
-			$.expression,
-			"}",
-		),
-
-		multiLineStringContent: $ => choice(
-			$.MultiLineStrText,
-			$.MultiLineStrQuote,
-			$.MultiLineStrRef,
-		),
-
-		multiLineStringExpression: $ => seq(
-			"${",
-			optional($.NLS),
-			$.expression,
-			optional($.NLS),
-			"}",
-		),
-
 		LineStrText: $ => /[^\\"$]+|\$/,
 		MultiLineStrText: $ => /[^"$]+|\$/,
 		LineStrEscapedChar: $ => choice(
@@ -1788,29 +1961,6 @@ module.exports = grammar({
 		))),
 		TRIPLE_QUOTE_OPEN: $ => /"""/,
 		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
-
-		thisExpression: $ => choice(
-			$.THIS,
-			$.THIS_AT
-		),
-
-		superExpression: $ => prec.left(choice(
-			seq(
-				$.SUPER,
-				optional(seq(
-					$.LANGLE,
-					optional($.NLS),
-					$.type,
-					optional($.NLS),
-					$.RANGLE
-				)),
-				optional(seq(
-					$.AT_NO_WS,
-					$.simpleIdentifier
-				))
-			),
-			$.SUPER_AT
-		)),
 
 		rightRecursiveExpression: $ => choice(
 			$.jumpExpression,
@@ -2064,17 +2214,6 @@ module.exports = grammar({
 			$.SUSPEND
 		)),
 
-		DelimitedComment: $ => token(seq(
-			"/*",
-			repeat(/.|\n/),
-			"*/"
-		)),
-
-		LineComment: $ => token(seq(
-			"//",
-			repeat(/[^\r\n]/)
-		)),
-
 		WS: $ => /[\u0020\u0009\u000C]+/,
 
 		// TODO combining multiple newlines into single token
@@ -2088,7 +2227,7 @@ module.exports = grammar({
 				/\/\*([^*]|\*[^/])*\*\//
 			),
 			token(seq(
-				/\/\/[^\n]*(\n|\r\n?)/,
+				/\/\/[^\n]*(\n|\r\n?)?/,
 			)),
 			//token(/[\u0020\u0009\u000C]+/)
 		)),

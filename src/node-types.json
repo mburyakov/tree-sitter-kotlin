@@ -252,13 +252,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "NLS",
-          "named": true
-        },
         {
           "type": "multiAnnotation",
           "named": true
@@ -511,6 +507,10 @@
           "named": true
         },
         {
+          "type": "assignmentAndOperator",
+          "named": true
+        },
+        {
           "type": "directlyAssignableExpression",
           "named": true
         },
@@ -520,6 +520,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "assignmentAndOperator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "block",
@@ -1854,6 +1859,10 @@
       "required": true,
       "types": [
         {
+          "type": "EXTERNAL",
+          "named": true
+        },
+        {
           "type": "INFIX",
           "named": true
         },
@@ -1926,6 +1935,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "DOT",
+          "named": true
+        },
         {
           "type": "simple_identifier",
           "named": true
@@ -3639,7 +3652,7 @@
           "named": true
         },
         {
-          "type": "NLSQUEST",
+          "type": "QUEST_NO_WS",
           "named": true
         }
       ]
@@ -4342,13 +4355,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "NLS",
-          "named": true
-        },
         {
           "type": "SUSPEND",
           "named": true
@@ -5637,6 +5646,10 @@
   },
   {
     "type": "PUBLIC",
+    "named": true
+  },
+  {
+    "type": "QUEST_NO_WS",
     "named": true
   },
   {

@@ -168,6 +168,7 @@ Assignment with operator
             (simpleIdentifier
               (Identifier))))))
     (WS)
+    (assignmentAndOperator)
     (WS)
     (expression
       (disjunction
@@ -198,6 +199,7 @@ Assignment with operator
                 (lineStringContent
                   (LineStrText))))))))
     (WS)
+    (assignmentAndOperator)
     (WS)
     (expression
       (disjunction

@@ -984,7 +984,7 @@ module.exports = grammar({
 			),
 			seq(
 				$.assignableExpression,
-				$._assignment_and_operator,
+				$.assignmentAndOperator,
 				optional($.NLS),
 				$.expression
 			),
@@ -1024,6 +1024,11 @@ module.exports = grammar({
 			// express those language constructions which end
 			// with end with right recursive expressions
 			$.disjunctionWithReturn,
+		),
+
+		rightRecursiveExpression: $ => choice(
+			$.jumpExpression,
+			//$.if_expression,
 		),
 
 		disjunctionWithReturn: $ => choice(
@@ -1761,13 +1766,13 @@ module.exports = grammar({
 		),
 
 		range_test: $ => seq(
-			$._in_operator,
+			$.inOperator,
 			optional($.NLS),
 			$._expression
 		),
 
 		type_test: $ => seq(
-			$._is_operator,
+			$.isOperator,
 			optional($.NLS),
 			$._expression
 		),
@@ -1816,157 +1821,8 @@ module.exports = grammar({
 			$.block
 		),
 
-		// End of reviewed part
-		//-------------------------
-
-		_assignment_and_operator: $ => choice("+=", "-=", "*=", "/=", "%="),
-		
-		_in_operator: $ => $.inOperator,
-		
-		_is_operator: $ => $.isOperator,
-
-		// ==========
-		// Modifiers
-		// ==========
-
-		modifiers: $ => prec.right(repeat1(choice($.annotation, $._modifier))),
-
-		parameter_modifiers: $ => prec.right(choice($.annotation, repeat1($.parameter_modifier))),
-
-		_modifier: $ => choice(
-			$.class_modifier,
-			$.member_modifier,
-			$.visibility_modifier,
-			$.function_modifier,
-			$.property_modifier,
-			$.inheritance_modifier,
-			$.parameter_modifier,
-			$.platform_modifier
-		),
-
-		type_modifiers: $ => prec.right(repeat1($._type_modifier)),
-
-		_type_modifier: $ => choice($.annotation, $.SUSPEND),
-
-		class_modifier: $ => choice(
-			$.ENUM,
-			$.SEALED,
-			$.ANNOTATION,
-			$.DATA,
-			$.INNER
-		),
-
-		member_modifier: $ => choice(
-			$.OVERRIDE,
-			$.LATEINIT
-		),
-
-		visibility_modifier: $ => choice(
-			$.PUBLIC,
-			$.PRIVATE,
-			$.INTERNAL,
-			$.PROTECTED
-		),
-
-		type_parameter_modifiers: $ => prec.right(repeat1($._type_parameter_modifier)),
-
-		_type_parameter_modifier: $ => choice(
-			$.reification_modifier,
-			$.varianceModifier,
-			$.annotation
-		),
-
-		function_modifier: $ => choice(
-			$.TAILREC,
-			$.OPERATOR,
-			$.INFIX,
-			$.INLINE,
-			$.SUSPEND,
-			$.SUSPEND
-		),
-
-		property_modifier: $ => $.CONST,
-
-		inheritance_modifier: $ => choice(
-			$.ABSTRACT,
-			$.FINAL,
-			$.OPEN
-		),
-
-		parameter_modifier: $ => choice(
-			$.VARARG,
-			$.NOINLINE,
-			$.CROSSINLINE
-		),
-
-		reification_modifier: $ => $.REIFIED,
-
-		platform_modifier: $ => choice(
-			$.EXPECT,
-			$.ACTUAL
-		),
-
-		// ==========
-		// Identifiers
-		// ==========
-
-		identifier: $ => sep1($.simple_identifier, "."),
-
-		// ==========
-		// Glue for expression part converted from antlr
-		// ==========
-
-		_expression: $ => $.expression,
-		value_arguments: $ => $.valueArguments,
-		simple_identifier: $ => $.simpleIdentifier,
-		_type: $ => $.type,
-		user_type: $ => $.userType,
-		function_type: $ => $.functionType,
-		_simple_user_type: $ => $.simpleUserType,
-
-
-
-		//=================converted from antlr (expressions with some restrictions)==========================
-
-
-
-		LineStrText: $ => /[^\\"$]+|\$/,
-		MultiLineStrText: $ => /[^"$]+|\$/,
-		LineStrEscapedChar: $ => choice(
-			$.EscapedIdentifier,
-			$.UniCharacterLiteral,
-		),
-		LineStrRef: $ => $.FieldIdentifier,
-		MultiLineStrQuote: $ => /"?"/,
-		MultiLineStrRef: $ => $.FieldIdentifier,
-		EscapedIdentifier: $ => /\\[tbrn'"\\$]/,
-		UniCharacterLiteral: $ => /\\u[0-9a-fA-F]{4}/,
-		FieldIdentifier: $ => token(seq("$", choice(
-			seq(
-				choice(
-					/[a-zA-Z]/,
-					"_"
-				),
-				repeat(choice(
-					/[a-zA-Z]/,
-					"_",
-					/[0-9]/
-				))
-			),
-			seq(
-				"`",
-				repeat1(/[^\r\n`]/),
-				"`"
-			)
-		))),
-		TRIPLE_QUOTE_OPEN: $ => /"""/,
-		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
-
-		rightRecursiveExpression: $ => choice(
-			$.jumpExpression,
-			//$.if_expression,
-		),
-
+		// right precedence here is to avoid parsing
+		// 'val x = 4 get() = field' without line break before getter
 		jumpExpression: $ => prec.right(choice(
 			seq(
 				$.THROW,
@@ -1990,15 +1846,18 @@ module.exports = grammar({
 			choice(
 				seq(
 					optional($.receiverType),
-					//optional($.NLS)
+					// TODO
+					//optional($.NLS),
 					$.COLONCOLON,
 				),
 				seq(
 					$.parenthesizedType,
+					//optional($.NLS),
 					$.nullableCallable,
 				),
 				seq(
 					$.typeReference,
+					//optional($.NLS),
 					$.nullableCallable,
 				),
 			),
@@ -2007,6 +1866,14 @@ module.exports = grammar({
 				$.simpleIdentifier,
 				$.CLASS,
 			)
+		),
+
+		assignmentAndOperator: $ => choice(
+			"+=",
+			"-=",
+			"*=",
+			"/=",
+			"%="
 		),
 
 		equalityOperator: $ => choice(
@@ -2077,16 +1944,69 @@ module.exports = grammar({
 			$.COLONCOLON
 		),
 
-		safeNav: $ => seq($.NLSQUEST, $.DOT),
+		safeNav: $ => seq($.QUEST_NO_WS, $.DOT),
 
+		// ==========
+		// Modifiers
+		// ==========
+
+		// TODO do really all modifier lists should have right associativity?
+		modifiers: $ => prec.right(repeat1(choice(
+			$.annotation,
+			$._modifier
+		))),
+
+		parameter_modifiers: $ => prec.right(repeat1(choice(
+			$.annotation,
+			$.parameter_modifier
+		))),
+
+		_modifier: $ => seq(
+			choice(
+				$.class_modifier,
+				$.member_modifier,
+				$.visibility_modifier,
+				$.function_modifier,
+				$.property_modifier,
+				$.inheritance_modifier,
+				$.parameter_modifier,
+				$.platform_modifier
+			),
+			// TODO
+			//optional($.NLS)
+		),
+
+		// right precedence here avoids parsing
+		// 'val x: @A suspend' as property with name 'suspend'
 		typeModifiers: $ => prec.right(repeat1($.typeModifier)),
 
 		typeModifier: $ => choice(
 			$.annotation,
 			seq(
 				$.SUSPEND,
-				optional($.NLS)
+				// TODO
+				// optional($.NLS),
 			)
+		),
+
+		class_modifier: $ => choice(
+			$.ENUM,
+			$.SEALED,
+			$.ANNOTATION,
+			$.DATA,
+			$.INNER
+		),
+
+		member_modifier: $ => choice(
+			$.OVERRIDE,
+			$.LATEINIT
+		),
+
+		visibility_modifier: $ => choice(
+			$.PUBLIC,
+			$.PRIVATE,
+			$.INTERNAL,
+			$.PROTECTED
 		),
 
 		varianceModifier: $ => choice(
@@ -2094,15 +2014,61 @@ module.exports = grammar({
 			$.OUT
 		),
 
+		// TODO
+		//  right associativity here break parsing mysterious code like 'inline fun <@A reified reified> f() {}'
+		type_parameter_modifiers: $ => prec.right(repeat1($._type_parameter_modifier)),
+
+		_type_parameter_modifier: $ => choice(
+			$.reification_modifier,
+			$.varianceModifier,
+			$.annotation
+		),
+
+		function_modifier: $ => choice(
+			$.TAILREC,
+			$.OPERATOR,
+			$.INFIX,
+			$.INLINE,
+			$.EXTERNAL,
+			$.SUSPEND
+		),
+
+		property_modifier: $ => $.CONST,
+
+		inheritance_modifier: $ => choice(
+			$.ABSTRACT,
+			$.FINAL,
+			$.OPEN
+		),
+
+		parameter_modifier: $ => choice(
+			$.VARARG,
+			$.NOINLINE,
+			$.CROSSINLINE
+		),
+
+		reification_modifier: $ => $.REIFIED,
+
+		platform_modifier: $ => choice(
+			$.EXPECT,
+			$.ACTUAL
+		),
+
+        // ==========
+		// Annotations
+		// ==========
+
+        // extracted for referencing from conflict list
 		_annotations: $ => repeat1($.annotation),
 
-		annotation: $ => prec.right(seq(
+		annotation: $ => seq(
 			choice(
 				$.singleAnnotation,
 				$.multiAnnotation
 			),
-			optional($.NLS)
-		)),
+			// TODO
+			//optional($.NLS)
+		),
 
 		singleAnnotation: $ => choice(
 			seq(
@@ -2164,6 +2130,10 @@ module.exports = grammar({
 			$.userType
 		)),
 
+		// ==========
+		// Identifiers
+		// ==========
+
 		simpleIdentifier: $ => prec(PREC.SIMPLE_IDENTIDIER, choice(
 			$.Identifier,
 			$.ABSTRACT,
@@ -2214,10 +2184,67 @@ module.exports = grammar({
 			$.SUSPEND
 		)),
 
+		identifier: $ => sep1(
+			$.simple_identifier,
+			seq(
+				// TODO
+				//optional($.NLS),
+				$.DOT
+			)
+		),
+
+		// ==========
+		// Conversions due to mess with naming conventions
+		// ==========
+
+		_expression: $ => $.expression,
+		value_arguments: $ => $.valueArguments,
+		simple_identifier: $ => $.simpleIdentifier,
+		_type: $ => $.type,
+		user_type: $ => $.userType,
+		function_type: $ => $.functionType,
+
+		//-------------
+		// Lexical rules
+		//-------------
+
+		LineStrText: $ => /[^\\"$]+|\$/,
+		MultiLineStrText: $ => /[^"$]+|\$/,
+		LineStrEscapedChar: $ => choice(
+			$.EscapedIdentifier,
+			$.UniCharacterLiteral,
+		),
+		LineStrRef: $ => $.FieldIdentifier,
+		MultiLineStrQuote: $ => /"?"/,
+		MultiLineStrRef: $ => $.FieldIdentifier,
+		EscapedIdentifier: $ => /\\[tbrn'"\\$]/,
+		UniCharacterLiteral: $ => /\\u[0-9a-fA-F]{4}/,
+		FieldIdentifier: $ => token(seq("$", choice(
+			seq(
+				choice(
+					/[a-zA-Z]/,
+					"_"
+				),
+				repeat(choice(
+					/[a-zA-Z]/,
+					"_",
+					/[0-9]/
+				))
+			),
+			seq(
+				"`",
+				repeat1(/[^\r\n`]/),
+				"`"
+			)
+		))),
+		TRIPLE_QUOTE_OPEN: $ => /"""/,
+		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
+
+		// TODO: review tokens containing whitespaces/comments inside
 		WS: $ => /[\u0020\u0009\u000C]+/,
 
 		// TODO combining multiple newlines into single token
-		// misses comments inside newline characters
+		//  misses comments inside newline characters
 		NLS: $ => /(\n|\r\n?)+/,
 
 		// TODO nested block comments
@@ -2231,6 +2258,10 @@ module.exports = grammar({
 			)),
 			//token(/[\u0020\u0009\u000C]+/)
 		)),
+
+		//--------------
+		// Symbols
+		//--------------
 
 		DOT: $ => token("."),
 
@@ -2268,22 +2299,6 @@ module.exports = grammar({
 
 		DISJ: $ => token("||"),
 
-		EXCL_WS: $ => token(seq(
-			"!",
-			choice(
-				seq(
-					"/*",
-					repeat(/.|\n/),
-					"*/"
-				),
-				token(seq(
-					"//",
-					repeat(/[^\r\n]/)
-				)),
-				token(/[\u0020\u0009\u000C]/)
-			)
-		)),
-
 		EXCL_NO_WS: $ => token("!"),
 
 		COLON: $ => token(":"),
@@ -2298,75 +2313,9 @@ module.exports = grammar({
 
 		AT_NO_WS: $ => token("@"),
 
-		AT_POST_WS: $ => token(seq(
-			"@",
-			choice(
-				choice(
-					seq(
-						"/*",
-						repeat(/.|\n/),
-						"*/"
-					),
-					token(seq(
-						"//",
-						repeat(/[^\r\n]/)
-					)),
-					token(/[\u0020\u0009\u000C]/)
-				),
-				token(choice(
-					"\n",
-					seq(
-						"\r",
-						optional("\n")
-					)
-				))
-			)
-		)),
-
-		AT_PRE_WS: $ => token(seq(
-			choice(
-				choice(
-					seq(
-						"/*",
-						repeat(/.|\n/),
-						"*/"
-					),
-					token(seq(
-						"//",
-						repeat(/[^\r\n]/)
-					)),
-					token(/[\u0020\u0009\u000C]/)
-				),
-				token(choice(
-					"\n",
-					seq(
-						"\r",
-						optional("\n")
-					)
-				))
-			),
-			"@"
-		)),
-
-		QUEST_WS: $ => token(seq(
-			"?",
-			choice(
-				seq(
-					"/*",
-					repeat(/.|\n/),
-					"*/"
-				),
-				token(seq(
-					"//",
-					repeat(/[^\r\n]/)
-				)),
-				token(/[\u0020\u0009\u000C]/)
-			)
-		)),
+		QUEST_NO_WS: $ => "?",
 
 		NLSQUEST: $ => /(\n|\r\n)*\?/,
-
-		QUEST: $ => token("?"),
 
 		LANGLE: $ => token("<"),
 
@@ -2385,6 +2334,10 @@ module.exports = grammar({
 		EQEQ: $ => token("=="),
 
 		EQEQEQ: $ => token("==="),
+
+		//---------------
+		// Tokens containing identifier
+		//---------------
 
 		RETURN_AT: $ => token(seq(
 			"return@",
@@ -2496,6 +2449,147 @@ module.exports = grammar({
 			)
 		)),
 
+		//---------------
+		// Symbols consuming whitespaces
+		//---------------
+
+
+		AT_POST_WS: $ => token(seq(
+			"@",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		AT_PRE_WS: $ => token(seq(
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			),
+			"@"
+		)),
+
+		EXCL_WS: $ => token(seq(
+			"!",
+			choice(
+				seq(
+					"/*",
+					repeat(/.|\n/),
+					"*/"
+				),
+				token(seq(
+					"//",
+					repeat(/[^\r\n]/)
+				)),
+				token(/[\u0020\u0009\u000C]/)
+			)
+		)),
+
+		QUEST_WS: $ => token(seq(
+			"?",
+			choice(
+				seq(
+					"/*",
+					repeat(/.|\n/),
+					"*/"
+				),
+				token(seq(
+					"//",
+					repeat(/[^\r\n]/)
+				)),
+				token(/[\u0020\u0009\u000C]/)
+			)
+		)),
+
+		NOT_IS: $ => token(seq(
+			"!is",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		NOT_IN: $ => token(seq(
+			"!in",
+			choice(
+				choice(
+					seq(
+						"/*",
+						repeat(/.|\n/),
+						"*/"
+					),
+					token(seq(
+						"//",
+						repeat(/[^\r\n]/)
+					)),
+					token(/[\u0020\u0009\u000C]/)
+				),
+				token(choice(
+					"\n",
+					seq(
+						"\r",
+						optional("\n")
+					)
+				))
+			)
+		)),
+
+		//---------------
+		// Keywords
+		//---------------
+
 		FILE: $ => token("file"),
 
 		FIELD: $ => token("field"),
@@ -2549,56 +2643,6 @@ module.exports = grammar({
 		IS: $ => token("is"),
 
 		IN: $ => token("in"),
-
-		NOT_IS: $ => token(seq(
-			"!is",
-			choice(
-				choice(
-					seq(
-						"/*",
-						repeat(/.|\n/),
-						"*/"
-					),
-					token(seq(
-						"//",
-						repeat(/[^\r\n]/)
-					)),
-					token(/[\u0020\u0009\u000C]/)
-				),
-				token(choice(
-					"\n",
-					seq(
-						"\r",
-						optional("\n")
-					)
-				))
-			)
-		)),
-
-		NOT_IN: $ => token(seq(
-			"!in",
-			choice(
-				choice(
-					seq(
-						"/*",
-						repeat(/.|\n/),
-						"*/"
-					),
-					token(seq(
-						"//",
-						repeat(/[^\r\n]/)
-					)),
-					token(/[\u0020\u0009\u000C]/)
-				),
-				token(choice(
-					"\n",
-					seq(
-						"\r",
-						optional("\n")
-					)
-				))
-			)
-		)),
 
 		OUT: $ => token("out"),
 
@@ -2657,6 +2701,10 @@ module.exports = grammar({
 		EXPECT: $ => token("expect"),
 
 		ACTUAL: $ => token("actual"),
+
+		//--------------
+		// Literals and identifiers
+		//--------------
 
 		DecDigit: $ => token(/[0123456789]/),
 
@@ -3239,8 +3287,6 @@ module.exports = grammar({
 				"`"
 			)
 		)),
-
-		EOF: $ => token(/[\r\n]/),
 
 	}
 });

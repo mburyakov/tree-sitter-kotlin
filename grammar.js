@@ -2241,6 +2241,7 @@ module.exports = grammar({
 		TRIPLE_QUOTE_CLOSE: $ => /"*"""/,
 
 		// TODO: review tokens containing whitespaces/comments inside
+		// due to tree-sitter's context lexing tricks with *_NO_WS do not work
 		WS: $ => /[\u0020\u0009\u000C]+/,
 
 		// TODO combining multiple newlines into single token
